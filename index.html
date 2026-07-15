@@ -1,89 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kingdom 1269 Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+        // === ضع بيانات Firebase الخاصة بك هنا ===
+        const firebaseConfig = {
+  apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+  authDomain: "kingdom-1269-portal.firebaseapp.com",
+  projectId: "kingdom-1269-portal",
+  storageBucket: "kingdom-1269-portal.firebasestorage.app",
+  messagingSenderId: "1007373803222",
+  appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+};
+        // =======================================
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getFirestore();
+        const provider = new GoogleAuthProvider();
+
+        window.login = () => signInWithPopup(auth, provider);
+        window.logout = () => signOut(auth);
+
+        window.register = async () => {
+            const name = document.getElementById('ign').value;
+            if(!name) return alert("الرجاء إدخال اسمك في اللعبة");
+            const user = auth.currentUser;
+            await setDoc(doc(db, "users", user.uid), {
+                name: name,
+                email: user.email,
+                status: 'pending',
+                role: 'member'
+            });
+            location.reload();
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                document.getElementById('login-view').style.display = 'block';
+            } else {
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (!docSnap.exists()) {
+                    document.getElementById('register-view').style.display = 'block';
+                } else if (docSnap.data().status === 'pending') {
+                    document.getElementById('pending-view').style.display = 'block';
+                } else {
+                    document.getElementById('portal-view').style.display = 'block';
+                    document.getElementById('username').innerText = docSnap.data().name;
+                }
+            }
+        });
+    </script>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --primary-color: #3b82f6;
-            --accent-color: #10b981;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; -webkit-user-select: none; user-select: none; }
-
-        body { background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-
-        .container { width: 100%; max-width: 450px; background: var(--card-bg); border-radius: 24px; padding: 35px 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); border: 1px solid #334155; text-align: center; }
-
-        .logo-container { margin-bottom: 20px; }
-        .logo-img { width: 90px; height: 90px; object-fit: contain; border-radius: 50%; border: 2px solid var(--primary-color); padding: 5px; background: rgba(255, 255, 255, 0.05); }
-
-        h1 { font-size: 1.6rem; margin-bottom: 12px; color: #fff; font-weight: 700; }
-        p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px; }
-
-        .btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 14px; font-size: 1rem; font-weight: bold; border: none; border-radius: 14px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; margin-bottom: 15px; }
-        .btn-google { background-color: #fff; color: #1e293b; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-google:active { transform: scale(0.98); }
-        .btn-google img { width: 22px; height: 22px; }
-
-        .portal-content { display: none; }
-        .strategy-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
-
-        .strategy-card { display: block; background: rgba(255, 255, 255, 0.03); border: 1px solid #334155; border-radius: 12px; padding: 16px; text-align: center; text-decoration: none; color: #fff; transition: 0.2s; font-weight: bold; }
-        .strategy-card:active { background: rgba(255, 255, 255, 0.1); }
-
-        .security-badge { display: inline-block; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; margin-top: 20px; }
-        
-        /* Footer Style */
-        .footer { margin-top: 30px; color: var(--text-muted); font-size: 0.8rem; opacity: 0.7; }
+        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
+        .view { display: none; }
+        button { padding: 10px 20px; cursor: pointer; border-radius: 8px; border: none; background: #3b82f6; color: white; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="login-view">
-            <div class="logo-container">
-                <img class="logo-img" src="IMG_3934.png" alt="Kingdom 1269 Logo">
-            </div>
-            <h1>Kingdom 1269 Portal</h1>
-            <p>Access restricted to authorized members only.</p>
-            
-            <button class="btn btn-google" onclick="loginWithGoogle()">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
-                Sign in with Google
-            </button>
-        </div>
-
-        <div id="portal-view" class="portal-content">
-            <div class="logo-container">
-                <img class="logo-img" src="IMG_3934.png" alt="Kingdom 1269 Logo">
-            </div>
-            <h1 id="welcome-message">Welcome, Commander</h1>
-
-            <div class="strategy-grid">
-                <a href="op-center.html" class="strategy-card">Operation command center</a>
-                <a href="execution-court.html" class="strategy-card">Execution Court</a>
-                <a href="reception.html" class="strategy-card">Appointment reception</a>
-                <a href="bear-trap.html" class="strategy-card">Bear Trap calculator</a>
-            </div>
-
-            <span class="security-badge">🔒 Secure Kingdom Portal</span>
-            
-            <div class="footer">Designed by Hell</div>
-        </div>
+    <div id="login-view" class="view">
+        <h1>Welcome to Kingdom 1269</h1>
+        <button onclick="login()">Login with Google</button>
     </div>
 
-    <script>
-        function loginWithGoogle() {
-            document.getElementById('login-view').style.display = 'none';
-            document.getElementById('portal-view').style.display = 'block';
-        }
-    </script>
+    <div id="register-view" class="view">
+        <h2>Enter In-Game Name</h2>
+        <input type="text" id="ign" placeholder="Your Name">
+        <button onclick="register()">Submit</button>
+    </div>
+
+    <div id="pending-view" class="view">
+        <h2>Request Pending</h2>
+        <p>جاري مراجعة طلبك من قبل الإدارة.</p>
+    </div>
+
+    <div id="portal-view" class="view">
+        <h1>Welcome, <span id="username"></span></h1>
+        <p>Operation Command Center Access Granted.</p>
+        <a href="op-center.html"><button>Enter Command Center</button></a>
+        <br><br>
+        <button onclick="logout()">Logout</button>
+    </div>
+
 </body>
 </html>
