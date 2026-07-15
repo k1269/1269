@@ -8,16 +8,14 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
 
-        // === ضع بيانات Firebase الخاصة بك هنا ===
         const firebaseConfig = {
-  apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
-  authDomain: "kingdom-1269-portal.firebaseapp.com",
-  projectId: "kingdom-1269-portal",
-  storageBucket: "kingdom-1269-portal.firebasestorage.app",
-  messagingSenderId: "1007373803222",
-  appId: "1:1007373803222:web:bcb85595a99da596aaf377"
-};
-        // =======================================
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
@@ -47,11 +45,14 @@
                 const docSnap = await getDoc(doc(db, "users", user.uid));
                 if (!docSnap.exists()) {
                     document.getElementById('register-view').style.display = 'block';
-                } else if (docSnap.data().status === 'pending') {
-                    document.getElementById('pending-view').style.display = 'block';
                 } else {
-                    document.getElementById('portal-view').style.display = 'block';
-                    document.getElementById('username').innerText = docSnap.data().name;
+                    const data = docSnap.data();
+                    if (data.status === 'pending') {
+                        document.getElementById('pending-view').style.display = 'block';
+                    } else {
+                        document.getElementById('portal-view').style.display = 'block';
+                        document.getElementById('username').innerText = data.name;
+                    }
                 }
             }
         });
@@ -59,34 +60,29 @@
     <style>
         body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
         .view { display: none; }
-        button { padding: 10px 20px; cursor: pointer; border-radius: 8px; border: none; background: #3b82f6; color: white; }
+        input { padding: 10px; border-radius: 5px; border: none; width: 200px; }
+        button { padding: 10px 20px; cursor: pointer; border-radius: 8px; border: none; background: #3b82f6; color: white; margin: 5px; }
     </style>
 </head>
 <body>
-
     <div id="login-view" class="view">
         <h1>Welcome to Kingdom 1269</h1>
         <button onclick="login()">Login with Google</button>
     </div>
-
     <div id="register-view" class="view">
         <h2>Enter In-Game Name</h2>
         <input type="text" id="ign" placeholder="Your Name">
         <button onclick="register()">Submit</button>
     </div>
-
     <div id="pending-view" class="view">
         <h2>Request Pending</h2>
         <p>جاري مراجعة طلبك من قبل الإدارة.</p>
     </div>
-
     <div id="portal-view" class="view">
         <h1>Welcome, <span id="username"></span></h1>
-        <p>Operation Command Center Access Granted.</p>
         <a href="op-center.html"><button>Enter Command Center</button></a>
         <br><br>
         <button onclick="logout()">Logout</button>
     </div>
-
 </body>
 </html>
