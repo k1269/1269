@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Kingdom 1269</title>
+    <style>
+        :root { --bg-color: #0f172a; --card-bg: #1e293b; --text-color: #f8fafc; }
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 20px; border-radius: 15px; }
+        .user-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #334155; }
+        .btn-approve { background: #10b981; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <p>Pending Join Requests:</p>
+        <div id="pending-list">
+            <div class="user-row">
+                <span>Commander_Name (email@example.com)</span>
+                <button class="btn-approve" onclick="approveUser('uid_123')">Approve</button>
+            </div>
+        </div>
+        <br>
+        <a href="index.html" style="color: #94a3b8;">← Back to Portal</a>
+    </div>
+
+    <script>
+        // دالة للموافقة على المستخدم (سنربطها بـ Firebase لاحقاً)
+        function approveUser(uid) {
+            alert("User approved successfully!");
+            // هنا سنكتب كود تحديث الـ Firestore لاحقاً
+        }
+    </script>
+</body>
+</html>
