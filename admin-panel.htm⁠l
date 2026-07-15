@@ -1,79 +1,63 @@
-// 1. إعدادات Firebase الخاصة بك (التي نسختها سابقاً)
-const firebaseConfig = {
-  apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
-  authDomain: "kingdom-1269-portal.firebaseapp.com",
-  projectId: "kingdom-1269-portal",
-  storageBucket: "kingdom-1269-portal.firebasestorage.app",
-  messagingSenderId: "1007373803222",
-  appId: "1:1007373803222:web:bcb85595a99da596aaf377"
-};
-    // ... باقي الإعدادات
-};
-
-// 2. التحقق من حالة المستخدم
-auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-        // المستخدم غير مسجل دخول: أظهر زر تسجيل الدخول
-        document.getElementById('login-btn').style.display = 'block';
-        return;
-    }
-
-    // المستخدم مسجل دخول: افحص القاعدة
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-
-    if (!userDoc.exists()) {
-        // جديد: أظهر نموذج تسجيل اسم اللاعب
-        document.getElementById('registration-form').style.display = 'block';
-    } else {
-        const userData = userDoc.data();
-        if (userData.status === 'approved') {
-            // مقبول: أظهر المحتوى
-            document.getElementById('portal-content').style.display = 'block';
-            setWatermark(userData.name); // تفعيل الووترمارك باسمه
-        } else {
-            // معلق: أظهر رسالة الانتظار
-            document.getElementById('pending-msg').style.display = 'block';
-        }
-    }
-});
-
-
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Kingdom 1269</title>
+    <title>Admin Dashboard</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore();
+        const auth = getAuth();
+
+        async function loadPendingUsers() {
+            const q = query(collection(db, "users"), where("status", "==", "pending"));
+            const querySnapshot = await getDocs(q);
+            const list = document.getElementById('pending-list');
+            list.innerHTML = '';
+            
+            querySnapshot.forEach((docSnap) => {
+                const user = docSnap.data();
+                const div = document.createElement('div');
+                div.style = "padding: 10px; border-bottom: 1px solid #334155;";
+                div.innerHTML = `
+                    <span>${user.name} (${user.email})</span>
+                    <button onclick="approve('${docSnap.id}')" style="background:#10b981;">موافقة</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        window.approve = async (uid) => {
+            await updateDoc(doc(db, "users", uid), { status: 'approved' });
+            alert("تم قبول اللاعب!");
+            loadPendingUsers();
+        };
+
+        auth.onAuthStateChanged(user => {
+            if (!user) window.location.href = "index.html";
+            loadPendingUsers();
+        });
+    </script>
     <style>
-        :root { --bg-color: #0f172a; --card-bg: #1e293b; --text-color: #f8fafc; }
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 20px; border-radius: 15px; }
-        .user-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #334155; }
-        .btn-approve { background: #10b981; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer; }
+        body { background: #0f172a; color: white; font-family: sans-serif; padding: 20px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Dashboard</h1>
-        <p>Pending Join Requests:</p>
-        <div id="pending-list">
-            <div class="user-row">
-                <span>Commander_Name (email@example.com)</span>
-                <button class="btn-approve" onclick="approveUser('uid_123')">Approve</button>
-            </div>
-        </div>
-        <br>
-        <a href="index.html" style="color: #94a3b8;">← Back to Portal</a>
-    </div>
-
-    <script>
-        // دالة للموافقة على المستخدم (سنربطها بـ Firebase لاحقاً)
-        function approveUser(uid) {
-            alert("User approved successfully!");
-            // هنا سنكتب كود تحديث الـ Firestore لاحقاً
-        }
-    </script>
+    <h1>لوحة تحكم الإدارة</h1>
+    <div id="pending-list">جاري تحميل الطلبات...</div>
+    <br>
+    <a href="index.html" style="color:#94a3b8;">العودة للرئيسية</a>
 </body>
 </html>
