@@ -1,12 +1,74 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kingdom 1269 Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingdom 1269 | Operation Portal</title>
+    <style>
+        /* التنسيق العام */
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            user-select: none; /* منع تحديد النصوص */
+            -webkit-user-select: none;
+            overflow: hidden;
+        }
+
+        /* الووترمارك - اسم المملكة */
+        .watermark {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        /* الهيدر */
+        header { text-align: center; padding: 40px 20px; }
+        header img { width: 180px; height: auto; margin-bottom: 10px; }
+
+        /* منطقة تسجيل الدخول */
+        main { flex: 1; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: #1a1a1a; padding: 50px; border-radius: 15px; text-align: center; border: 1px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        button { padding: 15px 40px; background: #c5a059; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #d4b06a; }
+
+        /* الفوتر */
+        footer { text-align: center; padding: 20px; font-size: 12px; color: #444; }
+    </style>
+</head>
+<body>
+
+    <div class="watermark" id="userWatermark">KINGDOM 1269</div>
+
+    <header>
+        <img src="IMG_3934.png" alt="Kingdom 1269 Logo">
+        <h1>Kingdom 1269 Portal</h1>
+    </header>
+
+    <main>
+        <div class="login-box" id="auth-section">
+            <p>Welcome Commander. Please login to access the Operations Center.</p>
+            <button id="loginBtn">Login with Google</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>Kingdom 1269 System | Design by Hell</p>
+    </footer>
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -22,67 +84,34 @@
         const db = getFirestore();
         const provider = new GoogleAuthProvider();
 
-        window.login = () => signInWithPopup(auth, provider);
-        window.logout = () => signOut(auth);
+        // عملية تسجيل الدخول
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch((error) => console.error(error));
+        });
 
-        window.register = async () => {
-            const name = document.getElementById('ign').value;
-            if(!name) return alert("الرجاء إدخال اسمك في اللعبة");
-            const user = auth.currentUser;
-            await setDoc(doc(db, "users", user.uid), {
-                name: name,
-                email: user.email,
-                status: 'pending',
-                role: 'member'
-            });
-            location.reload();
-        };
-
+        // مراقبة حالة المستخدم
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                document.getElementById('login-view').style.display = 'block';
-            } else {
-                const docSnap = await getDoc(doc(db, "users", user.uid));
-                if (!docSnap.exists()) {
-                    document.getElementById('register-view').style.display = 'block';
-                } else {
-                    const data = docSnap.data();
-                    if (data.status === 'pending') {
-                        document.getElementById('pending-view').style.display = 'block';
+            if (user) {
+                document.getElementById('userWatermark').innerText = user.displayName;
+                
+                // التحقق من الصلاحيات في قاعدة البيانات
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        const role = userDoc.data().role;
+                        if (role === 'admin' || role === 'member') {
+                            window.location.href = "command-center.html";
+                        } else {
+                            alert("Your account is pending approval.");
+                        }
                     } else {
-                        document.getElementById('portal-view').style.display = 'block';
-                        document.getElementById('username').innerText = data.name;
+                        alert("Account not found in system. Contact Admin.");
                     }
+                } catch (e) {
+                    console.error("Error accessing database:", e);
                 }
             }
         });
     </script>
-    <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
-        .view { display: none; }
-        input { padding: 10px; border-radius: 5px; border: none; width: 200px; }
-        button { padding: 10px 20px; cursor: pointer; border-radius: 8px; border: none; background: #3b82f6; color: white; margin: 5px; }
-    </style>
-</head>
-<body>
-    <div id="login-view" class="view">
-        <h1>Welcome to Kingdom 1269</h1>
-        <button onclick="login()">Login with Google</button>
-    </div>
-    <div id="register-view" class="view">
-        <h2>Enter In-Game Name</h2>
-        <input type="text" id="ign" placeholder="Your Name">
-        <button onclick="register()">Submit</button>
-    </div>
-    <div id="pending-view" class="view">
-        <h2>Request Pending</h2>
-        <p>جاري مراجعة طلبك من قبل الإدارة.</p>
-    </div>
-    <div id="portal-view" class="view">
-        <h1>Welcome, <span id="username"></span></h1>
-        <a href="op-center.html"><button>Enter Command Center</button></a>
-        <br><br>
-        <button onclick="logout()">Logout</button>
-    </div>
 </body>
 </html>
