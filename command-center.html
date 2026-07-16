@@ -2,37 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kingdom 1269 | Operations Center</title>
     <style>
         :root { --gold: #C5A059; --bg: #050505; --dark-blue: #0A0F1A; --text: #E0E0E0; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; position: relative; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; position: relative; margin: 0; }
         
-        /* Watermark - تم تعديل اللون ليكون أوضح */
+        /* Watermark styling */
         #watermark {
             position: fixed; top: 10px; right: 10px; font-size: 14px; 
-            color: rgba(197, 160, 89, 0.8); /* لون أوضح */
-            z-index: 9999; pointer-events: none; background: rgba(0,0,0,0.5); padding: 5px;
+            color: rgba(197, 160, 89, 0.9); z-index: 9999; 
+            background: rgba(0,0,0,0.6); padding: 5px 10px; border: 1px solid var(--gold);
+            border-radius: 5px; pointer-events: none;
         }
 
         h1, h2 { color: var(--gold); text-align: center; }
         
-        /* تنسيق الجدول المزدوج */
-        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: var(--dark-blue); }
-        th, td { border: 1px solid #333; padding: 8px; text-align: left; font-size: 13px; }
-        th { background: #1a1a1a; color: var(--gold); text-align: center; }
-        .division { border-right: 3px solid var(--gold); } /* فاصل بين التحالفين */
+        /* Iframe Styles */
+        .sheet-container { width: 100%; height: 600px; margin: 20px 0; border: 2px solid var(--gold); background: #fff; }
+        iframe { width: 100%; height: 100%; border: none; }
 
         .map-container { text-align: center; margin: 20px 0; }
         .map-container img { width: 100%; max-width: 600px; border: 2px solid var(--gold); }
+        
         .section-box { background: #111; padding: 15px; border-left: 3px solid var(--gold); margin-bottom: 20px; }
+        
         .admin-footer { text-align: center; margin-top: 50px; padding: 10px; }
-        .admin-footer a { color: #555; text-decoration: none; font-size: 0.75rem; }
+        .admin-footer a { color: #555; text-decoration: none; font-size: 0.75rem; transition: 0.3s; }
         .admin-footer a:hover { color: var(--gold); }
     </style>
 </head>
 <body>
 
-    <div id="watermark"></div>
+    <div id="watermark">Loading Player Info...</div>
 
     <h1>Command Center Operations</h1>
 
@@ -40,50 +42,21 @@
         <img src="PHOTO-2026-07-16-18-05-40.jpeg" alt="Strategic Map">
     </div>
 
-    <h2>Alliance Deployment Table</h2>
-    <table>
-        <thead>
-            <tr>
-                <th colspan="2">69S Alliance</th>
-                <th colspan="3" class="division">APX Alliance</th>
-            </tr>
-            <tr>
-                <th>Position</th><th>Player</th>
-                <th class="division">Position</th><th>Player</th><th>Troops</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>Counter Rally Wave 1</td><td>Pale King, Barahir</td><td class="division">Castle Garrison</td><td>Jamous</td><td>T11 Infantry</td></tr>
-            <tr><td>Counter Rally Wave 2</td><td>Westley, Kai</td><td class="division">Handover Support 1</td><td>ChildishJimbo</td><td>T11 Infantry</td></tr>
-            <tr><td>Turret Rally / Backup</td><td>Alex, Fixoune</td><td class="division">Handover Support 2</td><td>Lady D</td><td>T11 Cavalry</td></tr>
-            <tr><td>Turret Garrison 1</td><td>GGG</td><td class="division">Coordinator</td><td>Hell</td><td>T11 Infantry</td></tr>
-            <tr><td>Turret Garrison 2</td><td>Master Baiter</td><td class="division">Joiner 1</td><td>Zeus</td><td>T11 Cavalry</td></tr>
-            <tr><td>Turret Garrison 3</td><td>Bird</td><td class="division">Joiner 2</td><td>TBD</td><td>T10 60/40/0</td></tr>
-            <tr><td>Coordinator</td><td>Master Baiter</td><td class="division">Joiner 3</td><td>TBD</td><td>T10 60/40/0</td></tr>
-            <tr><td>-</td><td>-</td><td class="division">Joiner 4</td><td>TBD</td><td>T10 60/40/0</td></tr>
-        </tbody>
-    </table>
-
-    <!-- باقي الأقسام كما هي -->
-    <h2>Battle Meta</h2>
-    <table>
-        <tr><th>Item</th><th>Meta</th></tr>
-        <tr><td>Attack rally heroes</td><td>Amadeus, Petra, Rosa</td></tr>
-        <tr><td>Attack rally troop ratio</td><td>50/20/30</td></tr>
-        <tr><td>Defense garrison heroes</td><td>Alcar, Margot, Saul</td></tr>
-        <tr><td>Defense garrison troop ratio</td><td>60/40/0</td></tr>
-    </table>
+    <h2>Deployment Dashboard</h2>
+    <div class="sheet-container">
+        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgWmNwO47GLN4PQ3cka2YYbwfrpC2VOdN8hIno9CLKUfg7kFl3DRo0zqMmMfgE7T2q78eLfCDnL2Zp/pubhtml?widget=true&amp;headers=false"></iframe>
+    </div>
 
     <h2>Battle Protocols</h2>
     <div class="section-box">
-        <h3>Enemy Counter Strategy</h3>
-        <ul>
-            <li>Step 1-8: ... (محتوى البروتوكولات كما في الملف) ...</li>
-        </ul>
+        <h3>General Protocol</h3>
+        <p>11:30 UTC ALL PLAYERS MUST BE IN 69S AND READY TO TELEPORT TO THEIR SPOTS!</p>
+        <p>Battle Start: All 17 players named below will be in APX to secure the first occupation by solo attacking with best heroes at 5/2/3 and pressing 2000 gem speedups until inside!</p>
     </div>
 
     <div class="admin-footer">
         <a href="admin.html" id="admin-link-btn" style="display:none;">Admin Dashboard</a>
+        <br>Designed by Hell
     </div>
 
     <script type="module">
@@ -91,23 +64,45 @@
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const firebaseConfig = { /* بياناتك هنا */ };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377" 
+        };
+        
+        const app = initializeApp(firebaseConfig);
         const auth = getAuth();
         const db = getFirestore();
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
             
-            // الووتر مارك المحدث
-            const now = new Date();
-            document.getElementById('watermark').innerText = `${user.displayName} | ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-            
             try {
+                // محاولة جلب بيانات المستخدم من الفايربيس لعرض الاسم والتحقق من الأدمن
                 const userDoc = await getDoc(doc(db, "users", user.uid));
+                
+                // تحديد الاسم للعرض
+                let displayName = user.displayName || user.email;
+                if (userDoc.exists() && userDoc.data().inGameName) {
+                    displayName = userDoc.data().inGameName;
+                }
+
+                // تحديث الووتر مارك
+                const now = new Date();
+                const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('watermark').innerText = `${displayName} | ${timeString}`;
+                
+                // إظهار زر الأدمن فقط إذا كان الرول admin
                 if (userDoc.exists() && userDoc.data().role === 'admin') {
                     document.getElementById('admin-link-btn').style.display = 'inline';
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Error loading user data:", e);
+                document.getElementById('watermark').innerText = "Logged In"; 
+            }
         });
     </script>
 </body>
