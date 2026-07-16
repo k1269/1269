@@ -5,40 +5,43 @@
     <title>Kingdom 1269 | Operations Center</title>
     <style>
         :root { --gold: #C5A059; --bg: #050505; --dark-blue: #0A0F1A; --text: #E0E0E0; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; user-select: none; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; position: relative; }
+        
+        /* Watermark */
+        #watermark {
+            position: fixed; top: 10px; right: 10px; font-size: 12px; color: rgba(197, 160, 89, 0.3);
+            pointer-events: none; z-index: 9999;
+        }
+
         h1, h2 { color: var(--gold); text-align: center; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: var(--dark-blue); }
-        th, td { border: 1px solid #333; padding: 10px; text-align: center; font-size: 14px; }
-        th { background: #1a1a1a; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; font-size: 13px; }
+        th { background: #1a1a1a; color: var(--gold); }
+        
         .map-container { text-align: center; margin: 20px 0; }
         .map-container img { width: 100%; max-width: 600px; border: 2px solid var(--gold); }
-        .alert-box { background: #4a0000; padding: 15px; border-left: 5px solid red; margin-bottom: 20px; }
-        .footer { text-align: center; padding: 20px; color: var(--gold); }
-        .admin-link { text-align: center; margin: 20px; display: none; }
-        .admin-link a { color: var(--gold); text-decoration: none; border: 1px solid var(--gold); padding: 10px 20px; font-weight: bold; }
+        
+        .section-box { background: #111; padding: 15px; border-left: 3px solid var(--gold); margin-bottom: 20px; }
+        
+        /* Admin Link */
+        .admin-footer { text-align: center; margin-top: 50px; padding: 10px; }
+        .admin-footer a { color: #555; text-decoration: none; font-size: 0.75rem; transition: 0.3s; }
+        .admin-footer a:hover { color: var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="alert-box">
-        <h3>URGENT ALERT</h3>
-        <p>11:30 UTC ALL PLAYERS MUST BE IN 69S AND READY TO TELEPORT TO THEIR SPOTS!</p>
-        <p>Battle Start: All 17 players must be in APX to secure first occupation. Press 2000 gem speedups until inside!</p>
-    </div>
+    <div id="watermark"></div>
 
     <h1>Command Center Operations</h1>
-
-    <div id="admin-link" class="admin-link">
-        <a href="admin.html">⚙️ GO TO ADMIN DASHBOARD</a>
-    </div>
 
     <div class="map-container">
         <img src="PHOTO-2026-07-16-18-05-40.jpeg" alt="Strategic Map">
     </div>
 
-    <h2>Deployment Roles</h2>
+    <h2>69S / APX Deployments</h2>
     <table>
-        <tr><th>Position</th><th>Players</th><th>Troops</th></tr>
+        <tr><th>Position</th><th>Player</th><th>Troops</th></tr>
         <tr><td>Counter Rally Wave 1</td><td>Pale King, Barahir</td><td>-</td></tr>
         <tr><td>Counter Rally Wave 2</td><td>Westley, Kai</td><td>-</td></tr>
         <tr><td>Turret Rally / Backup</td><td>Alex, Fixoune</td><td>-</td></tr>
@@ -49,39 +52,81 @@
         <tr><td>Castle Garrison (69S)</td><td>Jamous</td><td>T11 Infantry</td></tr>
         <tr><td>Handover Support 1</td><td>ChildishJimbo</td><td>T11 Infantry</td></tr>
         <tr><td>Handover Support 2</td><td>Lady D</td><td>T11 Cavalry</td></tr>
+        <tr><td>Joiner 1</td><td>Zeus</td><td>T11 Cavalry</td></tr>
+        <tr><td>Joiner 2</td><td>TBD</td><td>T10 60/40/0</td></tr>
+        <tr><td>Joiner 3</td><td>TBD</td><td>T10 60/40/0</td></tr>
+        <tr><td>Joiner 4</td><td>TBD</td><td>T10 60/40/0</td></tr>
     </table>
 
     <h2>Battle Meta</h2>
     <table>
-        <tr><th>Item</th><th>Details</th></tr>
-        <tr><td>Attack Rally Heroes</td><td>Amadeus, Petra, Rosa</td></tr>
-        <tr><td>Attack Ratio</td><td>50/20/30</td></tr>
-        <tr><td>Defense Garrison Heroes</td><td>Alcar, Margot, Saul</td></tr>
-        <tr><td>Defense Ratio</td><td>60/40/0</td></tr>
+        <tr><th>Item</th><th>Meta</th></tr>
+        <tr><td>Attack rally heroes</td><td>Amadeus, Petra, Rosa</td></tr>
+        <tr><td>Attack rally troop ratio</td><td>50/20/30</td></tr>
+        <tr><td>Optimum attack rally joiners</td><td>4x Saul (3x Saul, Hilde also acceptable)</td></tr>
+        <tr><td>Defense garrison heroes</td><td>Alcar, Margot, Saul</td></tr>
+        <tr><td>Defense garrison troop ratio</td><td>60/40/0</td></tr>
+        <tr><td>Optimum defense garrison joiners</td><td>2x Saul, Hilde, Gordon</td></tr>
     </table>
 
-    <h2>Battle Protocols (Full Details)</h2>
-    <div style="background:#111; padding:15px; border:1px solid #333;">
-        <p><strong>Step 1:</strong> Keep an eye on incoming rallies. 69S cannot see the rally. Hell/Jamous to communicate in voice channel.</p>
-        <p><strong>Step 2:</strong> Counter double rally from 69S with Pale, Barahir. If defense is successful, cancel rally or recall the march.</p>
-        <p><strong>Step 3:</strong> As soon as counter starts, single rally from APX with Jamous.</p>
-        <p><strong>Step 4:</strong> Observe enemy alliances to see signs of a second counter rally. Enemy may disband rallies. Keep watching.</p>
-        <p><strong>Step 5:</strong> As soon as counter starts, double rally from 69S with Westley, Kai. Jamous and joiners to start marching with best heroes at 5/2/3 timed to arrive 10-20 seconds after counter rallies land.</p>
-        <p><strong>Step 6:</strong> Jamous to initiate countdown from 10 after speeding up his march. Joiners try to match timing.</p>
-        <p><strong>Step 7:</strong> 69S will empty castle until rally lead and 3 weak joiners remain inside. When Jamous says "1", rally lead leaves garrison.</p>
-        <p><strong>Step 8:</strong> Jamous captures castle, switches to defensive heroes. Joiners switch to 6/4/0 and garrison joiner heroes.</p>
-        <p><strong>Step 9:</strong> Joiner heroes are shuffled by Hell to optimum combination.</p>
-        <p><strong>Step 10:</strong> Once castle secured, initiate handover.</p>
+    <h2>Battle Protocols</h2>
+    <div class="section-box">
+        <h3>General Protocol</h3>
+        <p>11:30 UTC ALL PLAYERS MUST BE IN 69S AND READY TO TELEPORT TO THEIR SPOTS!</p>
+        <p>Battle Start: All 17 players named below will be in APX to secure the first occupation by solo attacking with best heroes at 5/2/3 and pressing 2000 gem speedups until inside!</p>
+        <p>The moment castle is secured, leaders assigned to 69S will switch alliances.</p>
     </div>
 
-    <div class="footer">Kingdom 1269 System | Designed by Hell</div>
+    <div class="section-box">
+        <h3>Enemy Counter Strategy</h3>
+        <p>Enemy will split into 2 alliances and run a counter rally.</p>
+        <ul>
+            <li><strong>Step 1:</strong> Double rally from 69S with Pale King, Barahir.</li>
+            <li><strong>Step 2:</strong> Observe enemy alliances to see signs of counter rally. Enemy may disband rallies. Keep watching.</li>
+            <li><strong>Step 3:</strong> As soon as counter starts, single rally from APX with Jamous.</li>
+            <li><strong>Step 4:</strong> Observe enemy alliances to see signs of a second counter rally. Enemy may disband rallies. Keep watching.</li>
+            <li><strong>Step 5:</strong> As soon as counter starts, double rally from 69S with Westley, Kai.</li>
+            <li><strong>Step 6:</strong> Observe enemy alliances to see signs of a third counter rally. Enemy may disband rallies. Keep watching.</li>
+            <li><strong>Step 7:</strong> As soon as counter starts, double rally from 69S with Alex, Fixoune.</li>
+            <li><strong>Step 8:</strong> When castle is secured, initiate handover.</li>
+        </ul>
+    </div>
+
+    <div class="section-box">
+        <h3>Castle Defense Procedures</h3>
+        <ul>
+            <li><strong>Step 1:</strong> As soon as castle defense is lost Jamous, and joiners to head back with march speedups.</li>
+            <li><strong>Step 2:</strong> Jamous, and joiners to start marching with best heroes at 5/2/3 timed to arrive 10-20 seconds after counter rallies land.</li>
+            <li><strong>Step 3:</strong> Jamous to initiate countdown from 10 after speeding up his march. No more march speed ups by Jamous from that point and countdown continues. Joiners will try to match their arrival times to Jamous' countdown.</li>
+            <li><strong>Step 4:</strong> 69S will empty the castle until rally lead, and 3 weak joiners remain inside.</li>
+            <li><strong>Step 5:</strong> When Jamous says "1" rally lead leaves the garrison, leaving behind 3 joiner squads.</li>
+            <li><strong>Step 6:</strong> Jamous captures the castle and joiners arrive right after.</li>
+            <li><strong>Step 7:</strong> Jamous switches to defensive heroes.</li>
+            <li><strong>Step 8:</strong> Joiners switch to 6/4/0 and garrison joiner heroes.</li>
+            <li><strong>Step 9:</strong> Joiner heroes are shuffled by Hell to optimum combination.</li>
+        </ul>
+    </div>
+
+    <div class="section-box">
+        <h3>Turret Operations</h3>
+        <ul>
+            <li><strong>Step 1:</strong> Alex, Fixoune to double rally from 69S.</li>
+            <li><strong>Step 2:</strong> Wait for 4 joiners to be inside the rally.</li>
+            <li><strong>Step 3:</strong> An available turret garrison leader to join with best defensive set of heroes to Alex.</li>
+            <li><strong>Step 4:</strong> As soon as turret is taken, Alex to hand over garrison to the rally leader and head back.</li>
+            <li><strong>Step 5:</strong> Go back to step 1 till all 4 turrets are under control. Once all 4 is controlled, Fixoune to swap to defensive heroes and defend.</li>
+        </ul>
+    </div>
+
+    <div class="admin-footer">
+        <a href="admin.html" id="admin-link-btn" style="display:none;">Admin Dashboard</a>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // تأكد من وضع بيانات الـ firebaseConfig الخاصة بك هنا
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
             authDomain: "kingdom-1269-portal.firebaseapp.com",
@@ -97,15 +142,19 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
+
+            // Set Watermark
+            const now = new Date();
+            const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            document.getElementById('watermark').innerText = `${user.displayName} | ${timeString}`;
             
+            // Check Admin
             try {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists() && userDoc.data().role === 'admin') {
-                    document.getElementById('admin-link').style.display = 'block';
+                    document.getElementById('admin-link-btn').style.display = 'inline';
                 }
-            } catch (e) {
-                console.error("Auth Check Error:", e);
-            }
+            } catch (e) { console.error(e); }
         });
     </script>
 </body>
