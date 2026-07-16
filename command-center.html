@@ -6,19 +6,26 @@
     <title>Kingdom 1269 | Operations Center</title>
     <style>
         :root { --gold: #C5A059; --bg: #050505; --dark-blue: #0A0F1A; --text: #E0E0E0; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; position: relative; margin: 0; }
-        
-        /* Watermark styling */
-        #watermark {
-            position: fixed; top: 10px; right: 10px; font-size: 14px; 
-            color: rgba(197, 160, 89, 0.9); z-index: 9999; 
-            background: rgba(0,0,0,0.6); padding: 5px 10px; border: 1px solid var(--gold);
-            border-radius: 5px; pointer-events: none;
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; position: relative; }
+
+        /* طبقة الووتر مارك الشاملة */
+        #watermark-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999;
+            opacity: 0.15; /* شفافية خفيفة */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            overflow: hidden;
+            font-size: 20px;
+            color: var(--gold);
+            transform: rotate(-20deg);
+            white-space: nowrap;
         }
+        .wm-cell { display: flex; align-items: center; justify-content: center; padding: 20px; }
 
         h1, h2 { color: var(--gold); text-align: center; }
         
-        /* Iframe Styles */
         .sheet-container { width: 100%; height: 600px; margin: 20px 0; border: 2px solid var(--gold); background: #fff; }
         iframe { width: 100%; height: 100%; border: none; }
 
@@ -27,14 +34,15 @@
         
         .section-box { background: #111; padding: 15px; border-left: 3px solid var(--gold); margin-bottom: 20px; }
         
-        .admin-footer { text-align: center; margin-top: 50px; padding: 10px; }
+        .admin-footer { text-align: center; margin-top: 50px; padding: 10px; color: #555; }
         .admin-footer a { color: #555; text-decoration: none; font-size: 0.75rem; transition: 0.3s; }
         .admin-footer a:hover { color: var(--gold); }
     </style>
 </head>
 <body>
 
-    <div id="watermark">Loading Player Info...</div>
+    <!-- طبقة الووتر مارك التي تغطي كل شيء -->
+    <div id="watermark-overlay"></div>
 
     <h1>Command Center Operations</h1>
 
@@ -56,7 +64,7 @@
 
     <div class="admin-footer">
         <a href="admin.html" id="admin-link-btn" style="display:none;">Admin Dashboard</a>
-        <br>Designed by Hell
+        <p style="font-size: 0.7rem;">Designed by Hell</p>
     </div>
 
     <script type="module">
@@ -81,27 +89,31 @@
             if (!user) { window.location.href = "index.html"; return; }
             
             try {
-                // محاولة جلب بيانات المستخدم من الفايربيس لعرض الاسم والتحقق من الأدمن
                 const userDoc = await getDoc(doc(db, "users", user.uid));
-                
-                // تحديد الاسم للعرض
                 let displayName = user.displayName || user.email;
                 if (userDoc.exists() && userDoc.data().inGameName) {
                     displayName = userDoc.data().inGameName;
                 }
 
-                // تحديث الووتر مارك
+                // إنشاء محتوى الووتر مارك المكرر
                 const now = new Date();
-                const timeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                document.getElementById('watermark').innerText = `${displayName} | ${timeString}`;
+                const wmText = `${displayName} | ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+                const overlay = document.getElementById('watermark-overlay');
                 
-                // إظهار زر الأدمن فقط إذا كان الرول admin
+                // ملء الشاشة بنصوص مكررة
+                for(let i = 0; i < 12; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'wm-cell';
+                    div.innerText = wmText;
+                    overlay.appendChild(div);
+                }
+                
+                // إظهار زر الأدمن
                 if (userDoc.exists() && userDoc.data().role === 'admin') {
                     document.getElementById('admin-link-btn').style.display = 'inline';
                 }
             } catch (e) { 
                 console.error("Error loading user data:", e);
-                document.getElementById('watermark').innerText = "Logged In"; 
             }
         });
     </script>
