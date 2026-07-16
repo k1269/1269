@@ -2,72 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 | Operation Command Center</title>
+    <title>Kingdom 1269 | Operations Center</title>
     <style>
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; user-select: none; }
-        .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 80px; color: rgba(255, 255, 255, 0.03); pointer-events: none; z-index: 1000; white-space: nowrap; }
-        header { text-align: center; border-bottom: 2px solid #c5a059; padding-bottom: 20px; margin-bottom: 30px; }
-        h1, h2 { color: #c5a059; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: #1a1a1a; }
-        th, td { border: 1px solid #333; padding: 12px; text-align: left; }
-        th { background: #222; }
-        .protocol-box { background: #1a1a1a; padding: 20px; border-left: 5px solid #c5a059; }
-        footer { text-align: center; padding: 40px; font-size: 12px; color: #444; }
+        :root { --gold: #C5A059; --bg: #050505; --dark-blue: #0A0F1A; --text: #E0E0E0; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; user-select: none; }
+        h1, h2 { color: var(--gold); text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: var(--dark-blue); }
+        th, td { border: 1px solid #333; padding: 10px; text-align: center; font-size: 14px; }
+        th { background: #1a1a1a; }
+        .map-container { text-align: center; margin: 20px 0; }
+        .map-container img { width: 100%; max-width: 600px; border: 2px solid var(--gold); }
+        .alert-box { background: #4a0000; padding: 15px; border-left: 5px solid red; margin-bottom: 20px; }
+        .footer { text-align: center; padding: 20px; color: var(--gold); }
+        .admin-link { text-align: center; margin: 20px; display: none; }
+        .admin-link a { color: var(--gold); text-decoration: none; border: 1px solid var(--gold); padding: 10px 20px; font-weight: bold; }
     </style>
-    <div id="admin-panel-link" style="display:none; text-align: center; margin: 20px;">
-    <a href="admin.html" style="color: #c5a059; text-decoration: none; border: 1px solid #c5a059; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
-        ⚙️ ADMIN DASHBOARD
-    </a>
-</div>
-
 </head>
 <body>
 
-    <div class="watermark" id="watermark">KINGDOM 1269</div>
+    <div class="alert-box">
+        <h3>URGENT ALERT</h3>
+        <p>11:30 UTC ALL PLAYERS MUST BE IN 69S AND READY TO TELEPORT TO THEIR SPOTS!</p>
+        <p>Battle Start: All 17 players must be in APX to secure first occupation. Press 2000 gem speedups until inside!</p>
+    </div>
 
-    <header>
-        <h1>Operation Command Center</h1>
-        <p id="user-display"></p>
-    </header>
+    <h1>Command Center Operations</h1>
 
-    <main>
-        <h2>Deployment Roles</h2>
-        <table>
-            <tr><th>Position</th><th>Players</th></tr>
-            <tr><td>Counter Rally Wave 1</td><td>Pale King, Barahir</td></tr>
-            <tr><td>Counter Rally Wave 2</td><td>Westley, Kai</td></tr>
-            <tr><td>Turret Garrisons</td><td>GGG, Master Baiter, Bird</td></tr>
-            <tr><td>Castle Garrison (69S)</td><td>Jamous (T11 Infantry)</td></tr>
-        </table>
+    <div id="admin-link" class="admin-link">
+        <a href="admin.html">⚙️ GO TO ADMIN DASHBOARD</a>
+    </div>
 
-        <h2>Battle Meta</h2>
-        <table>
-            <tr><th>Type</th><th>Heroes</th><th>Ratio</th></tr>
-            <tr><td>Attack Rally</td><td>Amadeus, Petra, Rosa</td><td>50/20/30</td></tr>
-            <tr><td>Defense Garrison</td><td>Alcar, Margot, Saul</td><td>60/40/0</td></tr>
-        </table>
+    <div class="map-container">
+        <img src="PHOTO-2026-07-16-18-05-40.jpeg" alt="Strategic Map">
+    </div>
 
-        <h2>Battle Protocols</h2>
-        <div class="protocol-box">
-            <p><strong>Urgent Alert:</strong> 11:30 UTC ALL PLAYERS MUST BE IN 69S AND READY!</p>
-            <ol>
-                <li>Double rally from 69S with Pale King & Barahir.</li>
-                <li>Jamous initiates countdown after speed up.</li>
-                <li>When Jamous says "1", rally lead leaves garrison.</li>
-                <li>Turret Handover: Alex to hand over garrison to rally leader immediately after taking turret.</li>
-            </ol>
-        </div>
-    </main>
+    <h2>Deployment Roles</h2>
+    <table>
+        <tr><th>Position</th><th>Players</th><th>Troops</th></tr>
+        <tr><td>Counter Rally Wave 1</td><td>Pale King, Barahir</td><td>-</td></tr>
+        <tr><td>Counter Rally Wave 2</td><td>Westley, Kai</td><td>-</td></tr>
+        <tr><td>Turret Rally / Backup</td><td>Alex, Fixoune</td><td>-</td></tr>
+        <tr><td>Turret Garrison 1</td><td>GGG</td><td>-</td></tr>
+        <tr><td>Turret Garrison 2</td><td>Master Baiter</td><td>-</td></tr>
+        <tr><td>Turret Garrison 3</td><td>Bird</td><td>-</td></tr>
+        <tr><td>Coordinator</td><td>Master Baiter</td><td>-</td></tr>
+        <tr><td>Castle Garrison (69S)</td><td>Jamous</td><td>T11 Infantry</td></tr>
+        <tr><td>Handover Support 1</td><td>ChildishJimbo</td><td>T11 Infantry</td></tr>
+        <tr><td>Handover Support 2</td><td>Lady D</td><td>T11 Cavalry</td></tr>
+    </table>
 
-    <footer>
-        <p>Kingdom 1269 System | Design by Hell</p>
-    </footer>
+    <h2>Battle Meta</h2>
+    <table>
+        <tr><th>Item</th><th>Details</th></tr>
+        <tr><td>Attack Rally Heroes</td><td>Amadeus, Petra, Rosa</td></tr>
+        <tr><td>Attack Ratio</td><td>50/20/30</td></tr>
+        <tr><td>Defense Garrison Heroes</td><td>Alcar, Margot, Saul</td></tr>
+        <tr><td>Defense Ratio</td><td>60/40/0</td></tr>
+    </table>
+
+    <h2>Battle Protocols (Full Details)</h2>
+    <div style="background:#111; padding:15px; border:1px solid #333;">
+        <p><strong>Step 1:</strong> Keep an eye on incoming rallies. 69S cannot see the rally. Hell/Jamous to communicate in voice channel.</p>
+        <p><strong>Step 2:</strong> Counter double rally from 69S with Pale, Barahir. If defense is successful, cancel rally or recall the march.</p>
+        <p><strong>Step 3:</strong> As soon as counter starts, single rally from APX with Jamous.</p>
+        <p><strong>Step 4:</strong> Observe enemy alliances to see signs of a second counter rally. Enemy may disband rallies. Keep watching.</p>
+        <p><strong>Step 5:</strong> As soon as counter starts, double rally from 69S with Westley, Kai. Jamous and joiners to start marching with best heroes at 5/2/3 timed to arrive 10-20 seconds after counter rallies land.</p>
+        <p><strong>Step 6:</strong> Jamous to initiate countdown from 10 after speeding up his march. Joiners try to match timing.</p>
+        <p><strong>Step 7:</strong> 69S will empty castle until rally lead and 3 weak joiners remain inside. When Jamous says "1", rally lead leaves garrison.</p>
+        <p><strong>Step 8:</strong> Jamous captures castle, switches to defensive heroes. Joiners switch to 6/4/0 and garrison joiner heroes.</p>
+        <p><strong>Step 9:</strong> Joiner heroes are shuffled by Hell to optimum combination.</p>
+        <p><strong>Step 10:</strong> Once castle secured, initiate handover.</p>
+    </div>
+
+    <div class="footer">Kingdom 1269 System | Designed by Hell</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // تأكد من وضع بيانات الـ firebaseConfig الخاصة بك هنا
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
             authDomain: "kingdom-1269-portal.firebaseapp.com",
@@ -76,22 +90,21 @@
             messagingSenderId: "1007373803222",
             appId: "1:1007373803222:web:bcb85595a99da596aaf377"
         };
-
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
+        const db = getFirestore();
 
-        onAuthStateChanged(auth, (user) => {
-            // أضف هذا الجزء داخل دالة onAuthStateChanged للتحقق من الرتبة
-const userDoc = await getDoc(doc(db, "users", user.uid));
-if (userDoc.exists() && userDoc.data().role === 'admin') {
-    document.getElementById('admin-panel-link').style.display = 'block';
-}
-
-            if (!user) {
-                window.location.href = "index.html"; // إعادة توجيه إذا لم يكن مسجل دخول
-            } else {
-                document.getElementById('watermark').innerText = `KINGDOM 1269 | ${user.displayName}`;
-                document.getElementById('user-display').innerText = `Logged in as: ${user.displayName}`;
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            
+            try {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && userDoc.data().role === 'admin') {
+                    document.getElementById('admin-link').style.display = 'block';
+                }
+            } catch (e) {
+                console.error("Auth Check Error:", e);
             }
         });
     </script>
