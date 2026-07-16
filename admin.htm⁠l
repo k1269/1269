@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard | Kingdom 1269</title>
+    <style>
+        body { background: #0d0d0d; color: #fff; font-family: sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; background: #1a1a1a; margin-top: 20px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: center; }
+        button { background: #c5a059; border: none; padding: 5px 15px; cursor: pointer; color: #000; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Pending Approvals</h1>
+    <table id="usersTable">
+        <thead><tr><th>User Email</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+    </table>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        
+        const db = getFirestore();
+
+        async function loadPendingUsers() {
+            const q = query(collection(db, "users"), where("role", "==", "pending"));
+            const querySnapshot = await getDocs(q);
+            const tbody = document.querySelector("#usersTable tbody");
+            tbody.innerHTML = "";
+
+            querySnapshot.forEach((docSnap) => {
+                const user = docSnap.data();
+                const row = `<tr><td>${user.email}</td><td>
+                    <button onclick="approveUser('${docSnap.id}')">Approve</button>
+                </td></tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        window.approveUser = async (uid) => {
+            await updateDoc(doc(db, "users", uid), { role: "member" });
+            alert("User approved!");
+            loadPendingUsers();
+        };
+
+        loadPendingUsers();
+    </script>
+</body>
+</html>
