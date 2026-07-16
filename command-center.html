@@ -81,6 +81,12 @@
         const auth = getAuth();
 
         onAuthStateChanged(auth, (user) => {
+            // أضف هذا الجزء داخل دالة onAuthStateChanged للتحقق من الرتبة
+const userDoc = await getDoc(doc(db, "users", user.uid));
+if (userDoc.exists() && userDoc.data().role === 'admin') {
+    document.getElementById('admin-panel-link').style.display = 'block';
+}
+
             if (!user) {
                 window.location.href = "index.html"; // إعادة توجيه إذا لم يكن مسجل دخول
             } else {
