@@ -3,72 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 | Operation Portal</title>
+    <title>Kingdom 1269 | Portal</title>
     <style>
-        /* التنسيق العام */
+        :root {
+            --gold: #C5A059;
+            --dark-blue: #0A0F1A;
+            --bg-color: #050505;
+            --text-color: #E0E0E0;
+        }
         body {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            user-select: none; /* منع تحديد النصوص */
-            -webkit-user-select: none;
-            overflow: hidden;
+            align-items: center;
         }
-
-        /* الووترمارك - اسم المملكة */
-        .watermark {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 100px;
-            color: rgba(255, 255, 255, 0.03);
-            pointer-events: none;
-            z-index: 1000;
-            white-space: nowrap;
+        .header { text-align: center; padding: 40px; }
+        .logo { width: 300px; margin-bottom: 20px; }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1000px;
+            margin-bottom: 50px;
         }
-
-        /* الهيدر */
-        header { text-align: center; padding: 40px 20px; }
-        header img { width: 180px; height: auto; margin-bottom: 10px; }
-
-        /* منطقة تسجيل الدخول */
-        main { flex: 1; display: flex; justify-content: center; align-items: center; }
-        .login-box { background: #1a1a1a; padding: 50px; border-radius: 15px; text-align: center; border: 1px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        button { padding: 15px 40px; background: #c5a059; color: #000; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; font-size: 16px; transition: 0.3s; }
-        button:hover { background: #d4b06a; }
-
-        /* الفوتر */
-        footer { text-align: center; padding: 20px; font-size: 12px; color: #444; }
+        .card {
+            background: var(--dark-blue);
+            border: 1px solid var(--gold);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            color: var(--gold);
+        }
+        .card:hover { background: #151d2e; }
+        .card.disabled { cursor: not-allowed; opacity: 0.7; }
+        footer { margin-top: auto; padding: 20px; color: var(--gold); font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="watermark" id="userWatermark">KINGDOM 1269</div>
+    <div class="header">
+        <img src="IMG_3934.png" alt="Kingdom 1269" class="logo">
+        <h1>KINGDOM 1269 PORTAL</h1>
+    </div>
 
-    <header>
-        <img src="IMG_3934.png" alt="Kingdom 1269 Logo">
-        <h1>Kingdom 1269 Portal</h1>
-    </header>
-
-    <main>
-        <div class="login-box" id="auth-section">
-            <p>Welcome Commander. Please login to access the Operations Center.</p>
-            <button id="loginBtn">Login with Google</button>
+    <div class="grid-container">
+        <div class="card" onclick="checkAuth()">
+            <h3>Operations Command Center</h3>
         </div>
-    </main>
+        <div class="card disabled">
+            <h3>Execution Court (Coming Soon)</h3>
+        </div>
+        <div class="card disabled">
+            <h3>Bear Trap Calculator (Coming Soon)</h3>
+        </div>
+        <div class="card disabled">
+            <h3>KvK Appointment Desk (Coming Soon)</h3>
+        </div>
+    </div>
 
-    <footer>
-        <p>Kingdom 1269 System | Design by Hell</p>
-    </footer>
+    <footer>Designed by Hell</footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -84,34 +89,40 @@
         const db = getFirestore();
         const provider = new GoogleAuthProvider();
 
-        // عملية تسجيل الدخول
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch((error) => console.error(error));
-        });
-
-        // مراقبة حالة المستخدم
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById('userWatermark').innerText = user.displayName;
-                
-                // التحقق من الصلاحيات في قاعدة البيانات
+        window.checkAuth = async () => {
+            if (!auth.currentUser) {
                 try {
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    if (userDoc.exists()) {
-                        const role = userDoc.data().role;
-                        if (role === 'admin' || role === 'member') {
-                            window.location.href = "command-center.html";
-                        } else {
-                            alert("Your account is pending approval.");
-                        }
-                    } else {
-                        alert("Account not found in system. Contact Admin.");
-                    }
-                } catch (e) {
-                    console.error("Error accessing database:", e);
+                    const result = await signInWithPopup(auth, provider);
+                    handleUser(result.user);
+                } catch (e) { alert("Login failed"); }
+            } else {
+                handleUser(auth.currentUser);
+            }
+        };
+
+        async function handleUser(user) {
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+
+            if (!userDoc.exists()) {
+                const inGameName = prompt("Enter your In-Game Name:");
+                if (inGameName) {
+                    await setDoc(userRef, {
+                        email: user.email,
+                        inGameName: inGameName,
+                        role: "pending"
+                    });
+                    alert("Request submitted! Waiting for Admin approval.");
+                }
+            } else {
+                const data = userDoc.data();
+                if (data.role === "admin" || data.role === "member") {
+                    window.location.href = "command-center.html";
+                } else {
+                    alert("Status: " + data.role + ". Please wait for approval.");
                 }
             }
-        });
+        }
     </script>
 </body>
 </html>
