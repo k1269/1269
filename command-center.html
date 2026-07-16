@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingdom 1269 | Operation Command Center</title>
+    <style>
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; user-select: none; }
+        .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 80px; color: rgba(255, 255, 255, 0.03); pointer-events: none; z-index: 1000; white-space: nowrap; }
+        header { text-align: center; border-bottom: 2px solid #c5a059; padding-bottom: 20px; margin-bottom: 30px; }
+        h1, h2 { color: #c5a059; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; background: #1a1a1a; }
+        th, td { border: 1px solid #333; padding: 12px; text-align: left; }
+        th { background: #222; }
+        .protocol-box { background: #1a1a1a; padding: 20px; border-left: 5px solid #c5a059; }
+        footer { text-align: center; padding: 40px; font-size: 12px; color: #444; }
+    </style>
+</head>
+<body>
+
+    <div class="watermark" id="watermark">KINGDOM 1269</div>
+
+    <header>
+        <h1>Operation Command Center</h1>
+        <p id="user-display"></p>
+    </header>
+
+    <main>
+        <h2>Deployment Roles</h2>
+        <table>
+            <tr><th>Position</th><th>Players</th></tr>
+            <tr><td>Counter Rally Wave 1</td><td>Pale King, Barahir</td></tr>
+            <tr><td>Counter Rally Wave 2</td><td>Westley, Kai</td></tr>
+            <tr><td>Turret Garrisons</td><td>GGG, Master Baiter, Bird</td></tr>
+            <tr><td>Castle Garrison (69S)</td><td>Jamous (T11 Infantry)</td></tr>
+        </table>
+
+        <h2>Battle Meta</h2>
+        <table>
+            <tr><th>Type</th><th>Heroes</th><th>Ratio</th></tr>
+            <tr><td>Attack Rally</td><td>Amadeus, Petra, Rosa</td><td>50/20/30</td></tr>
+            <tr><td>Defense Garrison</td><td>Alcar, Margot, Saul</td><td>60/40/0</td></tr>
+        </table>
+
+        <h2>Battle Protocols</h2>
+        <div class="protocol-box">
+            <p><strong>Urgent Alert:</strong> 11:30 UTC ALL PLAYERS MUST BE IN 69S AND READY!</p>
+            <ol>
+                <li>Double rally from 69S with Pale King & Barahir.</li>
+                <li>Jamous initiates countdown after speed up.</li>
+                <li>When Jamous says "1", rally lead leaves garrison.</li>
+                <li>Turret Handover: Alex to hand over garrison to rally leader immediately after taking turret.</li>
+            </ol>
+        </div>
+    </main>
+
+    <footer>
+        <p>Kingdom 1269 System | Design by Hell</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html"; // إعادة توجيه إذا لم يكن مسجل دخول
+            } else {
+                document.getElementById('watermark').innerText = `KINGDOM 1269 | ${user.displayName}`;
+                document.getElementById('user-display').innerText = `Logged in as: ${user.displayName}`;
+            }
+        });
+    </script>
+</body>
+</html>
