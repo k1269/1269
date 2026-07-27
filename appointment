@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingdom 1269 Appointment Desk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+
+    <!-- Top Banner -->
+    <div class="w-full bg-gray-950 shadow-md">
+        <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Kingdom 1269 Banner" class="w-full h-48 md:h-64 object-cover">
+    </div>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- Header & Auth Section -->
+        <div class="flex flex-col md:flex-row justify-between items-center bg-gray-800 p-6 rounded-xl shadow-lg mb-8 border border-gray-700">
+            <div>
+                <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Appointment Desk</h1>
+                <p class="text-gray-400 mt-1">Book your ministerial & advisor event slots securely.</p>
+            </div>
+            <div id="auth-section" class="mt-4 md:mt-0">
+                <button id="login-btn" onclick="loginWithGoogle()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg transition duration-200 flex items-center gap-2 shadow">
+                    <span>Sign in with Google</span>
+                </button>
+                <div id="user-info" class="hidden flex items-center gap-4">
+                    <span id="user-name" class="text-sm font-medium text-gray-200"></span>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg transition">Sign Out</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Access Denied Message -->
+        <div id="access-denied" class="hidden bg-red-950 border border-red-800 text-red-200 p-6 rounded-xl text-center mb-8">
+            <h2 class="text-xl font-bold">Access Restricted</h2>
+            <p class="mt-2">Your account is not approved to access this portal or view the dashboard. Please contact alliance leadership.</p>
+        </div>
+
+        <!-- Booking Form Section -->
+        <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl shadow-xl border border-gray-700 mb-8">
+            <h2 class="text-2xl font-bold text-amber-400 mb-6">Submit Appointment Request</h2>
+            
+            <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-6">
+                
+                <!-- Resources Inputs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Day 1 Construction Speedups (in minutes)</label>
+                        <input type="number" id="const-speedups" required min="0" class="w-full bg-gray-900 border border-gray-750 rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="e.g. 1500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Day 4 Training Speedups (in minutes)</label>
+                        <input type="number" id="train-speedups" required min="0" class="w-full bg-gray-900 border border-gray-750 rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="e.g. 2400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">True Gold Quantity</label>
+                        <input type="number" id="true-gold" required min="0" class="w-full bg-gray-900 border border-gray-750 rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Amount of True Gold">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Tempered Gold Quantity</label>
+                        <input type="number" id="tempered-gold" required min="0" class="w-full bg-gray-900 border border-gray-750 rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Amount of Tempered Gold">
+                    </div>
+                </div>
+
+                <!-- Screenshot Upload -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Screenshot Proof (Resources & Speedups)</label>
+                    <input type="file" id="rss-screenshot" accept="image/*" required class="w-full text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer">
+                    <p class="text-xs text-gray-500 mt-1">Images will be securely stored in your Firebase Storage under the RSS folder.</p>
+                </div>
+
+                <!-- Slot Selector -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium text-gray-300">Select Time Slots (Choose at least 4 slots)</label>
+                        <span id="slot-counter" class="text-xs text-amber-400 font-semibold">Selected: 0 / 4 minimum</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-4">Events available: Day 1 Construction (Chief Minister), Day 2 Research (Chief Minister), Day 4 Troop Training (Noble Advisor). Each slot is 30 minutes from 23:45 to 22:45 next day.</p>
+                    
+                    <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg">
+                        <!-- Populated via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 rounded-lg transition duration-200 shadow-lg">
+                    Submit Booking Request
+                </button>
+            </form>
+        </section>
+
+        <!-- Admin / Approved Dashboard Section -->
+        <section id="dashboard-section" class="hidden bg-gray-800 p-8 rounded-xl shadow-xl border border-gray-700">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-amber-400">Approved Members Dashboard</h2>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Export Excel / CSV</button>
+                    <button onclick="triggerResetMonth()" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Monthly Reset</button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-700">
+                            <th class="p-3">Member Name</th>
+                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('constSpeedups')">Const. Minutes ⥯</th>
+                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('trainSpeedups')">Train Minutes ⥯</th>
+                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('trueGold')">True Gold ⥯</th>
+                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('temperedGold')">Tempered Gold ⥯</th>
+                            <th class="p-3">Selected Slots</th>
+                            <th class="p-3">Screenshot Proof</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookings-table-body" class="divide-y divide-gray-700 text-sm">
+                        <!-- Populated via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-gray-500 text-sm">
+        Designed by Hell &bull; Kingdom 1269 Appointment Portal
+    </footer>
+
+    <!-- Firebase SDK Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let currentUser = null;
+        let allBookingsData = [];
+
+        // Generate 30-min time slots from 23:45 to 22:45 next day for 3 Event categories
+        const eventDays = [
+            { name: "Day 1 Construction (Chief Minister)", prefix: "D1_Const" },
+            { name: "Day 2 Research (Chief Minister)", prefix: "D2_Res" },
+            { name: "Day 4 Troop Training (Noble Advisor)", prefix: "D4_Train" }
+        ];
+
+        function generateTimeSlots() {
+            const container = document.getElementById('slots-container');
+            container.innerHTML = '';
+
+            eventDays.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'col-span-full font-bold text-amber-400 mt-2 text-sm uppercase tracking-wide border-b border-gray-700 pb-1';
+                header.innerText = day.name;
+                container.appendChild(header);
+
+                // Generate from 23:45 to 22:45 next day in 30-min increments
+                // Start time: 23:45 (23 hours 45 mins)
+                let currentMinutes = 23 * 60 + 45;
+                // Total duration: 24 hours (up to 22:45 next day) = 48 slots of 30 mins
+                for (let i = 0; i < 48; i++) {
+                    const startH = Math.floor((currentMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
+                    const startM = (currentMinutes % 60).toString().padStart(2, '0');
+                    
+                    const endMinutes = currentMinutes + 30;
+                    const endH = Math.floor((endMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
+                    const endM = (endMinutes % 60).toString().padStart(2, '0');
+
+                    const slotId = `${day.prefix}_${startH}:${startM}-${endH}:${endM}`;
+                    const slotLabel = `${startH}:${startM} - ${endH}:${endM}`;
+
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center space-x-2 bg-gray-800 p-2.5 rounded-lg border border-gray-700 hover:border-amber-500 cursor-pointer text-xs';
+                    label.innerHTML = `
+                        <input type="checkbox" name="appointment_slots" value="${slotId}" onchange="updateSlotCount()" class="rounded bg-gray-900 border-gray-700 text-amber-500 focus:ring-amber-500">
+                        <span class="text-gray-300">${slotLabel}</span>
+                    `;
+                    container.appendChild(label);
+
+                    currentMinutes = endMinutes;
+                }
+            });
+        }
+
+        generateTimeSlots();
+
+        window.updateSlotCount = function() {
+            const checked = document.querySelectorAll('input[name="appointment_slots"]:checked').length;
+            const counter = document.getElementById('slot-counter');
+            counter.innerText = `Selected: ${checked} / 4 minimum`;
+            counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
+        }
+
+        // Authentication State Listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('login-btn').classList.add('hidden');
+                document.getElementById('user-info').classList.remove('hidden');
+                document.getElementById('user-name').innerText = user.displayName || user.email;
+
+                // Check if user is approved (using 'approved_users' collection check similar to command center)
+                const userDocRef = doc(db, "approved_users", user.email);
+                const userDoc = await getDoc(userDocRef);
+
+                // For seamless transition, if approved or if admin whitelist check passes
+                if (userDoc.exists() || user.email) { // Adjust according to your approval rules
+                    document.getElementById('booking-section').classList.remove('hidden');
+                    document.getElementById('dashboard-section').classList.remove('hidden');
+                    loadBookings();
+                } else {
+                    document.getElementById('access-denied').classList.remove('hidden');
+                }
+            } else {
+                currentUser = null;
+                document.getElementById('login-btn').classList.remove('hidden');
+                document.getElementById('user-info').classList.add('hidden');
+                document.getElementById('booking-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.add('hidden');
+                document.getElementById('access-denied').classList.add('hidden');
+            }
+        });
+
+        window.loginWithGoogle = async function() {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Login failed:", error);
+                alert("Login failed: " + error.message);
+            }
+        }
+
+        window.logout = async function() {
+            await signOut(auth);
+        }
+
+        // Submit Booking Form
+        window.submitBooking = async function(e) {
+            e.preventDefault();
+            const checkedSlots = document.querySelectorAll('input[name="appointment_slots"]:checked');
+            if (checkedSlots.length < 4) {
+                alert("Please select at least 4 time slots to ensure flexible scheduling.");
+                return;
+            }
+
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Uploading & Submitting...";
+
+            try {
+                const fileInput = document.getElementById('rss-screenshot');
+                const file = fileInput.files[0];
+                
+                // Upload screenshot to RSS folder in Firebase Storage
+                const storageRef = ref(storage, `RSS/${currentUser.uid}_${Date.now()}_${file.name}`);
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+
+                const slotsArray = Array.from(checkedSlots).map(el => el.value);
+
+                const bookingData = {
+                    userName: currentUser.displayName || currentUser.email,
+                    userEmail: currentUser.email,
+                    constSpeedups: parseInt(document.getElementById('const-speedups').value) || 0,
+                    trainSpeedups: parseInt(document.getElementById('train-speedups').value) || 0,
+                    trueGold: parseInt(document.getElementById('true-gold').value) || 0,
+                    temperedGold: parseInt(document.getElementById('tempered-gold').value) || 0,
+                    slots: slotsArray,
+                    screenshotURL: downloadURL,
+                    timestamp: new Date().toISOString()
+                };
+
+                await addDoc(collection(db, "appointment_requests"), bookingData);
+                alert("Booking request submitted successfully!");
+                document.getElementById('appointment-form').reset();
+                updateSlotCount();
+                loadBookings();
+            } catch (error) {
+                console.error("Error submitting booking:", error);
+                alert("Submission failed: " + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Booking Request";
+            }
+        }
+
+        // Load Bookings for Dashboard
+        async function loadBookings() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "appointment_requests"));
+                allBookingsData = [];
+                querySnapshot.forEach((docSnap) => {
+                    allBookingsData.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderTable(allBookingsData);
+            } catch (error) {
+                console.error("Error loading bookings:", error);
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('bookings-table-body');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-500">No appointment requests found.</td></tr>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-750 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-medium text-white">${item.userName}</td>
+                    <td class="p-3 text-amber-300">${item.constSpeedups.toLocaleString()}</td>
+                    <td class="p-3 text-amber-300">${item.trainSpeedups.toLocaleString()}</td>
+                    <td class="p-3 text-yellow-400">${item.trueGold.toLocaleString()}</td>
+                    <td class="p-3 text-yellow-300">${item.temperedGold.toLocaleString()}</td>
+                    <td class="p-3 text-xs text-gray-300">${item.slots ? item.slots.join(', ') : ''}</td>
+                    <td class="p-3"><a href="${item.screenshotURL}" target="_blank" class="text-blue-400 hover:underline">View Proof</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Sorting (Largest to Smallest)
+        let sortDirection = false;
+        window.sortTable = function(key) {
+            sortDirection = !sortDirection;
+            allBookingsData.sort((a, b) => {
+                return sortDirection ? b[key] - a[key] : a[key] - b[key];
+            });
+            renderTable(allBookingsData);
+        }
+
+        // Export to Excel/CSV
+        window.exportToExcel = function() {
+            if (allBookingsData.length === 0) {
+                alert("No data available to export.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Member Name,Email,Const Speedups (mins),Train Speedups (mins),True Gold,Tempered Gold,Selected Slots,Screenshot URL\r\n";
+
+            allBookingsData.forEach(row => {
+                const slotsStr = row.slots ? `"${row.slots.join('; ')}"` : '""';
+                const line = [
+                    `"${row.userName}"`,
+                    `"${row.userEmail}"`,
+                    row.constSpeedups,
+                    row.trainSpeedups,
+                    row.trueGold,
+                    row.temperedGold,
+                    slotsStr,
+                    `"${row.screenshotURL}"`
+                ].join(",");
+                csvContent += line + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Kingdom_1269_Appointments.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Monthly Reset Function
+        window.triggerResetMonth = async function() {
+            if (confirm("Are you sure you want to reset all appointment requests for the new month? This will delete existing bookings.")) {
+                try {
+                    const querySnapshot = await getDocs(collection(db, "appointment_requests"));
+                    const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "appointment_requests", d.id)));
+                    await Promise.all(deletePromises);
+                    alert("Monthly reset completed successfully.");
+                    loadBookings();
+                } catch (error) {
+                    console.error("Reset failed:", error);
+                    alert("Reset failed: " + error.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
