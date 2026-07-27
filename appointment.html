@@ -12,15 +12,12 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
 
-    <!-- Top Banner -->
     <div class="w-full bg-gray-950 shadow-md">
         <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Kingdom 1269 Banner" class="w-full h-48 md:h-64 object-cover">
     </div>
 
-    <!-- Main Container -->
     <main class="max-w-6xl mx-auto px-4 py-8">
         
-        <!-- Header & Auth Section -->
         <div class="flex flex-col md:flex-row justify-between items-center bg-gray-800 p-6 rounded-xl shadow-lg mb-8 border border-gray-700">
             <div>
                 <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Appointment Desk</h1>
@@ -37,7 +34,6 @@
             </div>
         </div>
 
-        <!-- In-game Name Setup Modal / Box (Shown if first time login) -->
         <div id="setup-name-modal" class="hidden bg-gray-800 border border-amber-500/50 p-6 rounded-xl mb-8 shadow-xl">
             <h3 class="text-xl font-bold text-amber-400 mb-2">Complete Your Profile</h3>
             <p class="text-gray-300 text-sm mb-4">Please enter your exact in-game name to link with your Gmail account.</p>
@@ -47,15 +43,12 @@
             </div>
         </div>
 
-        <!-- Booking Form Section -->
         <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl shadow-xl border border-gray-700 mb-8">
             <h2 class="text-2xl font-bold text-amber-400 mb-6">Submit Appointment Request</h2>
             
             <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-6">
                 
-                <!-- Resources Inputs categorized by Day -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Day 1 -->
                     <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
                         <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 1: Construction</h3>
                         <div class="space-y-4">
@@ -74,7 +67,6 @@
                         </div>
                     </div>
 
-                    <!-- Day 2 -->
                     <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
                         <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 2: Research</h3>
                         <div class="space-y-4">
@@ -89,7 +81,6 @@
                         </div>
                     </div>
 
-                    <!-- Day 4 -->
                     <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
                         <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 4: Troop Training</h3>
                         <div class="space-y-4">
@@ -101,14 +92,12 @@
                     </div>
                 </div>
 
-                <!-- Screenshot Upload -->
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Screenshot Proof (Resources & Speedups)</label>
                     <input type="file" id="rss-screenshot" accept="image/*" required class="w-full text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer">
-                    <p class="text-xs text-gray-500 mt-1">Images will be securely stored in your Firebase Storage under the <b>RSS</b> folder.</p>
+                    <p class="text-xs text-gray-500 mt-1">Images will be securely uploaded to your GitHub repository folder automatically.</p>
                 </div>
 
-                <!-- Slot Selector -->
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-sm font-medium text-gray-300">Select Time Slots (Choose at least 4 slots)</label>
@@ -117,18 +106,15 @@
                     <p class="text-xs text-gray-400 mb-4">Each slot is 30 minutes from 23:45 to 22:45 next day.</p>
                     
                     <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-80 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg">
-                        <!-- Populated via JavaScript -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 rounded-lg transition duration-200 shadow-lg">
                     Submit Booking Request
                 </button>
             </form>
         </section>
 
-        <!-- Admin Only Dashboard Section -->
         <section id="admin-dashboard-section" class="hidden bg-gray-800 p-8 rounded-xl shadow-xl border border-amber-600/30">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <div>
@@ -137,7 +123,7 @@
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Export Excel / CSV</button>
-                    <button onclick="triggerResetMonth()" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Monthly Reset</button>
+                    <button id="reset-btn-container" onclick="triggerResetMonth()" class="hidden bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Monthly Reset</button>
                 </div>
             </div>
 
@@ -158,25 +144,21 @@
                         </tr>
                     </thead>
                     <tbody id="bookings-table-body" class="divide-y divide-gray-700 text-sm">
-                        <!-- Populated via JavaScript -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </section>
 
     </main>
 
-    <!-- Footer -->
     <footer class="text-center py-6 text-gray-500 text-sm">
         Designed for Kingdom 1269 Appointment Desk
     </footer>
 
-    <!-- Firebase SDK Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -187,10 +169,17 @@
             appId: "1:1007373803222:web:bcb85595a99da596aaf377"
         };
 
+        // GitHub Configuration
+        const GITHUB_USERNAME = "k1269"; 
+        const GITHUB_REPO = "1269";         
+        const GITHUB_TOKEN = "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";       
+
+        // ضع بريدك الإلكتروني هنا حصراً لتتمكن وحدك من رؤية واستخدام زر Reset
+        const SUPER_ADMIN_EMAIL = "kdn1269@gmail.com"; 
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
 
         let currentUser = null;
         let userProfile = null;
@@ -272,6 +261,14 @@
                 if (adminDoc.exists()) {
                     document.getElementById('admin-dashboard-section').classList.remove('hidden');
                     loadBookings();
+
+                    // التحقق مما إذا كان الإيميل هو إيميلك الشخصي لعرض زر Reset فقط
+                    if (user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) {
+                        document.getElementById('reset-btn-container').classList.remove('hidden');
+                    } else {
+                        document.getElementById('reset-btn-container').classList.add('hidden');
+                    }
+
                 } else {
                     document.getElementById('admin-dashboard-section').classList.add('hidden');
                 }
@@ -326,7 +323,40 @@
             }
         }
 
-        // Submit Booking Form
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function uploadImageToGitHub(file) {
+            const base64Content = await fileToBase64(file);
+            const fileName = `RSS/${currentUser.uid}_${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+            const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${fileName}`;
+
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: `Upload screenshot proof for ${currentUser.email}`,
+                    content: base64Content
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to upload image to GitHub.");
+            }
+
+            const data = await response.json();
+            return data.content.download_url;
+        }
+
         window.submitBooking = async function(e) {
             e.preventDefault();
             const checkedSlots = document.querySelectorAll('input[name="appointment_slots"]:checked');
@@ -337,15 +367,13 @@
 
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerText = "Uploading & Submitting...";
+            submitBtn.innerText = "Uploading to GitHub & Submitting...";
 
             try {
                 const fileInput = document.getElementById('rss-screenshot');
                 const file = fileInput.files[0];
                 
-                const storageRef = ref(storage, `RSS/${currentUser.uid}_${Date.now()}_${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
-                const downloadURL = await getDownloadURL(snapshot.ref);
+                const downloadURL = await uploadImageToGitHub(file);
 
                 const slotsArray = Array.from(checkedSlots).map(el => el.value);
 
@@ -379,7 +407,6 @@
             }
         }
 
-        // Load Bookings for Admin Dashboard
         async function loadBookings() {
             try {
                 const querySnapshot = await getDocs(collection(db, "appointment_requests"));
@@ -421,7 +448,6 @@
             });
         }
 
-        // Sorting (Largest to Smallest)
         let sortDirection = false;
         window.sortTable = function(key) {
             sortDirection = !sortDirection;
@@ -433,7 +459,6 @@
             renderTable(allBookingsData);
         }
 
-        // Export to Excel/CSV
         window.exportToExcel = function() {
             if (allBookingsData.length === 0) {
                 alert("No data available to export.");
@@ -441,7 +466,7 @@
             }
 
             let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Player Name,Email,Const Speedups (mins),Research Speedups (mins),Train Speedups (mins),True Gold,Tempered Gold,Gold Dust,Selected Slots,Screenshot URL\r\n";
+            csvContent += "Player Name,Email,Const Speedups (mins),Research Speedups (mins),Train Speedups (mins),TrueGold,TemperedGold,Gold Dust,Selected Slots,Screenshot URL\r\n";
 
             allBookingsData.forEach(row => {
                 const slotsStr = row.slots ? `"${row.slots.join('; ')}"` : '""';
@@ -469,8 +494,13 @@
             document.body.removeChild(link);
         }
 
-        // Monthly Reset Function
         window.triggerResetMonth = async function() {
+            // حماية إضافية برمجية في حال حاول شخص تخطي الواجهة
+            if (currentUser.email.toLowerCase() !== SUPER_ADMIN_EMAIL.toLowerCase()) {
+                alert("Unauthorized action.");
+                return;
+            }
+
             if (confirm("Are you sure you want to reset all appointment requests for the new month? This will delete existing bookings.")) {
                 try {
                     const querySnapshot = await getDocs(collection(db, "appointment_requests"));
