@@ -64,12 +64,12 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">S1 = Normal rally capacity (without buffs)</label>
-                            <input type="number" id="s1" value="1193110" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">S1 = Normal Troops capacity (without buffs)</label>
+                            <input type="number" id="s1" value="167610" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">S2 = Normal Troops capacity (without buffs)</label>
-                            <input type="number" id="s2" value="167610" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">S2 = Normal rally capacity (without buffs)</label>
+                            <input type="number" id="s2" value="1193110" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
 
                 <!-- Custom Formation Section (Optional R1, R2, R3 percentages) -->
                 <div class="border-t border-slate-800 pt-4 space-y-3">
-                    <p class="text-xs text-blue-400 font-medium">If you want to calculate your own formation use this (Enter percentages, e.g., 10 or 0.10):</p>
+                    <p class="text-xs text-blue-400 font-medium">If you want to calculate your own formation use this (Enter percentage, e.g., 10 or 0.10):</p>
                     <div class="grid grid-cols-3 gap-3">
                         <div>
                             <label class="block text-[11px] text-slate-400 mb-1">R1 = Infantry %</label>
@@ -180,7 +180,6 @@
         function parsePercentage(val) {
             if (val === "" || isNaN(val)) return null;
             let num = parseFloat(val);
-            // If user enters percentage like 10, convert to 0.10. If they enter 0.10, keep it.
             if (num > 1) {
                 return num / 100;
             }
@@ -199,10 +198,10 @@
             const r2Val = parsePercentage(document.getElementById('r2').value);
             const r3Val = parsePercentage(document.getElementById('r3').value);
 
-            // Formulas
-            const S7 = S1 + S4 + S5 + S6; // Your own rally capacity (Visible in logic/implicit)
-            const S8 = S2 + S4 + S5;       // Hidden calculation base
-            const S9 = 14 * S2;
+            // Formulas as specified
+            const S7 = S2 + S4 + S5 + S6; // Your own rally capacity
+            const S8 = S1 + S4 + S5;       // Hidden calculation base
+            const S9 = 14 * S1;          // 14 * troop capacity base
             const S10 = S7 - S9;          // Your own rally troops (hidden check)
 
             const contentDiv = document.getElementById('resultContent');
