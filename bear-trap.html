@@ -193,7 +193,7 @@
             const S7 = S2 + S4 + S5 + S6; // Your rally capacity
             const S8 = S1 + S6 + S5;       // Hidden calculation base
             const S9 = 14 * S3;
-            const S10 = S7 - S9;          // Squad deployment of YOUR Rally (hidden)
+            const S10 = S7 - S9;          // Squad deployment of YOUR Rally (hidden from standalone page text)
 
             const contentDiv = document.getElementById('resultContent');
 
@@ -219,8 +219,16 @@
                     </div>
                 `;
             } else {
-                // Determine effective base depending on whether S10 is <= S8 or > S8
-                let effectiveDeployment = (S10 <= S8) ? S10 : S8;
+                let effectiveBase;
+                let conditionLabel;
+
+                if (S10 <= S8) {
+                    effectiveBase = S10;
+                    conditionLabel = "Squad deployment of YOUR Rally is = S10";
+                } else {
+                    effectiveBase = S8;
+                    conditionLabel = "Squad deployment of YOUR Rally is = S8";
+                }
 
                 let infDeploy, cavDeploy, arcDeploy;
 
@@ -229,35 +237,35 @@
                     const r2 = parseFloat(r2Input) || 0;
                     const r3 = parseFloat(r3Input) || 0;
 
-                    infDeploy = Math.round(effectiveDeployment * r1 / 100);
-                    cavDeploy = Math.round(effectiveDeployment * r2 / 100);
-                    arcDeploy = Math.round(effectiveDeployment * r3 / 100);
+                    infDeploy = Math.round(effectiveBase * r1 / 100);
+                    cavDeploy = Math.round(effectiveBase * r2 / 100);
+                    arcDeploy = Math.round(effectiveBase * r3 / 100);
                 } else {
-                    infDeploy = Math.round(0.1 * effectiveDeployment);
-                    cavDeploy = Math.round(0.1 * effectiveDeployment);
-                    arcDeploy = Math.round(0.80 * effectiveDeployment);
+                    infDeploy = Math.round(0.1 * effectiveBase);
+                    cavDeploy = Math.round(0.1 * effectiveBase);
+                    arcDeploy = Math.round(0.80 * effectiveBase);
                 }
 
                 contentDiv.innerHTML = `
                     <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-lg text-emerald-300">
                         <span class="font-bold block mb-1">Status: Ready for Deployment</span>
-                        <p class="text-xs text-slate-300">Squad deployment of YOUR Rally (S10): <strong>${Math.round(S10).toLocaleString()}</strong></p>
+                        <p class="text-xs text-slate-300">${conditionLabel} (<strong>${Math.round(effectiveBase).toLocaleString()} Troops</strong>)</p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
                             <h4 class="font-semibold text-blue-400 mb-2">Squad Deployment of YOUR Rally</h4>
                             <ul class="space-y-1 text-xs text-slate-300">
-                                <li>Infantry: <span class="text-white font-bold">${infDeploy.toLocaleString()}</span></li>
-                                <li>Cavalry: <span class="text-white font-bold">${cavDeploy.toLocaleString()}</span></li>
-                                <li>Archers: <span class="text-white font-bold">${arcDeploy.toLocaleString()}</span></li>
+                                <li>Infantry: <span class="text-white font-bold">${infDeploy.toLocaleString()} Troops</span></li>
+                                <li>Cavalry: <span class="text-white font-bold">${cavDeploy.toLocaleString()} Troops</span></li>
+                                <li>Archers: <span class="text-white font-bold">${arcDeploy.toLocaleString()} Troops</span></li>
                             </ul>
                         </div>
                         <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
                             <h4 class="font-semibold text-purple-400 mb-2">Joining Ratio Breakdown</h4>
                             <ul class="space-y-1 text-xs text-slate-300">
-                                <li>Infantry (10%): <span class="text-white font-bold">${joinInf.toLocaleString()}</span></li>
-                                <li>Cavalry (10%): <span class="text-white font-bold">${joinCav.toLocaleString()}</span></li>
-                                <li>Archers (80%): <span class="text-white font-bold">${joinArc.toLocaleString()}</span></li>
+                                <li>Infantry (10%): <span class="text-white font-bold">${joinInf.toLocaleString()} Troops</span></li>
+                                <li>Cavalry (10%): <span class="text-white font-bold">${joinCav.toLocaleString()} Troops</span></li>
+                                <li>Archers (80%): <span class="text-white font-bold">${joinArc.toLocaleString()} Troops</span></li>
                             </ul>
                         </div>
                     </div>
