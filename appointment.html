@@ -121,8 +121,8 @@
                     <h2 class="text-2xl font-bold text-amber-400">Admin Command Dashboard</h2>
                     <p class="text-xs text-gray-400 mt-1">Restricted access: Visible only to authorized admins.</p>
                 </div>
-                <div class="flex flex-wrap gap-3">
-                    <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Export Excel / CSV</button>
+                <div class="flex flex-wrap gap-3 items-center">
+                    <input type="text" id="table-search" oninput="filterTable()" placeholder="Search player..." class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
                     <button id="reset-btn-container" onclick="triggerResetMonth()" class="hidden bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Monthly Reset</button>
                 </div>
             </div>
@@ -131,7 +131,7 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-700">
-                            <th class="p-3">Player Name</th>
+                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('inGameName')">Player Name ⥯</th>
                             <th class="p-3">Gmail</th>
                             <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('constSpeedups')">Const. mins ⥯</th>
                             <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('researchSpeedups')">Research mins ⥯</th>
@@ -151,6 +151,13 @@
 
     </main>
 
+    <div id="image-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onclick="closeImageModal()">
+        <div class="relative max-w-4xl max-h-full">
+            <button class="absolute -top-10 right-0 text-white text-xl font-bold bg-gray-800 px-3 py-1 rounded-full">✕ Close</button>
+            <img id="modal-img" src="" alt="Proof Preview" class="max-h-[85vh] rounded-lg border border-amber-500 shadow-2xl">
+        </div>
+    </div>
+
     <footer class="text-center py-6 text-gray-500 text-sm">
         Designed for Kingdom 1269 Appointment Desk
     </footer>
@@ -169,7 +176,6 @@
             appId: "1:1007373803222:web:bcb85595a99da596aaf377"
         };
 
-        // تم تعيين إيميلك هنا حصراً للـ Reset
         const SUPER_ADMIN_EMAIL = "kdn1269@gmail.com"; 
 
         const app = initializeApp(firebaseConfig);
@@ -230,7 +236,6 @@
             counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
         }
 
-        // Auth State Listener
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -410,10 +415,21 @@
                     <td class="p-3 text-yellow-300">${(item.temperedGold || 0).toLocaleString()}</td>
                     <td class="p-3 text-orange-300">${(item.goldDust || 0).toLocaleString()}</td>
                     <td class="p-3 text-xs text-gray-300">${item.slots ? item.slots.join(', ') : ''}</td>
-                    <td class="p-3"><a href="${item.screenshotURL}" target="_blank" class="text-blue-400 hover:underline">View Proof</a></td>
+                    <td class="p-3">
+                        <img src="${item.screenshotURL}" alt="Proof" onclick="openImageModal('${item.screenshotURL}')" class="w-12 h-12 object-cover rounded cursor-pointer border border-amber-500/50 hover:scale-105 transition" title="Click to view full image">
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        window.filterTable = function() {
+            const query = document.getElementById('table-search').value.toLowerCase();
+            const filtered = allBookingsData.filter(item => 
+                (item.inGameName && item.inGameName.toLowerCase().includes(query)) ||
+                (item.userEmail && item.userEmail.toLowerCase().includes(query))
+            );
+            renderTable(filtered);
         }
 
         let sortDirection = false;
@@ -422,43 +438,23 @@
             allBookingsData.sort((a, b) => {
                 const valA = a[key] || 0;
                 const valB = b[key] || 0;
+                if (typeof valA === 'string') {
+                    return sortDirection ? valB.localeCompare(valA) : valA.localeCompare(valB);
+                }
                 return sortDirection ? valB - valA : valA - valB;
             });
             renderTable(allBookingsData);
         }
 
-        window.exportToExcel = function() {
-            if (allBookingsData.length === 0) {
-                alert("No data available to export.");
-                return;
-            }
+        window.openImageModal = function(url) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-img');
+            modalImg.src = url;
+            modal.classList.remove('hidden');
+        }
 
-            let csvContent = "\uFEFFPlayer Name,Email,Const Speedups (mins),Research Speedups (mins),Train Speedups (mins),True Gold,Tempered Gold,Gold Dust,Selected Slots\r\n";
-
-            allBookingsData.forEach(row => {
-                const slotsStr = row.slots ? `"${row.slots.join('; ')}"` : '""';
-                const line = [
-                    `"${row.inGameName || ''}"`,
-                    `"${row.userEmail || ''}"`,
-                    row.constSpeedups || 0,
-                    row.researchSpeedups || 0,
-                    row.trainSpeedups || 0,
-                    row.trueGold || 0,
-                    row.temperedGold || 0,
-                    row.goldDust || 0,
-                    slotsStr
-                ].join(",");
-                csvContent += line + "\r\n";
-            });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", "Kingdom_1269_Appointments.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        window.closeImageModal = function() {
+            document.getElementById('image-modal').classList.add('hidden');
         }
 
         window.triggerResetMonth = async function() {
