@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 Bear Trap Calculator</title>
+    <title>Kingdom 1269 Bear trap calculator</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -37,20 +37,20 @@
         </div>
     </header>
 
-    <!-- Banner Section -->
+    <!-- Banner Section (Full Image View) -->
     <div class="w-full max-w-4xl mx-auto px-4 pt-6">
-        <img src="1E71647C-6DCA-44F6-8FD3-870666D195FD.png" alt="Kingdom 1269 Banner" class="w-full h-auto max-h-48 object-cover rounded-xl border border-slate-800 shadow-lg">
+        <img src="1E71647C-6DCA-44F6-8FD3-870666D195FD.png" alt="Kingdom 1269 Banner" class="w-full h-auto object-contain rounded-xl border border-slate-800 shadow-lg bg-slate-900/40">
     </div>
 
     <!-- Main Content Container -->
     <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
         <div class="mb-6 text-center">
-            <h1 class="text-3xl font-extrabold text-white tracking-tight">Kingdom 1269 Bear Trap Calculator</h1>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Kingdom 1269 Bear trap calculator</h1>
             <p class="text-slate-400 mt-2 text-sm">Real-time rally capacity and troop deployment optimization.</p>
         </div>
 
         <div class="bg-cardBg border border-slate-800 rounded-xl p-6 md:p-8 shadow-xl space-y-6">
-            <form id="trapForm" class="space-y-5" oninput="calculate()">
+            <form id="trapForm" class="space-y-5" oninput="calculate()" onchange="calculate()">
                 
                 <!-- S1 & S2 with Image Guide IMG_4201.jpeg -->
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-4">
@@ -65,11 +65,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-300 mb-1">S1 = Normal rally capacity (without buffs)</label>
-                            <input type="number" id="s1" value="250000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="number" id="s1" value="1193110" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-300 mb-1">S2 = Normal Troops capacity (without buffs)</label>
-                            <input type="number" id="s2" value="100000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <input type="number" id="s2" value="167610" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                     </div>
                 </div>
@@ -82,8 +82,9 @@
 
                 <!-- S4, S5, S6 Dropdowns -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- S4: Valora 1st skill -->
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">S4 = Valera 1st skill (Dance of the Hunt)</label>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">S4 = Valora 1st skill (Dance of the Hunt)</label>
                         <select id="s4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                             <option value="0">Level 0: 0</option>
                             <option value="30000">Level 1: 30,000</option>
@@ -98,6 +99,7 @@
                             <option value="300000" selected>Level 10: 300,000</option>
                         </select>
                     </div>
+                    <!-- S5: Valora 4th skill -->
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">S5 = Valora 4th skill (Savage Advantage)</label>
                         <select id="s5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
@@ -114,6 +116,7 @@
                             <option value="30000" selected>Level 10: 30,000</option>
                         </select>
                     </div>
+                    <!-- S6: Mighty Bison -->
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">S6 = Mighty bison LVL</label>
                         <select id="s6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
@@ -132,21 +135,21 @@
                     </div>
                 </div>
 
-                <!-- Custom Formation Section (Optional R1, R2, R3) -->
+                <!-- Custom Formation Section (Optional R1, R2, R3 percentages) -->
                 <div class="border-t border-slate-800 pt-4 space-y-3">
-                    <p class="text-xs text-blue-400 font-medium">If you want to calculate your own formation use this:</p>
+                    <p class="text-xs text-blue-400 font-medium">If you want to calculate your own formation use this (Enter percentages, e.g., 10 or 0.10):</p>
                     <div class="grid grid-cols-3 gap-3">
                         <div>
                             <label class="block text-[11px] text-slate-400 mb-1">R1 = Infantry %</label>
-                            <input type="number" step="0.01" id="r1" placeholder="e.g., 0.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                            <input type="number" step="0.01" id="r1" placeholder="e.g., 10 or 0.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-[11px] text-slate-400 mb-1">R2 = Cavalry %</label>
-                            <input type="number" step="0.01" id="r2" placeholder="e.g., 0.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                            <input type="number" step="0.01" id="r2" placeholder="e.g., 10 or 0.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
                         </div>
                         <div>
                             <label class="block text-[11px] text-slate-400 mb-1">R3 = Archers %</label>
-                            <input type="number" step="0.01" id="r3" placeholder="e.g., 0.80" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                            <input type="number" step="0.01" id="r3" placeholder="e.g., 80 or 0.80" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
                         </div>
                     </div>
                 </div>
@@ -164,7 +167,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        <p>Designed by Hell &copy; 2026 Kingdom 1269 Alliance Portal. All Rights Reserved.</p>
+        <p>Designed by Hell</p>
     </footer>
 
     <!-- Logic Script -->
@@ -172,6 +175,16 @@
         function toggleGuide() {
             const guide = document.getElementById('guideImageContainer');
             guide.classList.toggle('hidden');
+        }
+
+        function parsePercentage(val) {
+            if (val === "" || isNaN(val)) return null;
+            let num = parseFloat(val);
+            // If user enters percentage like 10, convert to 0.10. If they enter 0.10, keep it.
+            if (num > 1) {
+                return num / 100;
+            }
+            return num;
         }
 
         function calculate() {
@@ -182,12 +195,12 @@
             const S5 = parseFloat(document.getElementById('s5').value) || 0;
             const S6 = parseFloat(document.getElementById('s6').value) || 0;
 
-            const R1Input = document.getElementById('r1').value;
-            const R2Input = document.getElementById('r2').value;
-            const R3Input = document.getElementById('r3').value;
+            const r1Val = parsePercentage(document.getElementById('r1').value);
+            const r2Val = parsePercentage(document.getElementById('r2').value);
+            const r3Val = parsePercentage(document.getElementById('r3').value);
 
             // Formulas
-            const S7 = S1 + S4 + S5 + S6; // Your own rally capacity
+            const S7 = S1 + S4 + S5 + S6; // Your own rally capacity (Visible in logic/implicit)
             const S8 = S2 + S4 + S5;       // Hidden calculation base
             const S9 = 14 * S2;
             const S10 = S7 - S9;          // Your own rally troops (hidden check)
@@ -200,9 +213,9 @@
             const joinArc = Math.round(0.8 * S3);
 
             if (S10 > 1) {
-                let infRatio = R1Input !== "" ? parseFloat(R1Input) : 0.10;
-                let cavRatio = R2Input !== "" ? parseFloat(R2Input) : 0.10;
-                let arcRatio = R3Input !== "" ? parseFloat(R3Input) : 0.80;
+                let infRatio = r1Val !== null ? r1Val : 0.10;
+                let cavRatio = r2Val !== null ? r2Val : 0.10;
+                let arcRatio = r3Val !== null ? r3Val : 0.80;
 
                 const infDeploy = Math.round(S8 * infRatio);
                 const cavDeploy = Math.round(S8 * cavRatio);
@@ -211,7 +224,7 @@
                 contentDiv.innerHTML = `
                     <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-lg text-emerald-300">
                         <span class="font-bold block mb-1">Status: Ready for Deployment</span>
-                        <p class="text-xs text-slate-300">Your Own Rally Troops Deployment (S10): <strong>${S10.toLocaleString()}</strong></p>
+                        <p class="text-xs text-slate-300">Your Own Rally Troops Deployment (S10): <strong>${Math.round(S10).toLocaleString()}</strong></p>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
@@ -235,7 +248,7 @@
             } else {
                 contentDiv.innerHTML = `
                     <div class="bg-rose-500/10 border border-rose-500/30 p-4 rounded-lg text-rose-300 space-y-3">
-                        <span class="font-bold block text-base">Your rally capacity is not big enough, SEND 1 TROOP</span>
+                        <span class="font-bold block text-base">Your rally capacity is not big enough ,SEND 1 TROOP</span>
                         
                         <div class="border-t border-rose-500/20 pt-3">
                             <span class="font-semibold text-white block mb-2 text-xs uppercase tracking-wider">Recommendation to upgrade your rally capacity:</span>
@@ -243,7 +256,7 @@
                                 <li><strong>Masters:</strong> Valora 1st and 4th skills (F2P), Cassia 4th skill ($$)</li>
                                 <li><strong>Pets:</strong> Mighty bison level, Great Moose (Gen 5 pet)</li>
                                 <li><strong>Academy:</strong> Regimental Expansion all levels</li>
-                                <li><strong>War Academy:</strong> Truegold Battalion (all troop types), Truegold Legionaries</li>
+                                <li><strong>War Academy:</strong> Truegold Battalion (all troop types), Truegold Legionaries.</li>
                             </ul>
                         </div>
                     </div>
