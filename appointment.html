@@ -12,15 +12,12 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
 
-    <!-- Top Banner -->
     <div class="w-full bg-gray-950 shadow-md">
         <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Kingdom 1269 Banner" class="w-full h-48 md:h-64 object-cover">
     </div>
 
-    <!-- Main Container -->
     <main class="max-w-6xl mx-auto px-4 py-8">
         
-        <!-- Header & Auth Section -->
         <div class="flex flex-col md:flex-row justify-between items-center bg-gray-800 p-6 rounded-xl shadow-lg mb-8 border border-gray-700">
             <div>
                 <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Appointment Desk</h1>
@@ -37,7 +34,6 @@
             </div>
         </div>
 
-        <!-- In-game Name Setup Modal -->
         <div id="setup-name-modal" class="hidden bg-gray-800 border border-amber-500/50 p-6 rounded-xl mb-8 shadow-xl">
             <h3 class="text-xl font-bold text-amber-400 mb-2">Complete Your Profile</h3>
             <p class="text-gray-300 text-sm mb-4">Please enter your exact in-game name to link with your Gmail account.</p>
@@ -47,15 +43,12 @@
             </div>
         </div>
 
-        <!-- Booking Form Section -->
         <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl shadow-xl border border-gray-700 mb-8">
             <h2 class="text-2xl font-bold text-amber-400 mb-6">Submit Appointment Request</h2>
             
             <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-6">
                 
-                <!-- Resources Inputs categorized by Day -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Day 1 -->
                     <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
                         <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 1: Construction</h3>
                         <div class="space-y-4">
@@ -74,7 +67,6 @@
                         </div>
                     </div>
 
-                    <!-- Day 2 -->
                     <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
                         <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 2: Research</h3>
                         <div class="space-y-4">
@@ -89,7 +81,6 @@
                         </div>
                     </div>
 
-                    <!-- Day 4 -->
                     <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
                         <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 4: Troop Training</h3>
                         <div class="space-y-4">
@@ -101,14 +92,12 @@
                     </div>
                 </div>
 
-                <!-- Screenshot Upload -->
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Screenshot Proof (Resources & Speedups)</label>
                     <input type="file" id="rss-screenshot" accept="image/*" required class="w-full text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer">
                     <p class="text-xs text-gray-500 mt-1">Image will be securely processed and saved automatically.</p>
                 </div>
 
-                <!-- Slot Selector -->
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-sm font-medium text-gray-300">Select Time Slots (Choose at least 4 slots)</label>
@@ -117,18 +106,15 @@
                     <p class="text-xs text-gray-400 mb-4">Each slot is 30 minutes from 23:45 to 22:45 next day.</p>
                     
                     <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-80 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg">
-                        <!-- Populated via JavaScript -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 rounded-lg transition duration-200 shadow-lg">
                     Submit Booking Request
                 </button>
             </form>
         </section>
 
-        <!-- Admin Only Dashboard Section -->
         <section id="admin-dashboard-section" class="hidden bg-gray-800 p-8 rounded-xl shadow-xl border border-amber-600/30">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <div>
@@ -137,7 +123,6 @@
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Export Excel / CSV</button>
-                    <!-- زر Reset متاح فقط لك كـ Super Admin -->
                     <button id="reset-btn-container" onclick="triggerResetMonth()" class="hidden bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Monthly Reset</button>
                 </div>
             </div>
@@ -159,20 +144,17 @@
                         </tr>
                     </thead>
                     <tbody id="bookings-table-body" class="divide-y divide-gray-700 text-sm">
-                        <!-- Populated via JavaScript -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </section>
 
     </main>
 
-    <!-- Footer -->
     <footer class="text-center py-6 text-gray-500 text-sm">
         Designed for Kingdom 1269 Appointment Desk
     </footer>
 
-    <!-- Firebase SDK Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -187,8 +169,8 @@
             appId: "1:1007373803222:web:bcb85595a99da596aaf377"
         };
 
-        // ضع بريدك الإلكتروني هنا حصراً لتتمكن وحدك من رؤية واستخدام زر Reset
-        const SUPER_ADMIN_EMAIL = "YOUR_SUPER_ADMIN_EMAIL@gmail.com"; 
+        // تم تعيين إيميلك هنا حصراً للـ Reset
+        const SUPER_ADMIN_EMAIL = "kdn1269@gmail.com"; 
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -360,9 +342,7 @@
                 const fileInput = document.getElementById('rss-screenshot');
                 const file = fileInput.files[0];
                 
-                // تحويل الصورة مباشرة إلى رابط بيانات داخلي مجاني 100% بدون أي حاجة لخدمات خارجية أو فلوس
                 const imageBase64 = await fileToDataURL(file);
-
                 const slotsArray = Array.from(checkedSlots).map(el => el.value);
 
                 const bookingData = {
@@ -453,14 +433,13 @@
                 return;
             }
 
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "Player Name,Email,Const Speedups (mins),Research Speedups (mins),Train Speedups (mins),True Gold,Tempered Gold,Gold Dust,Selected Slots\r\n";
+            let csvContent = "\uFEFFPlayer Name,Email,Const Speedups (mins),Research Speedups (mins),Train Speedups (mins),True Gold,Tempered Gold,Gold Dust,Selected Slots\r\n";
 
             allBookingsData.forEach(row => {
                 const slotsStr = row.slots ? `"${row.slots.join('; ')}"` : '""';
                 const line = [
-                    `"${row.inGameName}"`,
-                    `"${row.userEmail}"`,
+                    `"${row.inGameName || ''}"`,
+                    `"${row.userEmail || ''}"`,
                     row.constSpeedups || 0,
                     row.researchSpeedups || 0,
                     row.trainSpeedups || 0,
@@ -472,9 +451,10 @@
                 csvContent += line + "\r\n";
             });
 
-            const encodedUri = encodeURI(csvContent);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
+            link.setAttribute("href", url);
             link.setAttribute("download", "Kingdom_1269_Appointments.csv");
             document.body.appendChild(link);
             link.click();
