@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kingdom 1269 Bear Trap Calculator</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -23,32 +24,35 @@
 </head>
 <body class="bg-darkBg text-slate-100 min-h-screen flex flex-col justify-between font-sans">
 
+    <!-- Navigation Header -->
     <header class="border-b border-slate-800 bg-cardBg/50 backdrop-blur sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <img src="IMG_3934.png" alt="Kingdom 1269 Logo" class="w-10 h-10 object-contain rounded-lg border border-slate-700">
-                <div>
-                    <span class="text-lg font-bold tracking-wider text-blue-400 block">KINGDOM 1269</span>
-                    <span class="text-xs text-slate-400 block">Bear Trap Calculator</span>
-                </div>
+                <span class="text-lg font-bold tracking-wider text-blue-400">KINGDOM 1269</span>
             </div>
-            <nav class="hidden md:flex space-x-6 text-sm text-slate-300">
-                <a href="index.html" class="hover:text-blue-400 transition">Dashboard</a>
+            <nav class="flex space-x-6 text-sm text-slate-300">
+                <a href="index.html" class="hover:text-blue-400 transition">Home</a>
                 <a href="bear-trap.html" class="text-blue-400 font-semibold">Bear Trap Calculator</a>
-                <a href="members.html" class="hover:text-blue-400 transition">Alliance Roster</a>
             </nav>
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 py-10 w-full flex-grow">
-        <div class="mb-8 text-center">
+    <!-- Banner Section -->
+    <div class="w-full max-w-4xl mx-auto px-4 pt-6">
+        <img src="1E71647C-6DCA-44F6-8FD3-870666D195FD.png" alt="Kingdom 1269 Banner" class="w-full h-auto max-h-48 object-cover rounded-xl border border-slate-800 shadow-lg">
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
+        <div class="mb-6 text-center">
             <h1 class="text-3xl font-extrabold text-white tracking-tight">Kingdom 1269 Bear Trap Calculator</h1>
-            <p class="text-slate-400 mt-2 text-sm">Optimize your rally capacity, troop deployment, and formation ratios.</p>
+            <p class="text-slate-400 mt-2 text-sm">Real-time rally capacity and troop deployment optimization.</p>
         </div>
 
         <div class="bg-cardBg border border-slate-800 rounded-xl p-6 md:p-8 shadow-xl space-y-6">
-            <form id="trapForm" class="space-y-5">
+            <form id="trapForm" class="space-y-5" oninput="calculate()">
                 
+                <!-- S1 & S2 with Image Guide IMG_4201.jpeg -->
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-sm font-semibold text-blue-400">Base Stats Guide</span>
@@ -61,47 +65,74 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-300 mb-1">S1 = Normal rally capacity (without buffs)</label>
-                            <input type="number" id="s1" value="250000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" required>
+                            <input type="number" id="s1" value="250000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-300 mb-1">S2 = Normal Troops capacity (without buffs)</label>
-                            <input type="number" id="s2" value="100000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" required>
+                            <input type="number" id="s2" value="100000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                         </div>
                     </div>
                 </div>
 
+                <!-- S3: Alliance joining troop number -->
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">S3 = Alliance joining troop number</label>
-                    <input type="number" id="s3" value="90000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" required>
+                    <input type="number" id="s3" value="90000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                 </div>
 
+                <!-- S4, S5, S6 Dropdowns -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">S4 = Valera 1st skill (Dance of the Hunt)</label>
                         <select id="s4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
-                            <option value="0">Level 0 (0)</option>
-                            <option value="5000">Level Max (5000)</option>
-                            <option value="10000" selected>Elite Max (10000)</option>
+                            <option value="0">Level 0: 0</option>
+                            <option value="30000">Level 1: 30,000</option>
+                            <option value="60000">Level 2: 60,000</option>
+                            <option value="90000">Level 3: 90,000</option>
+                            <option value="120000">Level 4: 120,000</option>
+                            <option value="150000">Level 5: 150,000</option>
+                            <option value="180000">Level 6: 180,000</option>
+                            <option value="210000">Level 7: 210,000</option>
+                            <option value="240000">Level 8: 240,000</option>
+                            <option value="270000">Level 9: 270,000</option>
+                            <option value="300000" selected>Level 10: 300,000</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">S5 = Valora 4th skill (Savage Adv.)</label>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">S5 = Valora 4th skill (Savage Advantage)</label>
                         <select id="s5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
-                            <option value="0">Level 0 (0)</option>
-                            <option value="5000">Level Max (5000)</option>
-                            <option value="8000" selected>Elite Max (8000)</option>
+                            <option value="0">Level 0: 0</option>
+                            <option value="3000">Level 1: 3,000</option>
+                            <option value="6000">Level 2: 6,000</option>
+                            <option value="9000">Level 3: 9,000</option>
+                            <option value="12000">Level 4: 12,000</option>
+                            <option value="15000">Level 5: 15,000</option>
+                            <option value="18000">Level 6: 18,000</option>
+                            <option value="21000">Level 7: 21,000</option>
+                            <option value="24000">Level 8: 24,000</option>
+                            <option value="27000">Level 9: 27,000</option>
+                            <option value="30000" selected>Level 10: 30,000</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">S6 = Mighty bison LVL</label>
                         <select id="s6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
-                            <option value="0">Level 0 (0)</option>
-                            <option value="15000">Level 5 (15000)</option>
-                            <option value="30000" selected>Level Max (30000)</option>
+                            <option value="0">Level 0: 0</option>
+                            <option value="1500">Level 1: 1,500</option>
+                            <option value="3000">Level 2: 3,000</option>
+                            <option value="4500">Level 3: 4,500</option>
+                            <option value="6000">Level 4: 6,000</option>
+                            <option value="7500">Level 5: 7,500</option>
+                            <option value="9000">Level 6: 9,000</option>
+                            <option value="10500">Level 7: 10,500</option>
+                            <option value="12000">Level 8: 12,000</option>
+                            <option value="13500">Level 9: 13,500</option>
+                            <option value="15000" selected>Level 10: 15,000</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Custom Formation Section (Optional R1, R2, R3) -->
                 <div class="border-t border-slate-800 pt-4 space-y-3">
                     <p class="text-xs text-blue-400 font-medium">If you want to calculate your own formation use this:</p>
                     <div class="grid grid-cols-3 gap-3">
@@ -119,24 +150,24 @@
                         </div>
                     </div>
                 </div>
-
-                <button type="button" onclick="calculate()" class="w-full bg-accentBlue hover:bg-accentHover text-white font-semibold py-2.5 px-4 rounded-lg transition text-sm shadow-lg shadow-blue-500/20">
-                    Calculate Deployment
-                </button>
             </form>
 
-            <div id="results" class="hidden border-t border-slate-800 pt-6 space-y-4">
+            <!-- Results Section -->
+            <div id="results" class="border-t border-slate-800 pt-6 space-y-4">
                 <h3 class="text-md font-bold text-white">Calculation Results</h3>
                 <div id="resultContent" class="space-y-3 text-sm">
-                    </div>
+                    <!-- Dynamic Output populated via JS -->
+                </div>
             </div>
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
         <p>Designed by Hell &copy; 2026 Kingdom 1269 Alliance Portal. All Rights Reserved.</p>
     </footer>
 
+    <!-- Logic Script -->
     <script>
         function toggleGuide() {
             const guide = document.getElementById('guideImageContainer');
@@ -161,12 +192,14 @@
             const S9 = 14 * S2;
             const S10 = S7 - S9;          // Your own rally troops (hidden check)
 
-            const resultsDiv = document.getElementById('results');
             const contentDiv = document.getElementById('resultContent');
-            resultsDiv.classList.remove('hidden');
+
+            // Joining ratio calculation
+            const joinInf = Math.round(0.1 * S3);
+            const joinCav = Math.round(0.1 * S3);
+            const joinArc = Math.round(0.8 * S3);
 
             if (S10 > 1) {
-                // Determine ratios
                 let infRatio = R1Input !== "" ? parseFloat(R1Input) : 0.10;
                 let cavRatio = R2Input !== "" ? parseFloat(R2Input) : 0.10;
                 let arcRatio = R3Input !== "" ? parseFloat(R3Input) : 0.80;
@@ -174,11 +207,6 @@
                 const infDeploy = Math.round(S8 * infRatio);
                 const cavDeploy = Math.round(S8 * cavRatio);
                 const arcDeploy = Math.round(S8 * arcRatio);
-
-                // Joining ratio calculation
-                const joinInf = Math.round(0.1 * S3);
-                const joinCav = Math.round(0.1 * S3);
-                const joinArc = Math.round(0.8 * S3);
 
                 contentDiv.innerHTML = `
                     <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-lg text-emerald-300">
@@ -222,7 +250,9 @@
                 `;
             }
         }
+
+        // Run calculation on initial load
+        window.onload = calculate;
     </script>
 </body>
 </html>
-
