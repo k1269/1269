@@ -202,8 +202,10 @@
             const joinCav = Math.round(0.1 * S3);
             const joinArc = Math.round(0.8 * S3);
 
+            let resultsHTML = '';
+
             if (S10 < 1) {
-                contentDiv.innerHTML = `
+                resultsHTML = `
                     <div class="bg-rose-500/10 border border-rose-500/30 p-4 rounded-lg text-rose-300 space-y-3">
                         <span class="font-bold block text-base">Your rally capacity is not big enough ,SEND 1 TROOP in your rally</span>
                         
@@ -246,7 +248,7 @@
                     arcDeploy = Math.round(0.80 * effectiveBase);
                 }
 
-                contentDiv.innerHTML = `
+                resultsHTML = `
                     <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-lg text-emerald-300">
                         <span class="font-bold block mb-1">Status: Ready for Deployment</span>
                         <p class="text-xs text-slate-300">${conditionLabel} (<strong>${Math.round(effectiveBase).toLocaleString()} Troops</strong>)</p>
@@ -271,6 +273,16 @@
                     </div>
                 `;
             }
+
+            // Append the red note and Arabic contact note underneath all results
+            resultsHTML += `
+                <div class="mt-4 text-center space-y-1.5">
+                    <p class="text-xs font-bold text-red-500 tracking-wide">Remember to save your formation by Quantity not by Ratio</p>
+                    <p class="text-xs text-slate-300">إذا ما تعرف تستخدم الحاسبة لا تتردد بالتواصل مع الR4 أو [APX]Hell</p>
+                </div>
+            `;
+
+            contentDiv.innerHTML = resultsHTML;
         }
 
         // Run calculation on initial load
