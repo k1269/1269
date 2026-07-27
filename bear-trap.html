@@ -1,1 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingdom 1269 Bear Trap Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                        accentBlue: '#3b82f6',
+                        accentHover: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col justify-between font-sans">
+
+    <header class="border-b border-slate-800 bg-cardBg/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="IMG_3934.png" alt="Kingdom 1269 Logo" class="w-10 h-10 object-contain rounded-lg border border-slate-700">
+                <div>
+                    <span class="text-lg font-bold tracking-wider text-blue-400 block">KINGDOM 1269</span>
+                    <span class="text-xs text-slate-400 block">Bear Trap Calculator</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm text-slate-300">
+                <a href="index.html" class="hover:text-blue-400 transition">Dashboard</a>
+                <a href="bear-trap.html" class="text-blue-400 font-semibold">Bear Trap Calculator</a>
+                <a href="members.html" class="hover:text-blue-400 transition">Alliance Roster</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-4 py-10 w-full flex-grow">
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Kingdom 1269 Bear Trap Calculator</h1>
+            <p class="text-slate-400 mt-2 text-sm">Optimize your rally capacity, troop deployment, and formation ratios.</p>
+        </div>
+
+        <div class="bg-cardBg border border-slate-800 rounded-xl p-6 md:p-8 shadow-xl space-y-6">
+            <form id="trapForm" class="space-y-5">
+                
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-semibold text-blue-400">Base Stats Guide</span>
+                        <button type="button" onclick="toggleGuide()" class="text-xs text-blue-400 hover:underline">View Guide Image (IMG_4201.jpeg)</button>
+                    </div>
+                    <div id="guideImageContainer" class="hidden">
+                        <img src="IMG_4201.jpeg" alt="S1 and S2 Guide" class="w-full h-auto rounded-lg border border-slate-700 max-h-60 object-contain">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">S1 = Normal rally capacity (without buffs)</label>
+                            <input type="number" id="s1" value="250000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">S2 = Normal Troops capacity (without buffs)</label>
+                            <input type="number" id="s2" value="100000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">S3 = Alliance joining troop number</label>
+                    <input type="number" id="s3" value="90000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" required>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">S4 = Valera 1st skill (Dance of the Hunt)</label>
+                        <select id="s4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="0">Level 0 (0)</option>
+                            <option value="5000">Level Max (5000)</option>
+                            <option value="10000" selected>Elite Max (10000)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">S5 = Valora 4th skill (Savage Adv.)</label>
+                        <select id="s5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="0">Level 0 (0)</option>
+                            <option value="5000">Level Max (5000)</option>
+                            <option value="8000" selected>Elite Max (8000)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">S6 = Mighty bison LVL</label>
+                        <select id="s6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="0">Level 0 (0)</option>
+                            <option value="15000">Level 5 (15000)</option>
+                            <option value="30000" selected>Level Max (30000)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-800 pt-4 space-y-3">
+                    <p class="text-xs text-blue-400 font-medium">If you want to calculate your own formation use this:</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">R1 = Infantry %</label>
+                            <input type="number" step="0.01" id="r1" placeholder="e.g., 0.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">R2 = Cavalry %</label>
+                            <input type="number" step="0.01" id="r2" placeholder="e.g., 0.10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">R3 = Archers %</label>
+                            <input type="number" step="0.01" id="r3" placeholder="e.g., 0.80" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" onclick="calculate()" class="w-full bg-accentBlue hover:bg-accentHover text-white font-semibold py-2.5 px-4 rounded-lg transition text-sm shadow-lg shadow-blue-500/20">
+                    Calculate Deployment
+                </button>
+            </form>
+
+            <div id="results" class="hidden border-t border-slate-800 pt-6 space-y-4">
+                <h3 class="text-md font-bold text-white">Calculation Results</h3>
+                <div id="resultContent" class="space-y-3 text-sm">
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>Designed by Hell &copy; 2026 Kingdom 1269 Alliance Portal. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function toggleGuide() {
+            const guide = document.getElementById('guideImageContainer');
+            guide.classList.toggle('hidden');
+        }
+
+        function calculate() {
+            const S1 = parseFloat(document.getElementById('s1').value) || 0;
+            const S2 = parseFloat(document.getElementById('s2').value) || 0;
+            const S3 = parseFloat(document.getElementById('s3').value) || 90000;
+            const S4 = parseFloat(document.getElementById('s4').value) || 0;
+            const S5 = parseFloat(document.getElementById('s5').value) || 0;
+            const S6 = parseFloat(document.getElementById('s6').value) || 0;
+
+            const R1Input = document.getElementById('r1').value;
+            const R2Input = document.getElementById('r2').value;
+            const R3Input = document.getElementById('r3').value;
+
+            // Formulas
+            const S7 = S1 + S4 + S5 + S6; // Your own rally capacity
+            const S8 = S2 + S4 + S5;       // Hidden calculation base
+            const S9 = 14 * S2;
+            const S10 = S7 - S9;          // Your own rally troops (hidden check)
+
+            const resultsDiv = document.getElementById('results');
+            const contentDiv = document.getElementById('resultContent');
+            resultsDiv.classList.remove('hidden');
+
+            if (S10 > 1) {
+                // Determine ratios
+                let infRatio = R1Input !== "" ? parseFloat(R1Input) : 0.10;
+                let cavRatio = R2Input !== "" ? parseFloat(R2Input) : 0.10;
+                let arcRatio = R3Input !== "" ? parseFloat(R3Input) : 0.80;
+
+                const infDeploy = Math.round(S8 * infRatio);
+                const cavDeploy = Math.round(S8 * cavRatio);
+                const arcDeploy = Math.round(S8 * arcRatio);
+
+                // Joining ratio calculation
+                const joinInf = Math.round(0.1 * S3);
+                const joinCav = Math.round(0.1 * S3);
+                const joinArc = Math.round(0.8 * S3);
+
+                contentDiv.innerHTML = `
+                    <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-lg text-emerald-300">
+                        <span class="font-bold block mb-1">Status: Ready for Deployment</span>
+                        <p class="text-xs text-slate-300">Your Own Rally Troops Deployment (S10): <strong>${S10.toLocaleString()}</strong></p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
+                            <h4 class="font-semibold text-blue-400 mb-2">Own Rally Troops Deployment</h4>
+                            <ul class="space-y-1 text-xs text-slate-300">
+                                <li>Infantry: <span class="text-white font-bold">${infDeploy.toLocaleString()}</span></li>
+                                <li>Cavalry: <span class="text-white font-bold">${cavDeploy.toLocaleString()}</span></li>
+                                <li>Archers: <span class="text-white font-bold">${arcDeploy.toLocaleString()}</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
+                            <h4 class="font-semibold text-purple-400 mb-2">Joining Ratio Breakdown</h4>
+                            <ul class="space-y-1 text-xs text-slate-300">
+                                <li>Infantry (10%): <span class="text-white font-bold">${joinInf.toLocaleString()}</span></li>
+                                <li>Cavalry (10%): <span class="text-white font-bold">${joinCav.toLocaleString()}</span></li>
+                                <li>Archers (80%): <span class="text-white font-bold">${joinArc.toLocaleString()}</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } else {
+                contentDiv.innerHTML = `
+                    <div class="bg-rose-500/10 border border-rose-500/30 p-4 rounded-lg text-rose-300 space-y-3">
+                        <span class="font-bold block text-base">Your rally capacity is not big enough, SEND 1 TROOP</span>
+                        
+                        <div class="border-t border-rose-500/20 pt-3">
+                            <span class="font-semibold text-white block mb-2 text-xs uppercase tracking-wider">Recommendation to upgrade your rally capacity:</span>
+                            <ul class="list-disc list-inside space-y-1 text-xs text-slate-300">
+                                <li><strong>Masters:</strong> Valora 1st and 4th skills (F2P), Cassia 4th skill ($$)</li>
+                                <li><strong>Pets:</strong> Mighty bison level, Great Moose (Gen 5 pet)</li>
+                                <li><strong>Academy:</strong> Regimental Expansion all levels</li>
+                                <li><strong>War Academy:</strong> Truegold Battalion (all troop types), Truegold Legionaries</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
 
