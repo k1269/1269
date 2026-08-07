@@ -3,126 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 | Portal</title>
-    <style>
-        :root {
-            --gold: #C5A059;
-            --dark-blue: #0A0F1A;
-            --bg-color: #050505;
-            --text-color: #E0E0E0;
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            align-items: center;
-        }
-        .header { text-align: center; padding: 40px; }
-        .logo { width: 300px; margin-bottom: 20px; }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            width: 90%;
-            max-width: 1000px;
-            margin-bottom: 50px;
-        }
-        .card {
-            background: var(--dark-blue);
-            border: 1px solid var(--gold);
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
-            color: var(--gold);
-        }
-        .card:hover { background: #151d2e; }
-        .card.disabled { cursor: not-allowed; opacity: 0.7; }
-        footer { margin-top: auto; padding: 20px; color: var(--gold); font-size: 14px; }
-    </style>
+    <title>Kingdom 1269 | Operations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-900 text-white min-h-screen">
 
-    <div class="header">
-        <img src="IMG_3934.png" alt="Kingdom 1269" class="logo">
-        <h1>KINGDOM 1269 PORTAL</h1>
-    </div>
+    <!-- Banner Section -->
+    <header class="w-full py-8 text-center bg-gray-950 border-b border-gray-800">
+        <!-- تأكد من تعديل مسار الصورة إذا كان في مجلد مختلف -->
+        <img src="logo.png" alt="Kingdom 1269 Logo" class="mx-auto w-32 h-32 object-contain mb-4">
+        <h1 class="text-4xl font-bold text-amber-500">Kingdom 1269 Operations</h1>
+    </header>
 
-    <div class="grid-container">
-        <div class="card" onclick="checkAuth()">
-            <h3>Operations Command Center</h3>
-        </div>
-        <div class="card disabled">
-            <h3>Execution Court (Coming Soon)</h3>
-        </div>
-        <div class="card disabled">
-            <h3>Bear Trap Calculator (Coming Soon)</h3>
-        </div>
-        <div class="card disabled">
-            <h3>KvK Appointment Desk (Coming Soon)</h3>
-        </div>
-    </div>
+    <!-- Cards Container -->
+    <main class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto px-4 py-12">
 
-    <footer>Designed by Hell</footer>
+        <!-- Operations Command Center -->
+        <a href="command-center.html" class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-amber-500 transition shadow-lg block text-center">
+            <h2 class="text-2xl font-bold text-amber-400 mb-2">Operations Command Center</h2>
+            <p class="text-gray-400">Manage alliance movements and strategic deployments.</p>
+        </a>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        <!-- Execution Court -->
+        <a href="https://musab85n.github.io/1269/" class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-amber-500 transition shadow-lg block text-center">
+            <h2 class="text-2xl font-bold text-amber-400 mb-2">Execution Court</h2>
+            <p class="text-gray-400">Oversee critical decisions and alliance justice.</p>
+        </a>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
-            authDomain: "kingdom-1269-portal.firebaseapp.com",
-            projectId: "kingdom-1269-portal",
-            storageBucket: "kingdom-1269-portal.firebasestorage.app",
-            messagingSenderId: "1007373803222",
-            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
-        };
+        <!-- Bear Trap Calculator -->
+        <a href="bear-trap.html" class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-amber-500 transition shadow-lg block text-center">
+            <h2 class="text-2xl font-bold text-amber-400 mb-2">Bear Trap Calculator</h2>
+            <p class="text-gray-400">Calculate deployments and optimization math.</p>
+        </a>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const db = getFirestore();
-        const provider = new GoogleAuthProvider();
+        <!-- KVK Appointment Desk -->
+        <a href="appointment.html" class="bg-gray-800 p-6 rounded-xl border border-gray-700 hover:border-amber-500 transition shadow-lg block text-center">
+            <h2 class="text-2xl font-bold text-amber-400 mb-2">KVK Appointment Desk</h2>
+            <p class="text-gray-400">Book your slots and update your preparation data.</p>
+        </a>
 
-        window.checkAuth = async () => {
-            if (!auth.currentUser) {
-                try {
-                    const result = await signInWithPopup(auth, provider);
-                    handleUser(result.user);
-                } catch (e) { alert("Login failed"); }
-            } else {
-                handleUser(auth.currentUser);
-            }
-        };
+    </main>
 
-        async function handleUser(user) {
-            const userRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userRef);
-
-            if (!userDoc.exists()) {
-                const inGameName = prompt("Enter your In-Game Name:");
-                if (inGameName) {
-                    await setDoc(userRef, {
-                        email: user.email,
-                        inGameName: inGameName,
-                        role: "pending"
-                    });
-                    alert("Request submitted! Waiting for Admin approval.");
-                }
-            } else {
-                const data = userDoc.data();
-                if (data.role === "admin" || data.role === "member") {
-                    window.location.href = "command-center.html";
-                } else {
-                    alert("Status: " + data.role + ". Please wait for approval.");
-                }
-            }
-        }
-    </script>
 </body>
 </html>
