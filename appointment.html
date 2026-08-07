@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kingdom 1269 Appointment Desk</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- مكتبات Excel والترتيب -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <style>body { font-family: 'Inter', sans-serif; }</style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        th.sort-header { cursor: pointer; }
+        th.sort-header:hover { color: #f59e0b; }
+    </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
 
@@ -32,7 +38,7 @@
                     <input type="text" id="nickname" placeholder="Enter your nickname" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
                 </div>
                 <div>
-                    <label class="block text-sm mb-1 text-gray-400">Player ID</label>
+                    <label class="block text-sm mb-1 text-gray-400">Player ID (Used for updating your booking)</label>
                     <input type="number" id="player-id" placeholder="Enter your player ID" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
                 </div>
                 <div>
@@ -51,11 +57,11 @@
                     <label class="block text-sm mb-1 text-gray-400">Alliance Password</label>
                     <input type="password" id="alliance-password" placeholder="Enter alliance password" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg font-bold transition">Sign In</button>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg font-bold transition">Sign In / Update Data</button>
             </form>
         </div>
 
-        <!-- 2. Booking Form Section (Visible after login) -->
+        <!-- 2. Booking Form Section -->
         <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl border border-gray-700 shadow-xl mb-8">
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
                 <h2 class="text-xl font-bold text-amber-400">Welcome, <span id="display-name" class="text-white"></span></h2>
@@ -64,7 +70,6 @@
             
             <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-6">
                 
-                <!-- Resources Inputs categorized by Day -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Day 1 -->
                     <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
@@ -115,7 +120,14 @@
                 <!-- Screenshot Upload -->
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Screenshot Proof (Auto-Compressed)</label>
-                    <input type="file" id="screenshot-input" accept="image/*" required class="w-full text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer text-sm">
+                    <input type="file" id="screenshot-input" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer text-sm">
+                    <span class="text-xs text-gray-500 mt-1 block">*Optional if updating, required for new submissions.</span>
+                </div>
+
+                <!-- Comments Input -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Comments / Special Notes</label>
+                    <textarea id="player-comments" rows="2" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Add any notes or requests here..."></textarea>
                 </div>
 
                 <!-- Slot Selector -->
@@ -124,14 +136,12 @@
                         <label class="block text-sm font-medium text-gray-300">Select Time Slots (Choose at least 4 slots)</label>
                         <span id="slot-counter" class="text-xs text-amber-400 font-semibold">Selected: 0 / 4 minimum</span>
                     </div>
-                    <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg">
-                        <!-- Populated via JS -->
-                    </div>
+                    <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg"></div>
                 </div>
 
                 <!-- Submit Button -->
                 <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg transition shadow-lg">
-                    Submit Booking Request
+                    Submit / Update Booking Request
                 </button>
             </form>
         </section>
@@ -145,23 +155,28 @@
         <section id="admin-dashboard" class="hidden bg-gray-800 p-8 rounded-xl border border-amber-600 mt-8 shadow-xl">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <h2 class="text-xl font-bold text-amber-400">Admin Command Center Dashboard</h2>
-                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-sm font-bold transition">Export to Excel</button>
+                <div class="flex gap-3">
+                    <button onclick="resetMonthlyData()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-bold transition">Reset Monthly Data</button>
+                    <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-sm font-bold transition">Export to Excel</button>
+                </div>
             </div>
             <div class="overflow-x-auto">
                 <table id="data-table" class="w-full text-left text-sm border-collapse">
                     <thead>
                         <tr class="text-gray-400 border-b border-gray-700">
-                            <th class="p-3">Nickname</th>
-                            <th class="p-3">Player ID</th>
-                            <th class="p-3">Alliance</th>
-                            <th class="p-3">Const</th>
-                            <th class="p-3">Research</th>
-                            <th class="p-3">Train</th>
-                            <th class="p-3">True Gold</th>
-                            <th class="p-3">Tempered</th>
-                            <th class="p-3">Dust</th>
+                            <th class="p-3 sort-header">Nickname ↕</th>
+                            <th class="p-3 sort-header">Player ID ↕</th>
+                            <th class="p-3 sort-header">Alliance ↕</th>
+                            <th class="p-3 sort-header">Const ↕</th>
+                            <th class="p-3 sort-header">Research ↕</th>
+                            <th class="p-3 sort-header">Train ↕</th>
+                            <th class="p-3 sort-header">True Gold ↕</th>
+                            <th class="p-3 sort-header">Tempered ↕</th>
+                            <th class="p-3 sort-header">Dust ↕</th>
                             <th class="p-3">Slots</th>
-                            <th class="p-3">Timestamp</th>
+                            <th class="p-3">Comments</th>
+                            <th class="p-3">Proof</th>
+                            <th class="p-3 sort-header">Timestamp ↕</th>
                         </tr>
                     </thead>
                     <tbody id="table-body" class="divide-y divide-gray-700"></tbody>
@@ -171,11 +186,22 @@
 
     </main>
 
+    <!-- Modal لعرض الصور -->
+    <div id="image-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 p-4 rounded-xl max-w-2xl w-full border border-gray-700">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="font-bold text-amber-400">Screenshot Proof</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
+            </div>
+            <img id="modal-img" src="" alt="Proof" class="w-full max-h-[75vh] object-contain rounded">
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, setDoc, doc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -201,6 +227,7 @@
         };
 
         let currentMember = null;
+        let existingDataMap = new Map();
 
         const eventDays = [
             { name: "Day 1 Construction", prefix: "D1_Const" },
@@ -208,7 +235,6 @@
             { name: "Day 4 Troop Training", prefix: "D4_Train" }
         ];
 
-        // توليد خيارات المواعيد كل نصف ساعة
         function generateTimeSlots() {
             const container = document.getElementById('slots-container');
             container.innerHTML = '';
@@ -250,8 +276,18 @@
             counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
         }
 
-        // تسجيل دخول العضو
-        document.getElementById('login-form').onsubmit = (e) => {
+        // تحميل البيانات السريعة للتحقق من وجود حجز سابق لنفس الـ ID
+        async function fetchExistingMembers() {
+            const querySnapshot = await getDocs(collection(db, "appointment_requests"));
+            existingDataMap.clear();
+            querySnapshot.forEach((docSnap) => {
+                existingDataMap.set(docSnap.id, docSnap.data());
+            });
+        }
+        fetchExistingMembers();
+
+        // تسجيل دخول العضو أو تحديث بياناته
+        document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault();
             const nickname = document.getElementById('nickname').value.trim();
             const playerId = document.getElementById('player-id').value.trim();
@@ -262,7 +298,28 @@
                 currentMember = { nickname, playerId, alliance };
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('booking-section').classList.remove('hidden');
-                document.getElementById('display-name').innerText = `${nickname} (${alliance})`;
+                document.getElementById('display-name').innerText = `${nickname} (${alliance}) - ID: ${playerId}`;
+
+                // إذا كان اللاعب قد سجل مسبقاً، عبّئ حقوله تلقائياً للتعديل
+                await fetchExistingMembers();
+                if (existingDataMap.has(playerId)) {
+                    const prev = existingDataMap.get(playerId);
+                    document.getElementById('const-speedups').value = prev.constSpeedups || '';
+                    document.getElementById('research-speedups').value = prev.researchSpeedups || '';
+                    document.getElementById('train-speedups').value = prev.trainSpeedups || '';
+                    document.getElementById('true-gold').value = prev.trueGold || '';
+                    document.getElementById('tempered-gold').value = prev.temperedGold || '';
+                    document.getElementById('gold-dust').value = prev.goldDust || '';
+                    document.getElementById('player-comments').value = prev.comments || '';
+
+                    if (prev.slots) {
+                        document.querySelectorAll('input[name="appointment_slots"]').forEach(chk => {
+                            if (prev.slots.includes(chk.value)) chk.checked = true;
+                        });
+                        updateSlotCount();
+                    }
+                    document.getElementById('screenshot-input').required = false; // الصورة اختيارية عند التعديل
+                }
             } else {
                 alert("Incorrect password for alliance " + alliance);
             }
@@ -270,7 +327,6 @@
 
         window.logout = () => location.reload();
 
-        // ضغط الصورة
         async function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -292,7 +348,6 @@
             });
         }
 
-        // إرسال الحجز
         window.submitBooking = async function(e) {
             e.preventDefault();
             const checkedSlots = document.querySelectorAll('input[name="appointment_slots"]:checked');
@@ -303,14 +358,20 @@
 
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerText = "Processing & Submitting...";
+            btn.innerText = "Processing & Saving...";
 
             try {
-                const file = document.getElementById('screenshot-input').files[0];
-                const compressedImage = await compressImage(file);
+                const fileInput = document.getElementById('screenshot-input');
+                let compressedImage = existingDataMap.has(currentMember.playerId) ? existingDataMap.get(currentMember.playerId).screenshot : "";
+                
+                if (fileInput.files && fileInput.files[0]) {
+                    compressedImage = await compressImage(fileInput.files[0]);
+                }
+
                 const slotsArray = Array.from(checkedSlots).map(el => el.value);
 
-                await addDoc(collection(db, "appointment_requests"), {
+                // استخدام رقم اللاعب كـ Document ID لضمان تحديث نفس السجل وعدم تكراره
+                await setDoc(doc(db, "appointment_requests", currentMember.playerId), {
                     nickname: currentMember.nickname,
                     playerId: currentMember.playerId,
                     alliance: currentMember.alliance,
@@ -320,18 +381,33 @@
                     trueGold: document.getElementById('true-gold').value,
                     temperedGold: document.getElementById('tempered-gold').value,
                     goldDust: document.getElementById('gold-dust').value,
+                    comments: document.getElementById('player-comments').value,
                     slots: slotsArray,
                     screenshot: compressedImage,
                     timestamp: new Date().toISOString()
                 });
 
-                alert("Request submitted successfully!");
+                alert("Data saved/updated successfully!");
                 location.reload();
             } catch (err) {
                 alert("Error: " + err.message);
                 btn.disabled = false;
-                btn.innerText = "Submit Booking Request";
+                btn.innerText = "Submit / Update Booking Request";
             }
+        };
+
+        // عرض الصور
+        window.openModal = (base64Img) => {
+            if (!base64Img) {
+                alert("No image proof attached.");
+                return;
+            }
+            document.getElementById('modal-img').src = base64Img;
+            document.getElementById('image-modal').classList.remove('hidden');
+        };
+
+        window.closeModal = () => {
+            document.getElementById('image-modal').classList.add('hidden');
         };
 
         // دخول الأدمن
@@ -354,8 +430,8 @@
             const querySnapshot = await getDocs(collection(db, "appointment_requests"));
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = "";
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
                 tbody.innerHTML += `
                     <tr class="hover:bg-gray-700/50">
                         <td class="p-3">${data.nickname || '-'}</td>
@@ -368,11 +444,35 @@
                         <td class="p-3">${data.temperedGold || 0}</td>
                         <td class="p-3">${data.goldDust || 0}</td>
                         <td class="p-3 text-xs">${data.slots ? data.slots.join(', ') : ''}</td>
+                        <td class="p-3 text-xs italic text-gray-300">${data.comments || '-'}</td>
+                        <td class="p-3">
+                            <button onclick="openModal('${data.screenshot || ''}')" class="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-xs text-white">View Proof</button>
+                        </td>
                         <td class="p-3 text-xs text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
                     </tr>
                 `;
             });
+
+            // تفعيل نظام الفرز للجدول
+            try {
+                new Tablesort(document.getElementById('data-table'));
+            } catch(e) {}
         }
+
+        // ريسيت شهري للداشبورد (حذف جميع المواعيد للبدء من جديد)
+        window.resetMonthlyData = async () => {
+            if (confirm("Are you sure you want to reset all data for the new month? This will delete all current submissions.")) {
+                try {
+                    const querySnapshot = await getDocs(collection(db, "appointment_requests"));
+                    const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "appointment_requests", d.id)));
+                    await Promise.all(deletePromises);
+                    alert("Dashboard has been reset successfully!");
+                    loadAdminTable();
+                } catch (err) {
+                    alert("Error resetting data: " + err.message);
+                }
+            }
+        };
 
         window.exportToExcel = () => {
             const table = document.getElementById("data-table");
@@ -381,4 +481,14 @@
         };
     </script>
 </body>
+        <!-- Footer -->
+    <footer class="mt-20 py-8 text-center border-t border-gray-800">
+        <p class="text-gray-600 text-sm">
+            © 2026 Kingdom 1269 Alliance. All rights reserved.
+        </p>
+        <p class="text-amber-500 font-bold mt-2 tracking-widest">
+            Designed by Hell🔥
+        </p>
+    </footer>
+
 </html>
