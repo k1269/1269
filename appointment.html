@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kingdom 1269 Appointment Desk</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- مكتبة تصدير Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
@@ -13,18 +12,18 @@
 
     <!-- Banner -->
     <div class="w-full bg-gray-950 shadow-md">
-        <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Banner" class="w-full h-48 object-cover">
+        <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Banner" class="w-full h-48 md:h-64 object-cover">
     </div>
 
-    <main class="max-w-5xl mx-auto px-4 py-8">
+    <main class="max-w-6xl mx-auto px-4 py-8">
         
-        <!-- Header Title -->
+        <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Portal</h1>
-            <p class="text-sm text-gray-400 mt-1">Alliance Management & Appointment Desk</p>
+            <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Appointment Desk</h1>
+            <p class="text-sm text-gray-400 mt-1">Book your Chief Minister and Noble Advisor for KvK preparations</p>
         </div>
 
-        <!-- 1. نموذج تسجيل دخول الأعضاء -->
+        <!-- 1. Member Login Section -->
         <div id="login-section" class="bg-gray-800 p-8 rounded-xl border border-gray-700 max-w-lg mx-auto shadow-lg">
             <h2 class="text-2xl font-bold mb-6 text-amber-400">Alliance Member Login</h2>
             <form id="login-form" class="space-y-4">
@@ -50,50 +49,99 @@
                 </div>
                 <div>
                     <label class="block text-sm mb-1 text-gray-400">Alliance Password</label>
-                    <input type="password" id="alliance-password" placeholder="Enter password" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
+                    <input type="password" id="alliance-password" placeholder="Enter alliance password" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
                 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg font-bold transition">Sign In</button>
             </form>
         </div>
 
-        <!-- 2. نموذج رفع البيانات والمواعيد (يظهر بعد تسجيل دخول العضو) -->
-        <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl border border-gray-700 max-w-2xl mx-auto shadow-lg">
+        <!-- 2. Booking Form Section (Visible after login) -->
+        <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl border border-gray-700 shadow-xl mb-8">
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
                 <h2 class="text-xl font-bold text-amber-400">Welcome, <span id="display-name" class="text-white"></span></h2>
                 <button onclick="logout()" class="text-red-400 text-xs hover:underline">Sign Out</button>
             </div>
             
-            <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs mb-1 text-gray-400">Const Speedups (mins)</label>
-                        <input type="number" id="const-speedups" placeholder="0" class="bg-gray-950 p-3 rounded border border-gray-700 w-full text-gray-100" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs mb-1 text-gray-400">Research Speedups (mins)</label>
-                        <input type="number" id="research-speedups" placeholder="0" class="bg-gray-950 p-3 rounded border border-gray-700 w-full text-gray-100" required>
-                    </div>
-                    <div>
-                        <label class="block text-xs mb-1 text-gray-400">Train Speedups (mins)</label>
-                        <input type="number" id="train-speedups" placeholder="0" class="bg-gray-950 p-3 rounded border border-gray-700 w-full text-gray-100" required>
-                    </div>
-                </div>
+            <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-6">
                 
-                <div>
-                    <label class="block text-sm mb-2 text-gray-400">Screenshot (Auto-Compressed)</label>
-                    <input type="file" id="screenshot-input" accept="image/*" class="w-full text-sm text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer" required>
+                <!-- Resources Inputs categorized by Day -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Day 1 -->
+                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
+                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 1: Construction</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs text-gray-300 mb-1">Construction Speedups (mins)</label>
+                                <input type="number" id="const-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 1500">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-300 mb-1">True Gold</label>
+                                <input type="number" id="true-gold" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-300 mb-1">Tempered Gold</label>
+                                <input type="number" id="tempered-gold" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day 2 -->
+                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
+                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 2: Research</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs text-gray-300 mb-1">Research Speedups (mins)</label>
+                                <input type="number" id="research-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 1200">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-300 mb-1">Gold Dust</label>
+                                <input type="number" id="gold-dust" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Day 4 -->
+                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
+                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 4: Troop Training</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs text-gray-300 mb-1">Training Speedups (mins)</label>
+                                <input type="number" id="train-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 2400">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 p-3 rounded-lg font-bold transition">Submit Request</button>
+                <!-- Screenshot Upload -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Screenshot Proof (Auto-Compressed)</label>
+                    <input type="file" id="screenshot-input" accept="image/*" required class="w-full text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer text-sm">
+                </div>
+
+                <!-- Slot Selector -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium text-gray-300">Select Time Slots (Choose at least 4 slots)</label>
+                        <span id="slot-counter" class="text-xs text-amber-400 font-semibold">Selected: 0 / 4 minimum</span>
+                    </div>
+                    <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg transition shadow-lg">
+                    Submit Booking Request
+                </button>
             </form>
         </section>
 
-        <!-- زر مخفي لدخول الأدمن في أسفل الصفحة -->
+        <!-- Hidden Admin Access Trigger -->
         <div class="mt-12 text-center">
             <button onclick="adminLogin()" class="text-xs text-gray-600 hover:text-amber-400 transition">Admin Access (Command Center)</button>
         </div>
 
-        <!-- 3. لوحة تحكم الأدمن (مخفية لا تظهر إلا بعد دخول إيميلك) -->
+        <!-- 3. Admin Dashboard Section -->
         <section id="admin-dashboard" class="hidden bg-gray-800 p-8 rounded-xl border border-amber-600 mt-8 shadow-xl">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <h2 class="text-xl font-bold text-amber-400">Admin Command Center Dashboard</h2>
@@ -106,9 +154,13 @@
                             <th class="p-3">Nickname</th>
                             <th class="p-3">Player ID</th>
                             <th class="p-3">Alliance</th>
-                            <th class="p-3">Const (mins)</th>
-                            <th class="p-3">Research (mins)</th>
-                            <th class="p-3">Train (mins)</th>
+                            <th class="p-3">Const</th>
+                            <th class="p-3">Research</th>
+                            <th class="p-3">Train</th>
+                            <th class="p-3">True Gold</th>
+                            <th class="p-3">Tempered</th>
+                            <th class="p-3">Dust</th>
+                            <th class="p-3">Slots</th>
                             <th class="p-3">Timestamp</th>
                         </tr>
                     </thead>
@@ -119,7 +171,7 @@
 
     </main>
 
-    <!-- سكربتات الاتصال وقواعد البيانات -->
+    <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -138,7 +190,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // جدول كلمات المرور للتحالفات
         const alliancePasswords = {
             "APX": "KvK@APX.Aug",
             "SVG": "Kvk@SVG.Aug",
@@ -151,7 +202,55 @@
 
         let currentMember = null;
 
-        // نظام تسجيل دخول الأعضاء بالنيكنيم والتحالف
+        const eventDays = [
+            { name: "Day 1 Construction", prefix: "D1_Const" },
+            { name: "Day 2 Research", prefix: "D2_Res" },
+            { name: "Day 4 Troop Training", prefix: "D4_Train" }
+        ];
+
+        // توليد خيارات المواعيد كل نصف ساعة
+        function generateTimeSlots() {
+            const container = document.getElementById('slots-container');
+            container.innerHTML = '';
+
+            eventDays.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'col-span-full font-bold text-amber-400 mt-2 text-xs uppercase tracking-wide border-b border-gray-700 pb-1';
+                header.innerText = day.name;
+                container.appendChild(header);
+
+                let currentMinutes = 23 * 60 + 45;
+                for (let i = 0; i < 48; i++) {
+                    const startH = Math.floor((currentMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
+                    const startM = (currentMinutes % 60).toString().padStart(2, '0');
+                    const endMinutes = currentMinutes + 30;
+                    const endH = Math.floor((endMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
+                    const endM = (endMinutes % 60).toString().padStart(2, '0');
+
+                    const slotId = `${day.prefix}_${startH}:${startM}-${endH}:${endM}`;
+                    const slotLabel = `${startH}:${startM} - ${endH}:${endM}`;
+
+                    const label = document.createElement('label');
+                    label.className = 'flex items-center space-x-2 bg-gray-950 p-2 rounded border border-gray-750 hover:border-amber-500 cursor-pointer text-xs';
+                    label.innerHTML = `
+                        <input type="checkbox" name="appointment_slots" value="${slotId}" onchange="updateSlotCount()" class="rounded bg-gray-900 border-gray-700 text-amber-500">
+                        <span class="text-gray-300">${slotLabel}</span>
+                    `;
+                    container.appendChild(label);
+                    currentMinutes = endMinutes;
+                }
+            });
+        }
+        generateTimeSlots();
+
+        window.updateSlotCount = function() {
+            const checked = document.querySelectorAll('input[name="appointment_slots"]:checked').length;
+            const counter = document.getElementById('slot-counter');
+            counter.innerText = `Selected: ${checked} / 4 minimum`;
+            counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
+        }
+
+        // تسجيل دخول العضو
         document.getElementById('login-form').onsubmit = (e) => {
             e.preventDefault();
             const nickname = document.getElementById('nickname').value.trim();
@@ -169,12 +268,9 @@
             }
         };
 
-        window.logout = () => {
-            currentMember = null;
-            location.reload();
-        };
+        window.logout = () => location.reload();
 
-        // وظيفة ضغط الصورة لتجنب مشاكل الحجم الكبير في Firestore
+        // ضغط الصورة
         async function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -196,19 +292,23 @@
             });
         }
 
-        // إرسال البيانات وقاعدة البيانات
+        // إرسال الحجز
         window.submitBooking = async function(e) {
             e.preventDefault();
+            const checkedSlots = document.querySelectorAll('input[name="appointment_slots"]:checked');
+            if (checkedSlots.length < 4) {
+                alert("Please select at least 4 time slots.");
+                return;
+            }
+
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerText = "Compressing & Submitting...";
+            btn.innerText = "Processing & Submitting...";
 
             try {
-                const fileInput = document.getElementById('screenshot-input').files[0];
-                let compressedImage = "";
-                if (fileInput) {
-                    compressedImage = await compressImage(fileInput);
-                }
+                const file = document.getElementById('screenshot-input').files[0];
+                const compressedImage = await compressImage(file);
+                const slotsArray = Array.from(checkedSlots).map(el => el.value);
 
                 await addDoc(collection(db, "appointment_requests"), {
                     nickname: currentMember.nickname,
@@ -217,6 +317,10 @@
                     constSpeedups: document.getElementById('const-speedups').value,
                     researchSpeedups: document.getElementById('research-speedups').value,
                     trainSpeedups: document.getElementById('train-speedups').value,
+                    trueGold: document.getElementById('true-gold').value,
+                    temperedGold: document.getElementById('tempered-gold').value,
+                    goldDust: document.getElementById('gold-dust').value,
+                    slots: slotsArray,
                     screenshot: compressedImage,
                     timestamp: new Date().toISOString()
                 });
@@ -226,11 +330,11 @@
             } catch (err) {
                 alert("Error: " + err.message);
                 btn.disabled = false;
-                btn.innerText = "Submit Request";
+                btn.innerText = "Submit Booking Request";
             }
         };
 
-        // دخول الأدمن عبر إيميلك الجيميل فقط
+        // دخول الأدمن
         window.adminLogin = async () => {
             try {
                 const provider = new GoogleAuthProvider();
@@ -239,14 +343,13 @@
                     document.getElementById('admin-dashboard').classList.remove('hidden');
                     loadAdminTable();
                 } else {
-                    alert("Access Denied: You are not the authorized administrator.");
+                    alert("Access Denied.");
                 }
             } catch (err) {
-                alert("Login cancelled or failed.");
+                alert("Login failed.");
             }
         };
 
-        // تحميل بيانات الداشبورد للأدمن
         async function loadAdminTable() {
             const querySnapshot = await getDocs(collection(db, "appointment_requests"));
             const tbody = document.getElementById('table-body');
@@ -261,13 +364,16 @@
                         <td class="p-3">${data.constSpeedups || 0}</td>
                         <td class="p-3">${data.researchSpeedups || 0}</td>
                         <td class="p-3">${data.trainSpeedups || 0}</td>
+                        <td class="p-3">${data.trueGold || 0}</td>
+                        <td class="p-3">${data.temperedGold || 0}</td>
+                        <td class="p-3">${data.goldDust || 0}</td>
+                        <td class="p-3 text-xs">${data.slots ? data.slots.join(', ') : ''}</td>
                         <td class="p-3 text-xs text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
                     </tr>
                 `;
             });
         }
 
-        // تصدير الجدول إلى ملف Excel
         window.exportToExcel = () => {
             const table = document.getElementById("data-table");
             const wb = XLSX.utils.table_to_book(table, { sheet: "Requests Report" });
