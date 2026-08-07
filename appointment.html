@@ -2,479 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 Appointment Desk</title>
+    <title>Kingdom 1269 Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <!-- مكتبة تحويل الجداول إلى Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen">
+<body class="bg-gray-900 text-gray-100 min-h-screen p-4">
 
-    <div class="w-full bg-gray-950 shadow-md">
-        <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Kingdom 1269 Banner" class="w-full h-48 md:h-64 object-cover">
-    </div>
-
-    <main class="max-w-6xl mx-auto px-4 py-8">
-        
-        <div class="flex flex-col md:flex-row justify-between items-center bg-gray-800 p-6 rounded-xl shadow-lg mb-8 border border-gray-700">
-            <div>
-                <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Appointment Desk</h1>
-                <p class="text-gray-400 mt-1">Book you Chief minister and Noble advisor for kvk preparations</p>
-            </div>
-            <div id="auth-section" class="mt-4 md:mt-0">
-                <button id="login-btn" onclick="loginWithGoogle()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg transition duration-200 flex items-center gap-2 shadow">
-                    <span>Sign in with Google</span>
-                </button>
-                <div id="user-info" class="hidden flex items-center gap-4">
-                    <span id="user-display-name" class="text-sm font-medium text-gray-200"></span>
-                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg transition">Sign Out</button>
-                </div>
-            </div>
+    <main class="max-w-4xl mx-auto">
+        <!-- قسم تسجيل دخول الأعضاء -->
+        <div id="login-section" class="bg-gray-800 p-8 rounded-xl border border-gray-700">
+            <h2 class="text-2xl font-bold mb-6 text-amber-400">Alliance Portal Login</h2>
+            <!-- ... (نموذج الدخول بالنيكنيم كما في الرد السابق) ... -->
         </div>
 
-        <div id="setup-name-modal" class="hidden bg-gray-800 border border-amber-500/50 p-6 rounded-xl mb-8 shadow-xl">
-            <h3 class="text-xl font-bold text-amber-400 mb-2">Complete Your Profile</h3>
-            <p class="text-gray-300 text-sm mb-4">Please enter your exact in-game name to link with your Gmail account.</p>
-            <div class="flex gap-4">
-                <input type="text" id="ingame-name-input" placeholder="Enter your in-game name" class="flex-1 bg-gray-900 border border-gray-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-amber-500 focus:outline-none">
-                <button onclick="saveIngameName()" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-6 py-3 rounded-lg transition">Save Name</button>
-            </div>
+        <!-- زر دخول الأدمن المخفي (يظهر عند الضغط على أيقونة صغيرة في الفوتر) -->
+        <div class="mt-10 text-center">
+            <button onclick="adminLogin()" class="text-xs text-gray-600 hover:text-gray-400">Admin Access</button>
         </div>
 
-        <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl shadow-xl border border-gray-700 mb-8">
-            <h2 class="text-2xl font-bold text-amber-400 mb-6">Submit Appointment Request</h2>
-            
-            <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-6">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 1: Construction</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-300 mb-1">Construction Speedups (mins)</label>
-                                <input type="number" id="const-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="e.g. 1500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-300 mb-1">True Gold</label>
-                                <input type="number" id="true-gold" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Amount">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-300 mb-1">Tempered Gold</label>
-                                <input type="number" id="tempered-gold" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Amount">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 2: Research</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-300 mb-1">Research Speedups (mins)</label>
-                                <input type="number" id="research-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="e.g. 1200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-300 mb-1">Gold Dust</label>
-                                <input type="number" id="gold-dust" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="Amount">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 4: Troop Training</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-300 mb-1">Training Speedups (mins)</label>
-                                <input type="number" id="train-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="e.g. 2400">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Screenshot Proof (Resources & Speedups)</label>
-                    <input type="file" id="rss-screenshot" accept="image/*" required class="w-full text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer">
-                    <p class="text-xs text-gray-500 mt-1">Image will be securely processed and saved automatically.</p>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="block text-sm font-medium text-gray-300">Select Time Slots (Choose at least 4 slots)</label>
-                        <span id="slot-counter" class="text-xs text-amber-400 font-semibold">Selected: 0 / 4 minimum</span>
-                    </div>
-                    <p class="text-xs text-gray-400 mb-4">Each slot is 30 minutes from 23:45 to 22:45 next day.</p>
-                    
-                    <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-80 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg">
-                        </div>
-                </div>
-
-                <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 rounded-lg transition duration-200 shadow-lg">
-                    Submit Booking Request
-                </button>
-            </form>
-        </section>
-
-        <section id="admin-dashboard-section" class="hidden bg-gray-800 p-8 rounded-xl shadow-xl border border-amber-600/30">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-amber-400">Admin Command Dashboard</h2>
-                    <p class="text-xs text-gray-400 mt-1">Restricted access: Visible only to authorized admins.</p>
-                </div>
-                <div class="flex flex-wrap gap-3 items-center">
-                    <input type="text" id="table-search" oninput="filterTable()" placeholder="Search player..." class="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <button id="reset-btn-container" onclick="triggerResetMonth()" class="hidden bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">Monthly Reset</button>
-                </div>
+        <!-- لوحة تحكم الأدمن (تظهر فقط بعد دخول الجيميل) -->
+        <section id="admin-dashboard" class="hidden bg-gray-800 p-8 rounded-xl border border-amber-600 mt-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-amber-400">Admin Command Center</h2>
+                <button onclick="exportToExcel()" class="bg-emerald-600 px-4 py-2 rounded text-sm font-bold hover:bg-emerald-700">Export to Excel</button>
             </div>
-
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table id="data-table" class="w-full text-left text-sm">
                     <thead>
-                        <tr class="bg-gray-900 text-gray-400 uppercase text-xs tracking-wider border-b border-gray-700">
-                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('inGameName')">Player Name ⥯</th>
-                            <th class="p-3">Gmail</th>
-                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('constSpeedups')">Const. mins ⥯</th>
-                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('researchSpeedups')">Research mins ⥯</th>
-                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('trainSpeedups')">Train mins ⥯</th>
-                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('trueGold')">True Gold ⥯</th>
-                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('temperedGold')">Tempered Gold ⥯</th>
-                            <th class="p-3 cursor-pointer hover:text-white" onclick="sortTable('goldDust')">Gold Dust ⥯</th>
-                            <th class="p-3">Slots</th>
-                            <th class="p-3">Proof</th>
+                        <tr class="text-gray-400 border-b border-gray-700">
+                            <th class="p-2">Nickname</th>
+                            <th class="p-2">Alliance</th>
+                            <th class="p-2">Const Speedups</th>
                         </tr>
                     </thead>
-                    <tbody id="bookings-table-body" class="divide-y divide-gray-700 text-sm">
-                        </tbody>
+                    <tbody id="table-body"></tbody>
                 </table>
             </div>
         </section>
-
     </main>
-
-    <div id="image-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onclick="closeImageModal()">
-        <div class="relative max-w-4xl max-h-full">
-            <button class="absolute -top-10 right-0 text-white text-xl font-bold bg-gray-800 px-3 py-1 rounded-full">✕ Close</button>
-            <img id="modal-img" src="" alt="Proof Preview" class="max-h-[85vh] rounded-lg border border-amber-500 shadow-2xl">
-        </div>
-    </div>
-
-    <footer class="text-center py-6 text-gray-500 text-sm">
-        Designed for Kingdom 1269 Appointment Desk
-    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
-            authDomain: "kingdom-1269-portal.firebaseapp.com",
-            projectId: "kingdom-1269-portal",
-            storageBucket: "kingdom-1269-portal.firebasestorage.app",
-            messagingSenderId: "1007373803222",
-            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
-        };
-
-        const SUPER_ADMIN_EMAIL = "kdn1269@gmail.com"; 
-
-        const app = initializeApp(firebaseConfig);
+        // Firebase Config
+        const app = initializeApp({ /* ... */ });
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let currentUser = null;
-        let userProfile = null;
-        let allBookingsData = [];
-
-        const eventDays = [
-            { name: "Day 1 Construction (Chief Minister)", prefix: "D1_Const" },
-            { name: "Day 2 Research (Chief Minister)", prefix: "D2_Res" },
-            { name: "Day 4 Troop Training (Noble Advisor)", prefix: "D4_Train" }
-        ];
-
-        function generateTimeSlots() {
-            const container = document.getElementById('slots-container');
-            container.innerHTML = '';
-
-            eventDays.forEach(day => {
-                const header = document.createElement('div');
-                header.className = 'col-span-full font-bold text-amber-400 mt-2 text-sm uppercase tracking-wide border-b border-gray-700 pb-1';
-                header.innerText = day.name;
-                container.appendChild(header);
-
-                let currentMinutes = 23 * 60 + 45;
-                for (let i = 0; i < 48; i++) {
-                    const startH = Math.floor((currentMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
-                    const startM = (currentMinutes % 60).toString().padStart(2, '0');
-                    
-                    const endMinutes = currentMinutes + 30;
-                    const endH = Math.floor((endMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
-                    const endM = (endMinutes % 60).toString().padStart(2, '0');
-
-                    const slotId = `${day.prefix}_${startH}:${startM}-${endH}:${endM}`;
-                    const slotLabel = `${startH}:${startM} - ${endH}:${endM}`;
-
-                    const label = document.createElement('label');
-                    label.className = 'flex items-center space-x-2 bg-gray-950 p-2.5 rounded-lg border border-gray-750 hover:border-amber-500 cursor-pointer text-xs';
-                    label.innerHTML = `
-                        <input type="checkbox" name="appointment_slots" value="${slotId}" onchange="updateSlotCount()" class="rounded bg-gray-900 border-gray-700 text-amber-500 focus:ring-amber-500">
-                        <span class="text-gray-300">${slotLabel}</span>
-                    `;
-                    container.appendChild(label);
-
-                    currentMinutes = endMinutes;
-                }
-            });
-        }
-
-        generateTimeSlots();
-
-        window.updateSlotCount = function() {
-            const checked = document.querySelectorAll('input[name="appointment_slots"]:checked').length;
-            const counter = document.getElementById('slot-counter');
-            counter.innerText = `Selected: ${checked} / 4 minimum`;
-            counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
-        }
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('login-btn').classList.add('hidden');
-                document.getElementById('user-info').classList.remove('hidden');
-
-                const userDocRef = doc(db, "users", user.email);
-                const userDoc = await getDoc(userDocRef);
-
-                if (!userDoc.exists() || !userDoc.data().inGameName) {
-                    document.getElementById('setup-name-modal').classList.remove('hidden');
-                    document.getElementById('booking-section').classList.add('hidden');
-                } else {
-                    userProfile = userDoc.data();
-                    document.getElementById('user-display-name').innerText = `${userProfile.inGameName} (${user.email})`;
-                    document.getElementById('setup-name-modal').classList.add('hidden');
-                    document.getElementById('booking-section').classList.remove('hidden');
-                }
-
-                const adminDocRef = doc(db, "admins", user.email);
-                const adminDoc = await getDoc(adminDocRef);
-
-                if (adminDoc.exists()) {
-                    document.getElementById('admin-dashboard-section').classList.remove('hidden');
-                    loadBookings();
-
-                    if (user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) {
-                        document.getElementById('reset-btn-container').classList.remove('hidden');
-                    } else {
-                        document.getElementById('reset-btn-container').classList.add('hidden');
-                    }
-
-                } else {
-                    document.getElementById('admin-dashboard-section').classList.add('hidden');
-                }
-
-            } else {
-                currentUser = null;
-                userProfile = null;
-                document.getElementById('login-btn').classList.remove('hidden');
-                document.getElementById('user-info').classList.add('hidden');
-                document.getElementById('setup-name-modal').classList.add('hidden');
-                document.getElementById('booking-section').classList.add('hidden');
-                document.getElementById('admin-dashboard-section').classList.add('hidden');
-            }
-        });
-
-        window.loginWithGoogle = async function() {
+        // وظيفة الأدمن (الجيميل)
+        window.adminLogin = async () => {
             const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Login failed:", error);
-                alert("Login failed: " + error.message);
+            const result = await signInWithPopup(auth, provider);
+            if (result.user.email === "kdn1269@gmail.com") {
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                loadTableData();
+            } else {
+                alert("Unauthorized!");
             }
-        }
+        };
 
-        window.logout = async function() {
-            await signOut(auth);
-        }
+        // وظيفة التصدير لملف إكسل
+        window.exportToExcel = () => {
+            const table = document.getElementById("data-table");
+            const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+            XLSX.writeFile(wb, "Kingdom1269_Report.xlsx");
+        };
 
-        window.saveIngameName = async function() {
-            const ingameName = document.getElementById('ingame-name-input').value.trim();
-            if (!ingameName) {
-                alert("Please enter a valid in-game name.");
-                return;
-            }
-
-            try {
-                await setDoc(doc(db, "users", currentUser.email), {
-                    email: currentUser.email,
-                    inGameName: ingameName,
-                    updatedAt: new Date().toISOString()
-                }, { merge: true });
-
-                userProfile = { inGameName };
-                document.getElementById('user-display-name').innerText = `${ingameName} (${currentUser.email})`;
-                document.getElementById('setup-name-modal').classList.add('hidden');
-                document.getElementById('booking-section').classList.remove('hidden');
-                alert("Profile saved successfully!");
-            } catch (error) {
-                console.error("Error saving name:", error);
-                alert("Failed to save name: " + error.message);
-            }
-        }
-
-        function fileToDataURL(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
+        async function loadTableData() {
+            const querySnapshot = await getDocs(collection(db, "appointment_requests"));
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = "";
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                tbody.innerHTML += `<tr>
+                    <td class="p-2">${data.inGameName}</td>
+                    <td class="p-2">${data.alliance}</td>
+                    <td class="p-2">${data.constSpeedups}</td>
+                </tr>`;
             });
-        }
-
-        window.submitBooking = async function(e) {
-            e.preventDefault();
-            const checkedSlots = document.querySelectorAll('input[name="appointment_slots"]:checked');
-            if (checkedSlots.length < 4) {
-                alert("Please select at least 4 time slots to ensure flexible scheduling.");
-                return;
-            }
-
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Processing & Submitting...";
-
-            try {
-                const fileInput = document.getElementById('rss-screenshot');
-                const file = fileInput.files[0];
-                
-                const imageBase64 = await fileToDataURL(file);
-                const slotsArray = Array.from(checkedSlots).map(el => el.value);
-
-                const bookingData = {
-                    inGameName: userProfile.inGameName,
-                    userEmail: currentUser.email,
-                    constSpeedups: parseInt(document.getElementById('const-speedups').value) || 0,
-                    researchSpeedups: parseInt(document.getElementById('research-speedups').value) || 0,
-                    trainSpeedups: parseInt(document.getElementById('train-speedups').value) || 0,
-                    trueGold: parseInt(document.getElementById('true-gold').value) || 0,
-                    temperedGold: parseInt(document.getElementById('tempered-gold').value) || 0,
-                    goldDust: parseInt(document.getElementById('gold-dust').value) || 0,
-                    slots: slotsArray,
-                    screenshotURL: imageBase64,
-                    timestamp: new Date().toISOString()
-                };
-
-                await addDoc(collection(db, "appointment_requests"), bookingData);
-                alert("Booking request submitted successfully!");
-                document.getElementById('appointment-form').reset();
-                updateSlotCount();
-                if(!document.getElementById('admin-dashboard-section').classList.contains('hidden')) {
-                    loadBookings();
-                }
-            } catch (error) {
-                console.error("Error submitting booking:", error);
-                alert("Submission failed: " + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Submit Booking Request";
-            }
-        }
-
-        async function loadBookings() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "appointment_requests"));
-                allBookingsData = [];
-                querySnapshot.forEach((docSnap) => {
-                    allBookingsData.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderTable(allBookingsData);
-            } catch (error) {
-                console.error("Error loading bookings:", error);
-            }
-        }
-
-        function renderTable(data) {
-            const tbody = document.getElementById('bookings-table-body');
-            tbody.innerHTML = '';
-
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-gray-500">No appointment requests found.</td></tr>`;
-                return;
-            }
-
-            data.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-750 transition";
-                tr.innerHTML = `
-                    <td class="p-3 font-semibold text-white">${item.inGameName || 'N/A'}</td>
-                    <td class="p-3 text-xs text-gray-400">${item.userEmail}</td>
-                    <td class="p-3 text-amber-300">${(item.constSpeedups || 0).toLocaleString()}</td>
-                    <td class="p-3 text-amber-300">${(item.researchSpeedups || 0).toLocaleString()}</td>
-                    <td class="p-3 text-amber-300">${(item.trainSpeedups || 0).toLocaleString()}</td>
-                    <td class="p-3 text-yellow-400">${(item.trueGold || 0).toLocaleString()}</td>
-                    <td class="p-3 text-yellow-300">${(item.temperedGold || 0).toLocaleString()}</td>
-                    <td class="p-3 text-orange-300">${(item.goldDust || 0).toLocaleString()}</td>
-                    <td class="p-3 text-xs text-gray-300">${item.slots ? item.slots.join(', ') : ''}</td>
-                    <td class="p-3">
-                        <img src="${item.screenshotURL}" alt="Proof" onclick="openImageModal('${item.screenshotURL}')" class="w-12 h-12 object-cover rounded cursor-pointer border border-amber-500/50 hover:scale-105 transition" title="Click to view full image">
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        window.filterTable = function() {
-            const query = document.getElementById('table-search').value.toLowerCase();
-            const filtered = allBookingsData.filter(item => 
-                (item.inGameName && item.inGameName.toLowerCase().includes(query)) ||
-                (item.userEmail && item.userEmail.toLowerCase().includes(query))
-            );
-            renderTable(filtered);
-        }
-
-        let sortDirection = false;
-        window.sortTable = function(key) {
-            sortDirection = !sortDirection;
-            allBookingsData.sort((a, b) => {
-                const valA = a[key] || 0;
-                const valB = b[key] || 0;
-                if (typeof valA === 'string') {
-                    return sortDirection ? valB.localeCompare(valA) : valA.localeCompare(valB);
-                }
-                return sortDirection ? valB - valA : valA - valB;
-            });
-            renderTable(allBookingsData);
-        }
-
-        window.openImageModal = function(url) {
-            const modal = document.getElementById('image-modal');
-            const modalImg = document.getElementById('modal-img');
-            modalImg.src = url;
-            modal.classList.remove('hidden');
-        }
-
-        window.closeImageModal = function() {
-            document.getElementById('image-modal').classList.add('hidden');
-        }
-
-        window.triggerResetMonth = async function() {
-            if (currentUser.email.toLowerCase() !== SUPER_ADMIN_EMAIL.toLowerCase()) {
-                alert("Unauthorized action.");
-                return;
-            }
-
-            if (confirm("Are you sure you want to reset all appointment requests for the new month? This will delete existing bookings.")) {
-                try {
-                    const querySnapshot = await getDocs(collection(db, "appointment_requests"));
-                    const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "appointment_requests", d.id)));
-                    await Promise.all(deletePromises);
-                    alert("Monthly reset completed successfully.");
-                    loadBookings();
-                } catch (error) {
-                    console.error("Reset failed:", error);
-                    alert("Reset failed: " + error.message);
-                }
-            }
         }
     </script>
 </body>
