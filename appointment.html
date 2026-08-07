@@ -2,88 +2,277 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kingdom 1269 Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingdom 1269 Appointment Desk</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- مكتبة تحويل الجداول إلى Excel -->
+    <!-- مكتبة تصدير Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>body { font-family: 'Inter', sans-serif; }</style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen p-4">
+<body class="bg-gray-900 text-gray-100 min-h-screen">
 
-    <main class="max-w-4xl mx-auto">
-        <!-- قسم تسجيل دخول الأعضاء -->
-        <div id="login-section" class="bg-gray-800 p-8 rounded-xl border border-gray-700">
-            <h2 class="text-2xl font-bold mb-6 text-amber-400">Alliance Portal Login</h2>
-            <!-- ... (نموذج الدخول بالنيكنيم كما في الرد السابق) ... -->
+    <!-- Banner -->
+    <div class="w-full bg-gray-950 shadow-md">
+        <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Banner" class="w-full h-48 object-cover">
+    </div>
+
+    <main class="max-w-5xl mx-auto px-4 py-8">
+        
+        <!-- Header Title -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Portal</h1>
+            <p class="text-sm text-gray-400 mt-1">Alliance Management & Appointment Desk</p>
         </div>
 
-        <!-- زر دخول الأدمن المخفي (يظهر عند الضغط على أيقونة صغيرة في الفوتر) -->
-        <div class="mt-10 text-center">
-            <button onclick="adminLogin()" class="text-xs text-gray-600 hover:text-gray-400">Admin Access</button>
+        <!-- 1. نموذج تسجيل دخول الأعضاء -->
+        <div id="login-section" class="bg-gray-800 p-8 rounded-xl border border-gray-700 max-w-lg mx-auto shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 text-amber-400">Alliance Member Login</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm mb-1 text-gray-400">In-Game Nickname</label>
+                    <input type="text" id="nickname" placeholder="Enter your nickname" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1 text-gray-400">Player ID</label>
+                    <input type="number" id="player-id" placeholder="Enter your player ID" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1 text-gray-400">Alliance</label>
+                    <select id="alliance-select" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500">
+                        <option value="APX">APX</option>
+                        <option value="SVG">SVG</option>
+                        <option value="NDT">NDT</option>
+                        <option value="WAR">WAR</option>
+                        <option value="DUN">DUN</option>
+                        <option value="69A">69A</option>
+                        <option value="DTM">DTM</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1 text-gray-400">Alliance Password</label>
+                    <input type="password" id="alliance-password" placeholder="Enter password" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg font-bold transition">Sign In</button>
+            </form>
         </div>
 
-        <!-- لوحة تحكم الأدمن (تظهر فقط بعد دخول الجيميل) -->
-        <section id="admin-dashboard" class="hidden bg-gray-800 p-8 rounded-xl border border-amber-600 mt-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold text-amber-400">Admin Command Center</h2>
-                <button onclick="exportToExcel()" class="bg-emerald-600 px-4 py-2 rounded text-sm font-bold hover:bg-emerald-700">Export to Excel</button>
+        <!-- 2. نموذج رفع البيانات والمواعيد (يظهر بعد تسجيل دخول العضو) -->
+        <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl border border-gray-700 max-w-2xl mx-auto shadow-lg">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+                <h2 class="text-xl font-bold text-amber-400">Welcome, <span id="display-name" class="text-white"></span></h2>
+                <button onclick="logout()" class="text-red-400 text-xs hover:underline">Sign Out</button>
+            </div>
+            
+            <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs mb-1 text-gray-400">Const Speedups (mins)</label>
+                        <input type="number" id="const-speedups" placeholder="0" class="bg-gray-950 p-3 rounded border border-gray-700 w-full text-gray-100" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs mb-1 text-gray-400">Research Speedups (mins)</label>
+                        <input type="number" id="research-speedups" placeholder="0" class="bg-gray-950 p-3 rounded border border-gray-700 w-full text-gray-100" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs mb-1 text-gray-400">Train Speedups (mins)</label>
+                        <input type="number" id="train-speedups" placeholder="0" class="bg-gray-950 p-3 rounded border border-gray-700 w-full text-gray-100" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm mb-2 text-gray-400">Screenshot (Auto-Compressed)</label>
+                    <input type="file" id="screenshot-input" accept="image/*" class="w-full text-sm text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer" required>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 p-3 rounded-lg font-bold transition">Submit Request</button>
+            </form>
+        </section>
+
+        <!-- زر مخفي لدخول الأدمن في أسفل الصفحة -->
+        <div class="mt-12 text-center">
+            <button onclick="adminLogin()" class="text-xs text-gray-600 hover:text-amber-400 transition">Admin Access (Command Center)</button>
+        </div>
+
+        <!-- 3. لوحة تحكم الأدمن (مخفية لا تظهر إلا بعد دخول إيميلك) -->
+        <section id="admin-dashboard" class="hidden bg-gray-800 p-8 rounded-xl border border-amber-600 mt-8 shadow-xl">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <h2 class="text-xl font-bold text-amber-400">Admin Command Center Dashboard</h2>
+                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-sm font-bold transition">Export to Excel</button>
             </div>
             <div class="overflow-x-auto">
-                <table id="data-table" class="w-full text-left text-sm">
+                <table id="data-table" class="w-full text-left text-sm border-collapse">
                     <thead>
                         <tr class="text-gray-400 border-b border-gray-700">
-                            <th class="p-2">Nickname</th>
-                            <th class="p-2">Alliance</th>
-                            <th class="p-2">Const Speedups</th>
+                            <th class="p-3">Nickname</th>
+                            <th class="p-3">Player ID</th>
+                            <th class="p-3">Alliance</th>
+                            <th class="p-3">Const (mins)</th>
+                            <th class="p-3">Research (mins)</th>
+                            <th class="p-3">Train (mins)</th>
+                            <th class="p-3">Timestamp</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body"></tbody>
+                    <tbody id="table-body" class="divide-y divide-gray-700"></tbody>
                 </table>
             </div>
         </section>
+
     </main>
 
+    <!-- سكربتات الاتصال وقواعد البيانات -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Firebase Config
-        const app = initializeApp({ /* ... */ });
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+        };
+
+        const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // وظيفة الأدمن (الجيميل)
-        window.adminLogin = async () => {
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(auth, provider);
-            if (result.user.email === "kdn1269@gmail.com") {
-                document.getElementById('admin-dashboard').classList.remove('hidden');
-                loadTableData();
+        // جدول كلمات المرور للتحالفات
+        const alliancePasswords = {
+            "APX": "KvK@APX.Aug",
+            "SVG": "Kvk@SVG.Aug",
+            "NDT": "Kvk@NDT.Aug",
+            "WAR": "Kvk@WAR.Aug",
+            "DUN": "Kvk@DUN.Aug",
+            "69A": "Kvk@69A.Aug",
+            "DTM": "Kvk@DTM.Aug"
+        };
+
+        let currentMember = null;
+
+        // نظام تسجيل دخول الأعضاء بالنيكنيم والتحالف
+        document.getElementById('login-form').onsubmit = (e) => {
+            e.preventDefault();
+            const nickname = document.getElementById('nickname').value.trim();
+            const playerId = document.getElementById('player-id').value.trim();
+            const alliance = document.getElementById('alliance-select').value;
+            const password = document.getElementById('alliance-password').value;
+
+            if (password === alliancePasswords[alliance]) {
+                currentMember = { nickname, playerId, alliance };
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('booking-section').classList.remove('hidden');
+                document.getElementById('display-name').innerText = `${nickname} (${alliance})`;
             } else {
-                alert("Unauthorized!");
+                alert("Incorrect password for alliance " + alliance);
             }
         };
 
-        // وظيفة التصدير لملف إكسل
-        window.exportToExcel = () => {
-            const table = document.getElementById("data-table");
-            const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
-            XLSX.writeFile(wb, "Kingdom1269_Report.xlsx");
+        window.logout = () => {
+            currentMember = null;
+            location.reload();
         };
 
-        async function loadTableData() {
+        // وظيفة ضغط الصورة لتجنب مشاكل الحجم الكبير في Firestore
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 800;
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                    };
+                };
+            });
+        }
+
+        // إرسال البيانات وقاعدة البيانات
+        window.submitBooking = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerText = "Compressing & Submitting...";
+
+            try {
+                const fileInput = document.getElementById('screenshot-input').files[0];
+                let compressedImage = "";
+                if (fileInput) {
+                    compressedImage = await compressImage(fileInput);
+                }
+
+                await addDoc(collection(db, "appointment_requests"), {
+                    nickname: currentMember.nickname,
+                    playerId: currentMember.playerId,
+                    alliance: currentMember.alliance,
+                    constSpeedups: document.getElementById('const-speedups').value,
+                    researchSpeedups: document.getElementById('research-speedups').value,
+                    trainSpeedups: document.getElementById('train-speedups').value,
+                    screenshot: compressedImage,
+                    timestamp: new Date().toISOString()
+                });
+
+                alert("Request submitted successfully!");
+                location.reload();
+            } catch (err) {
+                alert("Error: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "Submit Request";
+            }
+        };
+
+        // دخول الأدمن عبر إيميلك الجيميل فقط
+        window.adminLogin = async () => {
+            try {
+                const provider = new GoogleAuthProvider();
+                const result = await signInWithPopup(auth, provider);
+                if (result.user.email === "kdn1269@gmail.com") {
+                    document.getElementById('admin-dashboard').classList.remove('hidden');
+                    loadAdminTable();
+                } else {
+                    alert("Access Denied: You are not the authorized administrator.");
+                }
+            } catch (err) {
+                alert("Login cancelled or failed.");
+            }
+        };
+
+        // تحميل بيانات الداشبورد للأدمن
+        async function loadAdminTable() {
             const querySnapshot = await getDocs(collection(db, "appointment_requests"));
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = "";
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                tbody.innerHTML += `<tr>
-                    <td class="p-2">${data.inGameName}</td>
-                    <td class="p-2">${data.alliance}</td>
-                    <td class="p-2">${data.constSpeedups}</td>
-                </tr>`;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-700/50">
+                        <td class="p-3">${data.nickname || '-'}</td>
+                        <td class="p-3">${data.playerId || '-'}</td>
+                        <td class="p-3 font-semibold text-amber-400">${data.alliance || '-'}</td>
+                        <td class="p-3">${data.constSpeedups || 0}</td>
+                        <td class="p-3">${data.researchSpeedups || 0}</td>
+                        <td class="p-3">${data.trainSpeedups || 0}</td>
+                        <td class="p-3 text-xs text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
+                    </tr>
+                `;
             });
         }
+
+        // تصدير الجدول إلى ملف Excel
+        window.exportToExcel = () => {
+            const table = document.getElementById("data-table");
+            const wb = XLSX.utils.table_to_book(table, { sheet: "Requests Report" });
+            XLSX.writeFile(wb, "Kingdom1269_Appointments.xlsx");
+        };
     </script>
 </body>
 </html>
