@@ -29,7 +29,8 @@
                     Main Site 🌐
                 </a>
             </div>
-            <img src="IMG_3934.png" alt="Kingdom 1269 Logo" class="mx-auto w-36 h-36 md:w-44 md:h-44 object-contain mb-4 drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+            <!-- البانر المعتمد -->
+            <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Kingdom 1269 Banner" class="mx-auto w-48 md:w-64 object-contain mb-4 drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
             <h1 class="text-4xl md:text-5xl font-extrabold gold-gradient tracking-wider">KVK Appointment Desk</h1>
             <p class="text-amber-500/80 text-sm mt-2 tracking-widest uppercase font-semibold">Book your Chief Minister and Noble Advisor for KvK preparations</p>
         </div>
@@ -153,7 +154,6 @@
             <p class="text-gray-600 text-sm">© 2026 Kingdom 1269 Alliance. All rights reserved.</p>
             <p class="text-amber-500 font-bold mt-2 tracking-widest">Designed by Hell🔥</p>
             
-            <!-- رابط مخفي في الفوتر للوصول للداشبورد عبر فحص صلاحيات الفايربيس -->
             <div class="mt-4">
                 <a href="javascript:void(0);" onclick="openAdminDashboard()" class="text-gray-700 hover:text-amber-500 text-[10px] uppercase tracking-widest transition">
                     Dashboard Access
@@ -170,7 +170,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // وظيفة تسجيل دخول المستخدم العادي
         window.handleLinkLogin = function(event) {
             event.preventDefault();
             const nickname = document.getElementById('nickname').value;
@@ -189,7 +188,6 @@
             alert("Booking submitted successfully!");
         };
 
-        // وظيفة الرابط المخفي للادمن عبر Firebase
         window.openAdminDashboard = function() {
             const user = auth.currentUser;
             
