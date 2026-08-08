@@ -16,8 +16,13 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
 
-    <!-- Banner -->
-    <div class="w-full bg-gray-950 shadow-md">
+    <!-- Banner مع زر العودة للصفحة الرئيسية -->
+    <div class="w-full bg-gray-950 shadow-md relative">
+        <div class="absolute top-4 right-4 z-20">
+            <a href="https://k1269.github.io/1269/" class="bg-black/60 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition border border-amber-500/50 backdrop-blur-sm shadow-lg flex items-center gap-1.5">
+                Main Site 🌐
+            </a>
+        </div>
         <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Banner" class="w-full h-48 md:h-64 object-cover">
     </div>
 
@@ -276,7 +281,6 @@
             counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
         }
 
-        // تحميل البيانات السريعة للتحقق من وجود حجز سابق لنفس الـ ID
         async function fetchExistingMembers() {
             const querySnapshot = await getDocs(collection(db, "appointment_requests"));
             existingDataMap.clear();
@@ -286,7 +290,6 @@
         }
         fetchExistingMembers();
 
-        // تسجيل دخول العضو أو تحديث بياناته
         document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault();
             const nickname = document.getElementById('nickname').value.trim();
@@ -300,7 +303,6 @@
                 document.getElementById('booking-section').classList.remove('hidden');
                 document.getElementById('display-name').innerText = `${nickname} (${alliance}) - ID: ${playerId}`;
 
-                // إذا كان اللاعب قد سجل مسبقاً، عبّئ حقوله تلقائياً للتعديل
                 await fetchExistingMembers();
                 if (existingDataMap.has(playerId)) {
                     const prev = existingDataMap.get(playerId);
@@ -318,7 +320,7 @@
                         });
                         updateSlotCount();
                     }
-                    document.getElementById('screenshot-input').required = false; // الصورة اختيارية عند التعديل
+                    document.getElementById('screenshot-input').required = false;
                 }
             } else {
                 alert("Incorrect password for alliance " + alliance);
@@ -370,7 +372,6 @@
 
                 const slotsArray = Array.from(checkedSlots).map(el => el.value);
 
-                // استخدام رقم اللاعب كـ Document ID لضمان تحديث نفس السجل وعدم تكراره
                 await setDoc(doc(db, "appointment_requests", currentMember.playerId), {
                     nickname: currentMember.nickname,
                     playerId: currentMember.playerId,
@@ -396,7 +397,6 @@
             }
         };
 
-        // عرض الصور
         window.openModal = (base64Img) => {
             if (!base64Img) {
                 alert("No image proof attached.");
@@ -410,7 +410,6 @@
             document.getElementById('image-modal').classList.add('hidden');
         };
 
-        // دخول الأدمن
         window.adminLogin = async () => {
             try {
                 const provider = new GoogleAuthProvider();
@@ -453,13 +452,11 @@
                 `;
             });
 
-            // تفعيل نظام الفرز للجدول
             try {
                 new Tablesort(document.getElementById('data-table'));
             } catch(e) {}
         }
 
-        // ريسيت شهري للداشبورد (حذف جميع المواعيد للبدء من جديد)
         window.resetMonthlyData = async () => {
             if (confirm("Are you sure you want to reset all data for the new month? This will delete all current submissions.")) {
                 try {
