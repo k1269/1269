@@ -206,7 +206,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, setDoc, doc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, setDoc, doc, getDocs, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -414,14 +414,20 @@
             try {
                 const provider = new GoogleAuthProvider();
                 const result = await signInWithPopup(auth, provider);
-                if (result.user.email === "kdn1269@gmail.com") {
+                const userEmail = result.user.email;
+
+                // التحقق من وجود البريد الإلكتروني في مجموعة admins في قاعدة البيانات
+                const adminRef = doc(db, "admins", userEmail);
+                const adminSnap = await getDoc(adminRef);
+
+                if (adminSnap.exists()) {
                     document.getElementById('admin-dashboard').classList.remove('hidden');
                     loadAdminTable();
                 } else {
                     alert("Access Denied.");
                 }
             } catch (err) {
-                alert("Login failed.");
+                alert("Login failed: " + err.message);
             }
         };
 
