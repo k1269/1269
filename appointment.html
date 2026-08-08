@@ -5,157 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kingdom 1269 Appointment Desk</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        th.sort-header { cursor: pointer; }
-        th.sort-header:hover { color: #f59e0b; }
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #aa771c 50%, #f3e5ab 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen">
+<body class="bg-[#0b0f19] text-gray-100 min-h-screen">
 
-    <!-- Banner -->
-    <div class="w-full bg-gray-950 shadow-md relative">
-        <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Banner" class="w-full h-48 md:h-64 object-cover">
-        <a href="https://k1269.github.io/1269/" class="absolute top-4 right-4 bg-black/50 hover:bg-amber-600 text-white px-4 py-2 rounded-full text-xs font-bold transition border border-amber-500/50 backdrop-blur-sm">
-            Main Site 🌐
-        </a>
-    </div>
+    <!-- Header -->
+    <header class="w-full bg-[#070a12] border-b border-amber-900/30 py-6">
+        <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img src="https://github.com/k1269/1269/blob/main/IMG_3934.png?raw=true" alt="Logo" class="w-12 h-12 object-contain">
+                <span class="text-xl font-bold gold-gradient">Kingdom 1269</span>
+            </div>
+            <a href="https://k1269.github.io/1269/" class="bg-black/50 hover:bg-amber-600/80 text-white px-4 py-2 rounded-full text-xs font-bold transition border border-amber-500/50">
+                Main Site 🌐
+            </a>
+        </div>
+    </header>
 
     <main class="max-w-6xl mx-auto px-4 py-8">
-        
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Appointment Desk</h1>
-            <p class="text-sm text-gray-400 mt-1">Book your Chief Minister and Noble Advisor for KvK preparations</p>
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold gold-gradient">KVK Appointment Desk</h1>
         </div>
 
-        <!-- 1. Member Login Section -->
-        <div id="login-section" class="bg-gray-800 p-8 rounded-xl border border-gray-700 max-w-lg mx-auto shadow-lg">
-            <h2 class="text-2xl font-bold mb-6 text-amber-400">Alliance Member Login</h2>
-            <form id="login-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm mb-1 text-gray-400">In-Game Nickname</label>
-                    <input type="text" id="nickname" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
-                </div>
-                <div>
-                    <label class="block text-sm mb-1 text-gray-400">Player ID (Used for updating your booking)</label>
-                    <input type="number" id="player-id" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
-                </div>
-                <div>
-                    <label class="block text-sm mb-1 text-gray-400">Alliance</label>
-                    <select id="alliance-select" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500">
-                        <option value="APX">APX</option>
-                        <option value="SVG">SVG</option>
-                        <option value="NDT">NDT</option>
-                        <option value="WAR">WAR</option>
-                        <option value="DUN">DUN</option>
-                        <option value="69A">69A</option>
-                        <option value="DTM">DTM</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm mb-1 text-gray-400">Alliance Password</label>
-                    <input type="password" id="alliance-password" class="w-full bg-gray-950 p-3 rounded border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-500" required>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg font-bold transition">Sign In / Update Data</button>
-            </form>
-        </div>
-
-        <!-- 2. Booking Form Section -->
-        <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl border border-gray-700 shadow-xl mb-8">
-            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                <h2 class="text-xl font-bold text-amber-400">Welcome, <span id="display-name" class="text-white"></span></h2>
-                <button onclick="logout()" class="text-red-400 text-xs hover:underline">Sign Out</button>
-            </div>
-            
-            <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 1: Construction</h3>
-                        <div class="space-y-3">
-                            <input type="number" id="const-speedups" placeholder="Const Speedups (mins)" required class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm">
-                            <input type="number" id="true-gold" placeholder="True Gold" required class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm">
-                            <input type="number" id="tempered-gold" placeholder="Tempered Gold" required class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm">
-                        </div>
-                    </div>
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 2: Research</h3>
-                        <div class="space-y-3">
-                            <input type="number" id="research-speedups" placeholder="Research Speedups (mins)" required class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm">
-                            <input type="number" id="gold-dust" placeholder="Gold Dust" required class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm">
-                        </div>
-                    </div>
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 4: Troop Training</h3>
-                        <div class="space-y-3">
-                            <input type="number" id="train-speedups" placeholder="Training Speedups (mins)" required class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm">
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Screenshot Proof</label>
-                    <input type="file" id="screenshot-input" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:px-4 file:py-2 file:rounded-lg cursor-pointer text-sm">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Comments</label>
-                    <textarea id="player-comments" rows="2" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-amber-500"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Select Time Slots (Minimum 4)</label>
-                    <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg"></div>
-                </div>
-
-                <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg transition">Submit / Update Request</button>
-            </form>
-        </section>
-
-        <!-- Admin Dashboard -->
-        <section id="admin-dashboard" class="hidden bg-gray-800 p-8 rounded-xl border border-amber-600 mt-8 shadow-xl">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <h2 class="text-xl font-bold text-amber-400">Admin Dashboard</h2>
-                <div class="flex gap-3">
-                    <button onclick="resetMonthlyData()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-bold transition">Reset Monthly Data</button>
-                    <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-sm font-bold transition">Export to Excel</button>
-                </div>
-            </div>
+        <!-- Admin Dashboard Section (Hidden by default) -->
+        <section id="admin-dashboard" class="hidden bg-[#111827] p-8 rounded-xl border border-amber-600/30 mt-8 shadow-xl">
+            <h2 class="text-xl font-bold text-amber-400 mb-6">Admin Dashboard</h2>
             <div class="overflow-x-auto">
-                <table id="data-table" class="w-full text-left text-sm border-collapse">
-                    <thead><tr class="text-gray-400 border-b border-gray-700">
-                        <th class="p-3 sort-header">Nickname ↕</th>
-                        <th class="p-3 sort-header">Player ID ↕</th>
-                        <th class="p-3 sort-header">Alliance ↕</th>
-                        <th class="p-3">Const</th><th class="p-3">Res</th><th class="p-3">Train</th>
-                        <th class="p-3">Gold/Dust</th>
-                        <th class="p-3">Comments</th>
-                        <th class="p-3">Proof</th>
-                    </tr></thead>
-                    <tbody id="table-body" class="divide-y divide-gray-700"></tbody>
+                <table class="w-full text-left text-sm border-collapse">
+                    <tbody id="table-body" class="divide-y divide-gray-800"></tbody>
                 </table>
             </div>
         </section>
 
-        <footer class="mt-20 py-8 text-center border-t border-gray-800">
-            <p class="text-gray-600 text-sm">© 2026 Kingdom 1269 Alliance. All rights reserved.</p>
+        <!-- Footer with Hidden Admin Link -->
+        <footer class="mt-20 py-8 text-center border-t border-gray-900 bg-[#070a12]">
+            <p class="text-gray-600 text-sm">© 2026 Kingdom 1269 Alliance.</p>
             <p class="text-amber-500 font-bold mt-2 tracking-widest">Designed by Hell🔥</p>
+            
+            <!-- رابط مخفي في الأسفل للوصول للداشبورد عبر فحص صلاحيات الفايربيس -->
+            <div class="mt-4">
+                <a href="javascript:void(0);" onclick="openAdminDashboard()" class="text-gray-700 hover:text-amber-500 text-[10px] uppercase tracking-widest transition">
+                    Dashboard Access
+                </a>
+            </div>
         </footer>
     </main>
 
-    <!-- Scripts (Simplified for brevity) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, setDoc, doc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        const firebaseConfig = { /* Your Config Here */ };
+        // ضع إعدادات مشروعك هنا
+        const firebaseConfig = {
+            // apiKey, authDomain, projectId, etc.
+        };
+
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        // (Functionality remains same as previous logic: Login, Submit, Admin Table, Reset, Export)
-        // Ensure you fill in your specific firebaseConfig details.
+        const auth = getAuth(app);
+
+        // الدالة المرتبطة بالرابط المخفي والتي تتحقق من صلاحيات الأدمن عبر Firebase
+        window.openAdminDashboard = function() {
+            const user = auth.currentUser;
+            
+            if (!user) {
+                alert("Please sign in with your admin Google account first.");
+                return;
+            }
+
+            // التحقق من صلاحيات الأدمن المسجلة في الـ Firebase (Claims أو عبر قاعدة البيانات)
+            user.getIdTokenResult().then((idTokenResult) => {
+                // إذا كان الأدمن معرف مسبقاً في الـ Custom Claims أو إيميلك الأساسي
+                if (idTokenResult.claims.admin || user.email === "kdn1269@gmail.com") {
+                    const dashboard = document.getElementById('admin-dashboard');
+                    dashboard.classList.remove('hidden');
+                    dashboard.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    alert("Access Denied: You do not have administrator privileges.");
+                }
+            }).catch((error) => {
+                console.error("Error verifying admin status:", error);
+                alert("Authentication check failed.");
+            });
+        };
     </script>
 </body>
 </html>
