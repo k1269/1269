@@ -1,121 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 | Operations Center</title>
-    <style>
-        :root { --gold: #C5A059; --bg: #050505; --dark-blue: #0A0F1A; --text: #E0E0E0; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; position: relative; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Operations Center</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        /* طبقة الووتر مارك الشاملة */
-        #watermark-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 9999;
-            opacity: 0.15; /* شفافية خفيفة */
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            overflow: hidden;
-            font-size: 20px;
-            color: var(--gold);
-            transform: rotate(-20deg);
-            white-space: nowrap;
-        }
-        .wm-cell { display: flex; align-items: center; justify-content: center; padding: 20px; }
+    body {
+      background-color: #08080c;
+      color: #e0e6ed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-        h1, h2 { color: var(--gold); text-align: center; }
-        
-        .sheet-container { width: 100%; height: 600px; margin: 20px 0; border: 2px solid var(--gold); background: #fff; }
-        iframe { width: 100%; height: 100%; border: none; }
+    /* Auth Screen Overlay */
+    #auth-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 5, 8, 0.95);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
 
-        .map-container { text-align: center; margin: 20px 0; }
-        .map-container img { width: 100%; max-width: 600px; border: 2px solid var(--gold); }
-        
-        .section-box { background: #111; padding: 15px; border-left: 3px solid var(--gold); margin-bottom: 20px; }
-        
-        .admin-footer { text-align: center; margin-top: 50px; padding: 10px; color: #555; }
-        .admin-footer a { color: #555; text-decoration: none; font-size: 0.75rem; transition: 0.3s; }
-        .admin-footer a:hover { color: var(--gold); }
-    </style>
+    .login-card {
+      background: #11141d;
+      border: 1px solid #1f293d;
+      box-shadow: 0 0 25px rgba(0, 150, 255, 0.15);
+      border-radius: 12px;
+      padding: 30px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-card h2 {
+      color: #38bdf8;
+      text-align: center;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 1.4rem;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      background: #090b10;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: #38bdf8;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background: #0284c7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+      background: #0369a1;
+    }
+
+    .error-msg {
+      color: #f87171;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
+
+    /* Main Content Layout */
+    #main-content {
+      display: none;
+      width: 100%;
+      max-width: 1200px;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .banner-container {
+      width: 100%;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #1e293b;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .banner-container img {
+      width: 100%;
+      height: auto;
+      max-height: 250px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .user-bar {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-info span {
+      margin-right: 15px;
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      background: #0369a1;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .btn-logout {
+      background: transparent;
+      border: 1px solid #475569;
+      color: #94a3b8;
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #dc2626;
+      color: white;
+      border-color: #dc2626;
+    }
+
+    /* Presentation Frame */
+    .presentation-wrapper {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+    }
+
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      max-width: 1080px;
+      padding-top: 180.46%; /* Aspect ratio matching 1080x1949 */
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .iframe-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- طبقة الووتر مارك التي تغطي كل شيء -->
-    <div id="watermark-overlay"></div>
+  <!-- Authentication Modal -->
+  <div id="auth-overlay">
+    <div class="login-card">
+      <h2>Command Access</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="player-name">Player Name</label>
+          <input type="text" id="player-name" placeholder="Enter player name" required>
+        </div>
 
-    <h1>Command Center Operations</h1>
+        <div class="form-group">
+          <label for="game-id">Game ID</label>
+          <input type="text" id="game-id" placeholder="Enter in-game ID" required>
+        </div>
 
-    <div class="map-container">
-        <img src="PHOTO-2026-07-16-18-05-40.jpeg" alt="Strategic Map">
+        <div class="form-group">
+          <label for="alliance">Alliance</label>
+          <select id="alliance" required>
+            <option value="" disabled selected>Select Alliance</option>
+            <option value="APX">APX</option>
+            <option value="SVG">SVG</option>
+            <option value="NDT">NDT</option>
+            <option value="WAR">WAR</option>
+            <option value="69A">69A</option>
+            <option value="DTM">DTM</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter alliance password" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Authenticate</button>
+        <div id="error-msg" class="error-msg">Invalid password for selected alliance.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div id="main-content">
+    <div class="banner-container">
+      <img src="Commandcenter.PNG" alt="Command Center Banner" onerror="this.style.display='none'">
     </div>
 
-    <h2>Deployment Dashboard</h2>
-    <div class="sheet-container">
-        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgWmNwO47GLN4PQ3cka2YYbwfrpC2VOdN8hIno9CLKUfg7kFl3DRo0zqMmMfgE7T2q78eLfCDnL2Zp/pubhtml?widget=true&amp;headers=false"></iframe>
+    <div class="user-bar">
+      <div class="user-info">
+        <span>Operator: <strong id="display-name" style="color: #38bdf8;">-</strong></span>
+        <span>ID: <strong id="display-id">-</strong></span>
+        <span>Alliance: <span class="badge" id="display-alliance">-</span></span>
+      </div>
+      <button class="btn-logout" id="logout-btn">Logout</button>
     </div>
 
-    <h2>Battle Protocols</h2>
-    <div class="section-box">
-        <h3>General Protocol</h3>
-        <p>11:30 UTC ALL PLAYERS MUST BE IN 69S AND READY TO TELEPORT TO THEIR SPOTS!</p>
-        <p>Battle Start: All 17 players named below will be in APX to secure the first occupation by solo attacking with best heroes at 5/2/3 and pressing 2000 gem speedups until inside!</p>
+    <div class="presentation-wrapper">
+      <div class="iframe-container">
+        <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vRQ-bicmhBgY0YmvLVuIYAhN54BICYl82qw9VbwPFFPGv6qFBD90ApzssJuYJ3Y4rv1etNq2ekxksKG/pubembed?start=true&loop=true&delayms=10000" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+      </div>
     </div>
+  </div>
 
-    <div class="admin-footer">
-        <a href="admin.html" id="admin-link-btn" style="display:none;">Admin Dashboard</a>
-        <p style="font-size: 0.7rem;">Designed by Hell</p>
-    </div>
+  <script>
+    const alliancePasswords = {
+      'APX': 'welovepotato',
+      'SVG': 'welovechery',
+      'NDT': 'welovetofu',
+      'WAR': 'welovesvg',
+      '69A': 'weloveapx',
+      'DTM': 'weloveyou'
+    };
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    const loginForm = document.getElementById('login-form');
+    const authOverlay = document.getElementById('auth-overlay');
+    const mainContent = document.getElementById('main-content');
+    const errorMsg = document.getElementById('error-msg');
+    const logoutBtn = document.getElementById('logout-btn');
 
-        const firebaseConfig = { 
-            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
-            authDomain: "kingdom-1269-portal.firebaseapp.com",
-            projectId: "kingdom-1269-portal",
-            storageBucket: "kingdom-1269-portal.firebasestorage.app",
-            messagingSenderId: "1007373803222",
-            appId: "1:1007373803222:web:bcb85595a99da596aaf377" 
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const db = getFirestore();
+    // Check existing session
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedUser = JSON.parse(sessionStorage.getItem('cmd_user'));
+      if (savedUser) {
+        showDashboard(savedUser);
+      }
+    });
 
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) { window.location.href = "index.html"; return; }
-            
-            try {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                let displayName = user.displayName || user.email;
-                if (userDoc.exists() && userDoc.data().inGameName) {
-                    displayName = userDoc.data().inGameName;
-                }
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const playerName = document.getElementById('player-name').value.trim();
+      const gameId = document.getElementById('game-id').value.trim();
+      const alliance = document.getElementById('alliance').value;
+      const password = document.getElementById('password').value.trim();
 
-                // إنشاء محتوى الووتر مارك المكرر
-                const now = new Date();
-                const wmText = `${displayName} | ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-                const overlay = document.getElementById('watermark-overlay');
-                
-                // ملء الشاشة بنصوص مكررة
-                for(let i = 0; i < 12; i++) {
-                    const div = document.createElement('div');
-                    div.className = 'wm-cell';
-                    div.innerText = wmText;
-                    overlay.appendChild(div);
-                }
-                
-                // إظهار زر الأدمن
-                if (userDoc.exists() && userDoc.data().role === 'admin') {
-                    document.getElementById('admin-link-btn').style.display = 'inline';
-                }
-            } catch (e) { 
-                console.error("Error loading user data:", e);
-            }
-        });
-    </script>
+      if (alliancePasswords[alliance] && alliancePasswords[alliance] === password) {
+        const userData = { playerName, gameId, alliance };
+        sessionStorage.setItem('cmd_user', JSON.stringify(userData));
+        errorMsg.style.display = 'none';
+        showDashboard(userData);
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('cmd_user');
+      mainContent.style.display = 'none';
+      authOverlay.style.display = 'flex';
+      loginForm.reset();
+    });
+
+    function showDashboard(user) {
+      document.getElementById('display-name').textContent = user.playerName;
+      document.getElementById('display-id').textContent = user.gameId;
+      document.getElementById('display-alliance').textContent = user.alliance;
+      
+      authOverlay.style.display = 'none';
+      mainContent.style.display = 'flex';
+    }
+  </script>
 </body>
 </html>
