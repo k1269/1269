@@ -15,14 +15,20 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
 
-    <!-- Header Banner -->
-    <div class="w-full bg-gray-950 shadow-md relative">
+   <!-- Header Banner Section (معدّل) -->
+    <div class="w-full bg-gray-950 shadow-md relative overflow-hidden">
+        <!-- Floating Main Site Button -->
         <div class="absolute top-4 right-4 z-20">
             <a href="https://k1269.github.io/1269/" class="bg-black/60 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition border border-amber-500/50 backdrop-blur-sm shadow-lg flex items-center gap-1.5">
                 Main Site 🌐
             </a>
         </div>
-        <img src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Banner" class="w-full h-48 md:h-64 object-cover">
+
+        <!-- Dynamic Dark Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-black/40 z-10 pointer-events-none"></div>
+
+        <!-- Main Banner Image -->
+        <img id="main-banner" src="E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Kingdom 1269 Banner" class="w-full h-48 md:h-64 object-cover object-center transition-all duration-300">
     </div>
 
     <main class="max-w-6xl mx-auto px-4 py-8">
