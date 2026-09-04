@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kingdom 1269 Appointment Desk</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- مكتبات Excel والترتيب -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
     <style>
@@ -16,7 +15,7 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
 
-    <!-- Banner مع زر العودة للصفحة الرئيسية -->
+    <!-- Header Banner -->
     <div class="w-full bg-gray-950 shadow-md relative">
         <div class="absolute top-4 right-4 z-20">
             <a href="https://k1269.github.io/1269/" class="bg-black/60 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition border border-amber-500/50 backdrop-blur-sm shadow-lg flex items-center gap-1.5">
@@ -28,13 +27,59 @@
 
     <main class="max-w-6xl mx-auto px-4 py-8">
         
-        <!-- Header -->
+        <!-- Main Title -->
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-amber-400">Kingdom 1269 Appointment Desk</h1>
             <p class="text-sm text-gray-400 mt-1">Book your Chief Minister and Noble Advisor for KvK preparations</p>
         </div>
 
-        <!-- 1. Member Login Section -->
+        <!-- 1. General Speedups Calculator Widget -->
+        <section class="bg-gray-800 p-6 rounded-xl border border-amber-500/30 shadow-xl mb-8">
+            <h2 class="text-xl font-bold text-amber-400 mb-2 flex items-center gap-2">
+                <span>🧮</span> General Speedups Calculator
+            </h2>
+            <p class="text-xs text-gray-400 mb-4">Enter your total General Speedups and split them across Day 1, Day 2, and Day 4 by percentage.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="block text-xs text-gray-300 mb-1">Total General Speedups (mins)</label>
+                    <input type="number" id="calc-total" oninput="calculateSplit()" placeholder="e.g. 10000" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:border-amber-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-300 mb-1">Day 1 % (Const)</label>
+                    <input type="number" id="calc-d1-pct" value="33" oninput="calculateSplit()" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:border-amber-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-300 mb-1">Day 2 % (Research)</label>
+                    <input type="number" id="calc-d2-pct" value="33" oninput="calculateSplit()" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:border-amber-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-300 mb-1">Day 4 % (Training)</label>
+                    <input type="number" id="calc-d4-pct" value="34" oninput="calculateSplit()" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm focus:border-amber-500 outline-none">
+                </div>
+            </div>
+
+            <!-- Split Results Display -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-700/60 text-center text-xs">
+                <div class="bg-gray-950 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400">Day 1 General: </span>
+                    <span id="res-d1" class="font-bold text-amber-400">0 mins</span>
+                </div>
+                <div class="bg-gray-950 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400">Day 2 General: </span>
+                    <span id="res-d2" class="font-bold text-amber-400">0 mins</span>
+                </div>
+                <div class="bg-gray-950 p-2.5 rounded-lg border border-gray-800">
+                    <span class="text-gray-400">Day 4 General: </span>
+                    <span id="res-d4" class="font-bold text-amber-400">0 mins</span>
+                </div>
+            </div>
+            <button type="button" onclick="applySplitToForm()" class="mt-4 w-full bg-amber-600/80 hover:bg-amber-600 text-white font-semibold py-2 rounded-lg text-xs transition">
+                Auto-Fill Calculated Speedups Into Form
+            </button>
+        </section>
+
+        <!-- 2. Member Login Section -->
         <div id="login-section" class="bg-gray-800 p-8 rounded-xl border border-gray-700 max-w-lg mx-auto shadow-lg">
             <h2 class="text-2xl font-bold mb-6 text-amber-400">Alliance Member Login</h2>
             <form id="login-form" class="space-y-4">
@@ -66,67 +111,106 @@
             </form>
         </div>
 
-        <!-- 2. Booking Form Section -->
+        <!-- 3. Booking Form Section -->
         <section id="booking-section" class="hidden bg-gray-800 p-8 rounded-xl border border-gray-700 shadow-xl mb-8">
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
                 <h2 class="text-xl font-bold text-amber-400">Welcome, <span id="display-name" class="text-white"></span></h2>
                 <button onclick="logout()" class="text-red-400 text-xs hover:underline">Sign Out</button>
             </div>
             
-            <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-6">
+            <form id="appointment-form" onsubmit="submitBooking(event)" class="space-y-8">
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Day 1 -->
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 1: Construction</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-xs text-gray-300 mb-1">Construction Speedups (mins)</label>
-                                <input type="number" id="const-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 1500">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-300 mb-1">True Gold</label>
-                                <input type="number" id="true-gold" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-300 mb-1">Tempered Gold</label>
-                                <input type="number" id="tempered-gold" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
-                            </div>
+                <!-- DAY 1 SECTION -->
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 space-y-4">
+                    <h3 class="text-lg font-bold text-amber-400 border-b border-gray-800 pb-2 flex justify-between items-center">
+                        <span>Day 1: Construction</span>
+                        <span id="counter-d1" class="text-xs text-amber-400 font-normal">Day 1 Slots: 0 / 4 min</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">Construction Speedups (mins)</label>
+                            <input type="number" id="const-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 1500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">General Speedups (mins)</label>
+                            <input type="number" id="gen-speedups-d1" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">True Gold</label>
+                            <input type="number" id="true-gold-d1" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">Tempered Gold</label>
+                            <input type="number" id="tempered-gold" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
                         </div>
                     </div>
-
-                    <!-- Day 2 -->
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 2: Research</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-xs text-gray-300 mb-1">Research Speedups (mins)</label>
-                                <input type="number" id="research-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 1200">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-gray-300 mb-1">Gold Dust</label>
-                                <input type="number" id="gold-dust" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Day 4 -->
-                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-750">
-                        <h3 class="font-semibold text-amber-400 mb-3 border-b border-gray-800 pb-1">Day 4: Troop Training</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-xs text-gray-300 mb-1">Training Speedups (mins)</label>
-                                <input type="number" id="train-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 2400">
-                            </div>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 1 Slots (Minimum 4)</label>
+                        <div id="slots-d1-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-950 border border-gray-800 rounded-lg"></div>
                     </div>
                 </div>
 
-                <!-- Screenshot Upload -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Screenshot Proof (Auto-Compressed)</label>
-                    <input type="file" id="screenshot-input" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer text-sm">
-                    <span class="text-xs text-gray-500 mt-1 block">*Optional if updating, required for new submissions.</span>
+                <!-- DAY 2 SECTION -->
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 space-y-4">
+                    <h3 class="text-lg font-bold text-amber-400 border-b border-gray-800 pb-2 flex justify-between items-center">
+                        <span>Day 2: Research</span>
+                        <span id="counter-d2" class="text-xs text-amber-400 font-normal">Day 2 Slots: 0 / 4 min</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">Research Speedups (mins)</label>
+                            <input type="number" id="research-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 1200">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">General Speedups (mins)</label>
+                            <input type="number" id="gen-speedups-d2" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">True Gold</label>
+                            <input type="number" id="true-gold-d2" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 2 Slots (Minimum 4)</label>
+                        <div id="slots-d2-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-950 border border-gray-800 rounded-lg"></div>
+                    </div>
+                </div>
+
+                <!-- DAY 4 SECTION -->
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 space-y-4">
+                    <h3 class="text-lg font-bold text-amber-400 border-b border-gray-800 pb-2 flex justify-between items-center">
+                        <span>Day 4: Troop Training</span>
+                        <span id="counter-d4" class="text-xs text-amber-400 font-normal">Day 4 Slots: 0 / 4 min</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">Training Speedups (mins)</label>
+                            <input type="number" id="train-speedups" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 2400">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-1">General Speedups (mins)</label>
+                            <input type="number" id="gen-speedups-d4" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 4 Slots (Minimum 4)</label>
+                        <div id="slots-d4-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-950 border border-gray-800 rounded-lg"></div>
+                    </div>
+                </div>
+
+                <!-- MANDATORY SCREENSHOT PROOFS SECTION -->
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 space-y-4">
+                    <h3 class="text-sm font-bold text-amber-400">Required Screenshot Proofs</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-2">1. Resources Screenshot (True Gold / Tempered Gold) <span class="text-red-400">*Required</span></label>
+                            <input type="file" id="res-proof-input" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer text-xs" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-300 mb-2">2. Speedups Screenshot (in mins) <span class="text-red-400">*Required</span></label>
+                            <input type="file" id="speed-proof-input" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer text-xs" required>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Comments Input -->
@@ -135,17 +219,8 @@
                     <textarea id="player-comments" rows="2" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Add any notes or requests here..."></textarea>
                 </div>
 
-                <!-- Slot Selector -->
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="block text-sm font-medium text-gray-300">Select Time Slots (Choose at least 4 slots)</label>
-                        <span id="slot-counter" class="text-xs text-amber-400 font-semibold">Selected: 0 / 4 minimum</span>
-                    </div>
-                    <div id="slots-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-4 bg-gray-900 border border-gray-750 rounded-lg"></div>
-                </div>
-
                 <!-- Submit Button -->
-                <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg transition shadow-lg">
+                <button type="submit" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 rounded-lg transition shadow-lg text-base">
                     Submit / Update Booking Request
                 </button>
             </form>
@@ -156,7 +231,7 @@
             <button onclick="adminLogin()" class="text-xs text-gray-600 hover:text-amber-400 transition">Admin Access (Command Center)</button>
         </div>
 
-        <!-- 3. Admin Dashboard Section -->
+        <!-- 4. Admin Dashboard Section -->
         <section id="admin-dashboard" class="hidden bg-gray-800 p-8 rounded-xl border border-amber-600 mt-8 shadow-xl">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <h2 class="text-xl font-bold text-amber-400">Admin Command Center Dashboard</h2>
@@ -168,19 +243,21 @@
             <div class="overflow-x-auto">
                 <table id="data-table" class="w-full text-left text-sm border-collapse">
                     <thead>
-                        <tr class="text-gray-400 border-b border-gray-700">
+                        <tr class="text-gray-400 border-b border-gray-700 text-xs">
                             <th class="p-3 sort-header">Nickname ↕</th>
                             <th class="p-3 sort-header">Player ID ↕</th>
                             <th class="p-3 sort-header">Alliance ↕</th>
-                            <th class="p-3 sort-header">Const ↕</th>
-                            <th class="p-3 sort-header">Research ↕</th>
-                            <th class="p-3 sort-header">Train ↕</th>
-                            <th class="p-3 sort-header">True Gold ↕</th>
-                            <th class="p-3 sort-header">Tempered ↕</th>
-                            <th class="p-3 sort-header">Dust ↕</th>
-                            <th class="p-3">Slots</th>
+                            <th class="p-3 sort-header">Day 1 Total Speedups ↕</th>
+                            <th class="p-3 sort-header">Day 2 Total Speedups ↕</th>
+                            <th class="p-3 sort-header">Day 4 Total Speedups ↕</th>
+                            <th class="p-3 sort-header">Day 1 True Gold ↕</th>
+                            <th class="p-3 sort-header">Day 2 True Gold ↕</th>
+                            <th class="p-3 sort-header">Tempered Gold ↕</th>
+                            <th class="p-3">Day 1 Slots</th>
+                            <th class="p-3">Day 2 Slots</th>
+                            <th class="p-3">Day 4 Slots</th>
                             <th class="p-3">Comments</th>
-                            <th class="p-3">Proof</th>
+                            <th class="p-3">Proofs</th>
                             <th class="p-3 sort-header">Timestamp ↕</th>
                         </tr>
                     </thead>
@@ -191,14 +268,23 @@
 
     </main>
 
-    <!-- Modal لعرض الصور -->
+    <!-- Modal لعرض الصور المصغرة -->
     <div id="image-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 p-4 rounded-xl max-w-2xl w-full border border-gray-700">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-bold text-amber-400">Screenshot Proof</h3>
+        <div class="bg-gray-800 p-5 rounded-xl max-w-3xl w-full border border-gray-700 space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                <h3 class="font-bold text-amber-400">Screenshot Proofs</h3>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-white font-bold">✕ Close</button>
             </div>
-            <img id="modal-img" src="" alt="Proof" class="w-full max-h-[75vh] object-contain rounded">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <span class="text-xs text-amber-400 block mb-1 font-semibold">Resources Proof:</span>
+                    <img id="modal-res-img" src="" alt="Resources Proof" class="w-full max-h-[60vh] object-contain rounded bg-gray-950 border border-gray-700 p-1">
+                </div>
+                <div>
+                    <span class="text-xs text-amber-400 block mb-1 font-semibold">Speedups Proof:</span>
+                    <img id="modal-speed-img" src="" alt="Speedups Proof" class="w-full max-h-[60vh] object-contain rounded bg-gray-950 border border-gray-700 p-1">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -222,64 +308,82 @@
         const db = getFirestore(app);
 
         const alliancePasswords = {
-            "APX": "KvK@APX.Aug",
-            "SVG": "Kvk@SVG.Aug",
-            "NDT": "Kvk@NDT.Aug",
-            "WAR": "Kvk@WAR.Aug",
-            "DUN": "Kvk@DUN.Aug",
-            "69A": "Kvk@69A.Aug",
-            "DTM": "Kvk@DTM.Aug"
+            "APX": "ِAlwaysRightBarnie",
+            "SVG": "DramaticBarbie",
+            "NDT": "TooMuchBarbie",
+            "WAR": "WarBarbie",
+            "DUN": "BossyBarbie",
+            "69A": "69Barbie",
+            "DTM": "JealousBarbie"
         };
 
         let currentMember = null;
         let existingDataMap = new Map();
 
-        const eventDays = [
-            { name: "Day 1 Construction", prefix: "D1_Const" },
-            { name: "Day 2 Research", prefix: "D2_Res" },
-            { name: "Day 4 Troop Training", prefix: "D4_Train" }
-        ];
+        // Calculator logic
+        window.calculateSplit = function() {
+            const total = parseFloat(document.getElementById('calc-total').value) || 0;
+            const d1Pct = parseFloat(document.getElementById('calc-d1-pct').value) || 0;
+            const d2Pct = parseFloat(document.getElementById('calc-d2-pct').value) || 0;
+            const d4Pct = parseFloat(document.getElementById('calc-d4-pct').value) || 0;
 
-        function generateTimeSlots() {
-            const container = document.getElementById('slots-container');
+            const resD1 = Math.round((total * d1Pct) / 100);
+            const resD2 = Math.round((total * d2Pct) / 100);
+            const resD4 = Math.round((total * d4Pct) / 100);
+
+            document.getElementById('res-d1').innerText = resD1 + " mins";
+            document.getElementById('res-d2').innerText = resD2 + " mins";
+            document.getElementById('res-d4').innerText = resD4 + " mins";
+        };
+
+        window.applySplitToForm = function() {
+            const total = parseFloat(document.getElementById('calc-total').value) || 0;
+            const d1Pct = parseFloat(document.getElementById('calc-d1-pct').value) || 0;
+            const d2Pct = parseFloat(document.getElementById('calc-d2-pct').value) || 0;
+            const d4Pct = parseFloat(document.getElementById('calc-d4-pct').value) || 0;
+
+            document.getElementById('gen-speedups-d1').value = Math.round((total * d1Pct) / 100);
+            document.getElementById('gen-speedups-d2').value = Math.round((total * d2Pct) / 100);
+            document.getElementById('gen-speedups-d4').value = Math.round((total * d4Pct) / 100);
+        };
+
+        // Time slot generator per day
+        function generateDaySlots(containerId, dayPrefix, counterId, checkboxName) {
+            const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            eventDays.forEach(day => {
-                const header = document.createElement('div');
-                header.className = 'col-span-full font-bold text-amber-400 mt-2 text-xs uppercase tracking-wide border-b border-gray-700 pb-1';
-                header.innerText = day.name;
-                container.appendChild(header);
+            let currentMinutes = 23 * 60 + 45;
+            for (let i = 0; i < 48; i++) {
+                const startH = Math.floor((currentMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
+                const startM = (currentMinutes % 60).toString().padStart(2, '0');
+                const endMinutes = currentMinutes + 30;
+                const endH = Math.floor((endMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
+                const endM = (endMinutes % 60).toString().padStart(2, '0');
 
-                let currentMinutes = 23 * 60 + 45;
-                for (let i = 0; i < 48; i++) {
-                    const startH = Math.floor((currentMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
-                    const startM = (currentMinutes % 60).toString().padStart(2, '0');
-                    const endMinutes = currentMinutes + 30;
-                    const endH = Math.floor((endMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
-                    const endM = (endMinutes % 60).toString().padStart(2, '0');
+                const slotId = `${dayPrefix}_${startH}:${startM}-${endH}:${endM}`;
+                const slotLabel = `${startH}:${startM} - ${endH}:${endM}`;
 
-                    const slotId = `${day.prefix}_${startH}:${startM}-${endH}:${endM}`;
-                    const slotLabel = `${startH}:${startM} - ${endH}:${endM}`;
-
-                    const label = document.createElement('label');
-                    label.className = 'flex items-center space-x-2 bg-gray-950 p-2 rounded border border-gray-750 hover:border-amber-500 cursor-pointer text-xs';
-                    label.innerHTML = `
-                        <input type="checkbox" name="appointment_slots" value="${slotId}" onchange="updateSlotCount()" class="rounded bg-gray-900 border-gray-700 text-amber-500">
-                        <span class="text-gray-300">${slotLabel}</span>
-                    `;
-                    container.appendChild(label);
-                    currentMinutes = endMinutes;
-                }
-            });
+                const label = document.createElement('label');
+                label.className = 'flex items-center space-x-2 bg-gray-900 p-2 rounded border border-gray-800 hover:border-amber-500 cursor-pointer text-xs';
+                label.innerHTML = `
+                    <input type="checkbox" name="${checkboxName}" value="${slotId}" onchange="updateDayCounter('${checkboxName}', '${counterId}')" class="rounded bg-gray-950 border-gray-700 text-amber-500">
+                    <span class="text-gray-300">${slotLabel}</span>
+                `;
+                container.appendChild(label);
+                currentMinutes = endMinutes;
+            }
         }
-        generateTimeSlots();
 
-        window.updateSlotCount = function() {
-            const checked = document.querySelectorAll('input[name="appointment_slots"]:checked').length;
-            const counter = document.getElementById('slot-counter');
-            counter.innerText = `Selected: ${checked} / 4 minimum`;
+        generateDaySlots('slots-d1-container', 'D1', 'counter-d1', 'slots_d1');
+        generateDaySlots('slots-d2-container', 'D2', 'counter-d2', 'slots_d2');
+        generateDaySlots('slots-d4-container', 'D4', 'counter-d4', 'slots_d4');
+
+        window.updateDayCounter = function(checkboxName, counterId) {
+            const checked = document.querySelectorAll(`input[name="${checkboxName}"]:checked`).length;
+            const counter = document.getElementById(counterId);
+            counter.innerText = `Slots: ${checked} / 4 min`;
             counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
-        }
+        };
 
         async function fetchExistingMembers() {
             const querySnapshot = await getDocs(collection(db, "appointment_requests"));
@@ -307,20 +411,34 @@
                 if (existingDataMap.has(playerId)) {
                     const prev = existingDataMap.get(playerId);
                     document.getElementById('const-speedups').value = prev.constSpeedups || '';
-                    document.getElementById('research-speedups').value = prev.researchSpeedups || '';
-                    document.getElementById('train-speedups').value = prev.trainSpeedups || '';
-                    document.getElementById('true-gold').value = prev.trueGold || '';
+                    document.getElementById('gen-speedups-d1').value = prev.genSpeedupsD1 || '';
+                    document.getElementById('true-gold-d1').value = prev.trueGoldD1 || '';
                     document.getElementById('tempered-gold').value = prev.temperedGold || '';
-                    document.getElementById('gold-dust').value = prev.goldDust || '';
+
+                    document.getElementById('research-speedups').value = prev.researchSpeedups || '';
+                    document.getElementById('gen-speedups-d2').value = prev.genSpeedupsD2 || '';
+                    document.getElementById('true-gold-d2').value = prev.trueGoldD2 || '';
+
+                    document.getElementById('train-speedups').value = prev.trainSpeedups || '';
+                    document.getElementById('gen-speedups-d4').value = prev.genSpeedupsD4 || '';
                     document.getElementById('player-comments').value = prev.comments || '';
 
-                    if (prev.slots) {
-                        document.querySelectorAll('input[name="appointment_slots"]').forEach(chk => {
-                            if (prev.slots.includes(chk.value)) chk.checked = true;
-                        });
-                        updateSlotCount();
+                    // Check prev slots
+                    if (prev.slotsD1) {
+                        document.querySelectorAll('input[name="slots_d1"]').forEach(chk => chk.checked = prev.slotsD1.includes(chk.value));
+                        updateDayCounter('slots_d1', 'counter-d1');
                     }
-                    document.getElementById('screenshot-input').required = false;
+                    if (prev.slotsD2) {
+                        document.querySelectorAll('input[name="slots_d2"]').forEach(chk => chk.checked = prev.slotsD2.includes(chk.value));
+                        updateDayCounter('slots_d2', 'counter-d2');
+                    }
+                    if (prev.slotsD4) {
+                        document.querySelectorAll('input[name="slots_d4"]').forEach(chk => chk.checked = prev.slotsD4.includes(chk.value));
+                        updateDayCounter('slots_d4', 'counter-d4');
+                    }
+
+                    document.getElementById('res-proof-input').required = false;
+                    document.getElementById('speed-proof-input').required = false;
                 }
             } else {
                 alert("Incorrect password for alliance " + alliance);
@@ -352,9 +470,13 @@
 
         window.submitBooking = async function(e) {
             e.preventDefault();
-            const checkedSlots = document.querySelectorAll('input[name="appointment_slots"]:checked');
-            if (checkedSlots.length < 4) {
-                alert("Please select at least 4 time slots.");
+            
+            const checkedD1 = document.querySelectorAll('input[name="slots_d1"]:checked');
+            const checkedD2 = document.querySelectorAll('input[name="slots_d2"]:checked');
+            const checkedD4 = document.querySelectorAll('input[name="slots_d4"]:checked');
+
+            if (checkedD1.length < 4 || checkedD2.length < 4 || checkedD4.length < 4) {
+                alert("Please select at least 4 time slots for EACH day (Day 1, Day 2, and Day 4).");
                 return;
             }
 
@@ -363,32 +485,48 @@
             btn.innerText = "Processing & Saving...";
 
             try {
-                const fileInput = document.getElementById('screenshot-input');
-                let compressedImage = existingDataMap.has(currentMember.playerId) ? existingDataMap.get(currentMember.playerId).screenshot : "";
-                
-                if (fileInput.files && fileInput.files[0]) {
-                    compressedImage = await compressImage(fileInput.files[0]);
-                }
+                const resInput = document.getElementById('res-proof-input');
+                const speedInput = document.getElementById('speed-proof-input');
 
-                const slotsArray = Array.from(checkedSlots).map(el => el.value);
+                let resImg = existingDataMap.has(currentMember.playerId) ? existingDataMap.get(currentMember.playerId).resourceProof : "";
+                let speedImg = existingDataMap.has(currentMember.playerId) ? existingDataMap.get(currentMember.playerId).speedupProof : "";
+
+                if (resInput.files && resInput.files[0]) {
+                    resImg = await compressImage(resInput.files[0]);
+                }
+                if (speedInput.files && speedInput.files[0]) {
+                    speedImg = await compressImage(speedInput.files[0]);
+                }
 
                 await setDoc(doc(db, "appointment_requests", currentMember.playerId), {
                     nickname: currentMember.nickname,
                     playerId: currentMember.playerId,
                     alliance: currentMember.alliance,
+                    
                     constSpeedups: document.getElementById('const-speedups').value,
-                    researchSpeedups: document.getElementById('research-speedups').value,
-                    trainSpeedups: document.getElementById('train-speedups').value,
-                    trueGold: document.getElementById('true-gold').value,
+                    genSpeedupsD1: document.getElementById('gen-speedups-d1').value,
+                    trueGoldD1: document.getElementById('true-gold-d1').value,
                     temperedGold: document.getElementById('tempered-gold').value,
-                    goldDust: document.getElementById('gold-dust').value,
+
+                    researchSpeedups: document.getElementById('research-speedups').value,
+                    genSpeedupsD2: document.getElementById('gen-speedups-d2').value,
+                    trueGoldD2: document.getElementById('true-gold-d2').value,
+
+                    trainSpeedups: document.getElementById('train-speedups').value,
+                    genSpeedupsD4: document.getElementById('gen-speedups-d4').value,
+
                     comments: document.getElementById('player-comments').value,
-                    slots: slotsArray,
-                    screenshot: compressedImage,
+                    
+                    slotsD1: Array.from(checkedD1).map(el => el.value),
+                    slotsD2: Array.from(checkedD2).map(el => el.value),
+                    slotsD4: Array.from(checkedD4).map(el => el.value),
+
+                    resourceProof: resImg,
+                    speedupProof: speedImg,
                     timestamp: new Date().toISOString()
                 });
 
-                alert("Data saved/updated successfully!");
+                alert("Thank you for saving your resources for the KVK\nyour application has been sent successfully");
                 location.reload();
             } catch (err) {
                 alert("Error: " + err.message);
@@ -397,12 +535,13 @@
             }
         };
 
-        window.openModal = (base64Img) => {
-            if (!base64Img) {
+        window.openModal = (resImg, speedImg) => {
+            if (!resImg && !speedImg) {
                 alert("No image proof attached.");
                 return;
             }
-            document.getElementById('modal-img').src = base64Img;
+            document.getElementById('modal-res-img').src = resImg || '';
+            document.getElementById('modal-speed-img').src = speedImg || '';
             document.getElementById('image-modal').classList.remove('hidden');
         };
 
@@ -416,7 +555,6 @@
                 const result = await signInWithPopup(auth, provider);
                 const userEmail = result.user.email;
 
-                // التحقق من وجود البريد الإلكتروني في مجموعة admins في قاعدة البيانات
                 const adminRef = doc(db, "admins", userEmail);
                 const adminSnap = await getDoc(adminRef);
 
@@ -437,21 +575,28 @@
             tbody.innerHTML = "";
             querySnapshot.forEach((docSnap) => {
                 const data = docSnap.data();
+
+                const d1Total = (Number(data.constSpeedups) || 0) + (Number(data.genSpeedupsD1) || 0);
+                const d2Total = (Number(data.researchSpeedups) || 0) + (Number(data.genSpeedupsD2) || 0);
+                const d4Total = (Number(data.trainSpeedups) || 0) + (Number(data.genSpeedupsD4) || 0);
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-gray-700/50">
                         <td class="p-3">${data.nickname || '-'}</td>
                         <td class="p-3">${data.playerId || '-'}</td>
                         <td class="p-3 font-semibold text-amber-400">${data.alliance || '-'}</td>
-                        <td class="p-3">${data.constSpeedups || 0}</td>
-                        <td class="p-3">${data.researchSpeedups || 0}</td>
-                        <td class="p-3">${data.trainSpeedups || 0}</td>
-                        <td class="p-3">${data.trueGold || 0}</td>
+                        <td class="p-3 font-bold text-emerald-400">${d1Total} mins</td>
+                        <td class="p-3 font-bold text-emerald-400">${d2Total} mins</td>
+                        <td class="p-3 font-bold text-emerald-400">${d4Total} mins</td>
+                        <td class="p-3">${data.trueGoldD1 || 0}</td>
+                        <td class="p-3">${data.trueGoldD2 || 0}</td>
                         <td class="p-3">${data.temperedGold || 0}</td>
-                        <td class="p-3">${data.goldDust || 0}</td>
-                        <td class="p-3 text-xs">${data.slots ? data.slots.join(', ') : ''}</td>
+                        <td class="p-3 text-xs">${data.slotsD1 ? data.slotsD1.join(', ') : ''}</td>
+                        <td class="p-3 text-xs">${data.slotsD2 ? data.slotsD2.join(', ') : ''}</td>
+                        <td class="p-3 text-xs">${data.slotsD4 ? data.slotsD4.join(', ') : ''}</td>
                         <td class="p-3 text-xs italic text-gray-300">${data.comments || '-'}</td>
                         <td class="p-3">
-                            <button onclick="openModal('${data.screenshot || ''}')" class="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-xs text-white">View Proof</button>
+                            <button onclick="openModal('${data.resourceProof || ''}', '${data.speedupProof || ''}')" class="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-xs text-white">View Proofs</button>
                         </td>
                         <td class="p-3 text-xs text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
                     </tr>
