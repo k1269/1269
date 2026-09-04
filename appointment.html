@@ -232,18 +232,24 @@
             </form>
         </section>
 
-        <!-- Hidden Admin Access Trigger -->
+        <!-- Admin Google Sign-in Trigger -->
         <div class="mt-12 text-center">
-            <button onclick="adminLogin()" class="text-xs text-gray-600 hover:text-amber-400 transition">Admin Access (Command Center)</button>
+            <button onclick="adminLogin()" class="text-xs text-gray-600 hover:text-amber-400 transition flex items-center gap-2 mx-auto">
+                <span>🔐</span> Admin Login with Gmail (Google Auth)
+            </button>
         </div>
 
         <!-- 4. Admin Dashboard Section -->
         <section id="admin-dashboard" class="hidden bg-gray-800 p-8 rounded-xl border border-amber-600 mt-8 shadow-xl">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <h2 class="text-xl font-bold text-amber-400">Admin Command Center Dashboard</h2>
+                <div>
+                    <h2 class="text-xl font-bold text-amber-400">Admin Command Center Dashboard</h2>
+                    <p id="admin-user-info" class="text-xs text-gray-400 mt-0.5"></p>
+                </div>
                 <div class="flex gap-3">
                     <button onclick="resetMonthlyData()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-bold transition">Reset Monthly Data</button>
                     <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-sm font-bold transition">Export to Excel</button>
+                    <button onclick="adminLogout()" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-2 rounded text-sm font-bold transition">Sign Out Admin</button>
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -297,8 +303,8 @@
     <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, setDoc, doc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, setDoc, doc, getDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -312,6 +318,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
 
         // خريطة صور البانر الخاصة بالتحالفات
         const allianceBanners = {
@@ -412,11 +419,11 @@
             counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
         };
 
-        // دالة تحويل صيغة الوقت للتقرير والإكسل (تأخذ وقت البداية فقط وتنظفه)
+        // دالة تحويل صيغة الوقت للتقرير والإكسل (تأخذ وقت البداية فقط)
         function formatSlotTime(rawTime) {
             if (!rawTime) return "";
-            let cleanTime = rawTime.replace(/^D\d+_/, ''); // إزالة D1_ أو D2_ أو D4_
-            return cleanTime.split('-')[0].trim(); // أخذ الوقت الأول فقط (مثلاً 23:45)
+            let cleanTime = rawTime.replace(/^D\d+_/, '');
+            return cleanTime.split('-')[0].trim();
         }
 
         async function fetchExistingMembers() {
@@ -438,7 +445,6 @@
             if (password === alliancePasswords[alliance]) {
                 currentMember = { nickname, playerId, alliance };
                 
-                // التحديث التلقائي للبانر عند الدخول
                 if (allianceBanners[alliance]) {
                     document.getElementById('main-banner').src = allianceBanners[alliance];
                 }
@@ -463,7 +469,6 @@
                     document.getElementById('gen-speedups-d4').value = prev.genSpeedupsD4 || '';
                     document.getElementById('player-comments').value = prev.comments || '';
 
-                    // Check prev slots
                     if (prev.slotsD1) {
                         document.querySelectorAll('input[name="slots_d1"]').forEach(chk => chk.checked = prev.slotsD1.includes(chk.value));
                         updateDayCounter('slots_d1', 'counter-d1');
@@ -511,7 +516,6 @@
         window.submitBooking = async function(e) {
             e.preventDefault();
             
-            // 1. التحقق من إدخال الموارد وإظهار تنبيه إذا ترك أي منها فارغاً
             const trueGold1 = document.getElementById('true-gold-d1').value.trim();
             const tempGold = document.getElementById('tempered-gold').value.trim();
             const dustVal = document.getElementById('gold-dust').value.trim();
@@ -521,7 +525,6 @@
                 return;
             }
 
-            // 2. التحقق من تحديد المواعيد مع التأكيد في حال عدم الاختيار
             const checkedD1 = document.querySelectorAll('input[name="slots_d1"]:checked');
             const checkedD2 = document.querySelectorAll('input[name="slots_d2"]:checked');
             const checkedD4 = document.querySelectorAll('input[name="slots_d4"]:checked');
@@ -618,16 +621,52 @@
             document.getElementById('image-modal').classList.remove('hidden');
         };
 
-        // Admin Access Logic
+        // ==========================================
+        // ADMIN GOOGLE AUTHENTICATION & PERMISSIONS
+        // ==========================================
         window.adminLogin = async function() {
-            const pass = prompt("Enter Admin Password:");
-            if (pass === "1269ADMIN" || pass === "1269") {
-                document.getElementById('admin-dashboard').classList.remove('hidden');
-                loadAdminTable();
-            } else {
-                alert("Invalid Admin Password!");
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                await verifyAdminStatus(user);
+            } catch (error) {
+                console.error("Google Auth Error:", error);
+                alert("Login Failed: " + error.message);
             }
         };
+
+        async function verifyAdminStatus(user) {
+            if (!user || !user.email) return;
+
+            // التحقق من وجود الإيميل داخل مجموعة admins في Firestore
+            const adminDocRef = doc(db, "admins", user.email.toLowerCase());
+            const adminDocSnap = await getDoc(adminDocRef);
+
+            if (adminDocSnap.exists()) {
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                document.getElementById('admin-user-info').innerText = `Logged in as Admin: ${user.email}`;
+                loadAdminTable();
+            } else {
+                alert(`Access Denied: The account (${user.email}) does not have admin permissions.`);
+                await signOut(auth);
+                document.getElementById('admin-dashboard').classList.add('hidden');
+            }
+        }
+
+        window.adminLogout = async function() {
+            await signOut(auth);
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            alert("Admin signed out.");
+        };
+
+        // المراقبة المستمرة لحالة تسجيل الدخول
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await verifyAdminStatus(user);
+            } else {
+                document.getElementById('admin-dashboard').classList.add('hidden');
+            }
+        });
 
         async function loadAdminTable() {
             const tbody = document.getElementById('table-body');
@@ -644,7 +683,6 @@
                 const d2Total = (parseFloat(data.researchSpeedups) || 0) + (parseFloat(data.genSpeedupsD2) || 0);
                 const d4Total = (parseFloat(data.trainSpeedups) || 0) + (parseFloat(data.genSpeedupsD4) || 0);
 
-                // تحويل صيغة أوقات المواعيد إلى بداية الموعد فقط
                 const d1Formatted = (data.slotsD1 || []).map(formatSlotTime).join(', ');
                 const d2Formatted = (data.slotsD2 || []).map(formatSlotTime).join(', ');
                 const d4Formatted = (data.slotsD4 || []).map(formatSlotTime).join(', ');
@@ -683,18 +721,17 @@
         };
 
         window.resetMonthlyData = async function() {
+            if (!auth.currentUser) {
+                alert("You must be logged in as an Admin to perform this action.");
+                return;
+            }
             if (confirm("Are you sure you want to delete ALL submitted appointment data? This cannot be undone.")) {
-                const pass = prompt("Confirm Admin Password to execute RESET:");
-                if (pass === "1269ADMIN" || pass === "1269") {
-                    const snapshot = await getDocs(collection(db, "appointment_requests"));
-                    for (const docSnap of snapshot.docs) {
-                        await deleteDoc(doc(db, "appointment_requests", docSnap.id));
-                    }
-                    alert("All data cleared successfully!");
-                    loadAdminTable();
-                } else {
-                    alert("Incorrect Password!");
+                const snapshot = await getDocs(collection(db, "appointment_requests"));
+                for (const docSnap of snapshot.docs) {
+                    await deleteDoc(doc(db, "appointment_requests", docSnap.id));
                 }
+                alert("All data cleared successfully!");
+                loadAdminTable();
             }
         };
     </script>
