@@ -15,7 +15,7 @@
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen">
 
-   <!-- Header Banner Section (معدّل) -->
+    <!-- Header Banner Section -->
     <div class="w-full bg-gray-950 shadow-md relative overflow-hidden">
         <!-- Floating Main Site Button -->
         <div class="absolute top-4 right-4 z-20">
@@ -151,7 +151,7 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 1 Slots (Minimum 4)</label>
+                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 1 Slots (Minimum 4) <span class="text-amber-400 font-bold">(Scroll down 📜)</span></label>
                         <div id="slots-d1-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-950 border border-gray-800 rounded-lg"></div>
                     </div>
                 </div>
@@ -172,12 +172,12 @@
                             <input type="number" id="gen-speedups-d2" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="e.g. 500">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-300 mb-1">True Gold</label>
-                            <input type="number" id="true-gold-d2" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
+                            <label class="block text-xs text-gray-300 mb-1">Gold Dust</label>
+                            <input type="number" id="gold-dust" required min="0" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2.5 text-white text-sm" placeholder="Amount">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 2 Slots (Minimum 4)</label>
+                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 2 Slots (Minimum 4) <span class="text-amber-400 font-bold">(Scroll down 📜)</span></label>
                         <div id="slots-d2-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-950 border border-gray-800 rounded-lg"></div>
                     </div>
                 </div>
@@ -199,7 +199,7 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 4 Slots (Minimum 4)</label>
+                        <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 4 Slots (Minimum 4) <span class="text-amber-400 font-bold">(Scroll down 📜)</span></label>
                         <div id="slots-d4-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-gray-950 border border-gray-800 rounded-lg"></div>
                     </div>
                 </div>
@@ -209,7 +209,7 @@
                     <h3 class="text-sm font-bold text-amber-400">Required Screenshot Proofs</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs text-gray-300 mb-2">1. Resources Screenshot (True Gold / Tempered Gold) <span class="text-red-400">*Required</span></label>
+                            <label class="block text-xs text-gray-300 mb-2">1. Resources Screenshot (True Gold / Tempered Gold / Gold Dust) <span class="text-red-400">*Required</span></label>
                             <input type="file" id="res-proof-input" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:border-0 file:px-4 file:py-2 file:rounded-lg cursor-pointer text-xs" required>
                         </div>
                         <div>
@@ -253,11 +253,11 @@
                             <th class="p-3 sort-header">Nickname ↕</th>
                             <th class="p-3 sort-header">Player ID ↕</th>
                             <th class="p-3 sort-header">Alliance ↕</th>
-                            <th class="p-3 sort-header">Day 1 Total Speedups ↕</th>
-                            <th class="p-3 sort-header">Day 2 Total Speedups ↕</th>
-                            <th class="p-3 sort-header">Day 4 Total Speedups ↕</th>
+                            <th class="p-3 sort-header">Day 1 Speedups ↕</th>
+                            <th class="p-3 sort-header">Day 2 Speedups ↕</th>
+                            <th class="p-3 sort-header">Day 4 Speedups ↕</th>
                             <th class="p-3 sort-header">Day 1 True Gold ↕</th>
-                            <th class="p-3 sort-header">Day 2 True Gold ↕</th>
+                            <th class="p-3 sort-header">Day 2 Gold Dust ↕</th>
                             <th class="p-3 sort-header">Tempered Gold ↕</th>
                             <th class="p-3">Day 1 Slots</th>
                             <th class="p-3">Day 2 Slots</th>
@@ -297,8 +297,8 @@
     <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, setDoc, doc, getDocs, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, setDoc, doc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -313,18 +313,39 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-       const alliancePasswords = {
-    "APX": "AlwaysRightBarbie",
-    "SVG": "DramaticBarbie",
-    "NDT": "TooMuchBarbie",
-    "WAR": "WarBarbie",
-    "DUN": "BossyBarbie",
-    "69A": "69Barbie",
-    "DTM": "JealousBarbie"
-};
+        // خريطة صور البانر الخاصة بالتحالفات
+        const allianceBanners = {
+            "DEFAULT": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "APX": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "SVG": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "NDT": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "WAR": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "DUN": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "69A": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "DTM": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png"
+        };
+
+        const alliancePasswords = {
+            "APX": "AlwaysRightBarbie",
+            "SVG": "DramaticBarbie",
+            "NDT": "TooMuchBarbie",
+            "WAR": "WarBarbie",
+            "DUN": "BossyBarbie",
+            "69A": "69Barbie",
+            "DTM": "JealousBarbie"
+        };
 
         let currentMember = null;
         let existingDataMap = new Map();
+
+        // التبديل التلقائي للبانر عند اختيار التحالف
+        document.getElementById('alliance-select').addEventListener('change', (e) => {
+            const selectedAlliance = e.target.value;
+            const bannerImg = document.getElementById('main-banner');
+            if (allianceBanners[selectedAlliance]) {
+                bannerImg.src = allianceBanners[selectedAlliance];
+            }
+        });
 
         // Calculator logic
         window.calculateSplit = function() {
@@ -391,6 +412,13 @@
             counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold' : 'text-xs text-amber-400 font-semibold';
         };
 
+        // دالة تحويل صيغة الوقت للتقرير والإكسل (تأخذ وقت البداية فقط وتنظفه)
+        function formatSlotTime(rawTime) {
+            if (!rawTime) return "";
+            let cleanTime = rawTime.replace(/^D\d+_/, ''); // إزالة D1_ أو D2_ أو D4_
+            return cleanTime.split('-')[0].trim(); // أخذ الوقت الأول فقط (مثلاً 23:45)
+        }
+
         async function fetchExistingMembers() {
             const querySnapshot = await getDocs(collection(db, "appointment_requests"));
             existingDataMap.clear();
@@ -409,6 +437,12 @@
 
             if (password === alliancePasswords[alliance]) {
                 currentMember = { nickname, playerId, alliance };
+                
+                // التحديث التلقائي للبانر عند الدخول
+                if (allianceBanners[alliance]) {
+                    document.getElementById('main-banner').src = allianceBanners[alliance];
+                }
+
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('booking-section').classList.remove('hidden');
                 document.getElementById('display-name').innerText = `${nickname} (${alliance}) - ID: ${playerId}`;
@@ -423,7 +457,7 @@
 
                     document.getElementById('research-speedups').value = prev.researchSpeedups || '';
                     document.getElementById('gen-speedups-d2').value = prev.genSpeedupsD2 || '';
-                    document.getElementById('true-gold-d2').value = prev.trueGoldD2 || '';
+                    document.getElementById('gold-dust').value = prev.goldDust !== undefined ? prev.goldDust : (prev.trueGoldD2 || '');
 
                     document.getElementById('train-speedups').value = prev.trainSpeedups || '';
                     document.getElementById('gen-speedups-d4').value = prev.genSpeedupsD4 || '';
@@ -477,12 +511,42 @@
         window.submitBooking = async function(e) {
             e.preventDefault();
             
+            // 1. التحقق من إدخال الموارد وإظهار تنبيه إذا ترك أي منها فارغاً
+            const trueGold1 = document.getElementById('true-gold-d1').value.trim();
+            const tempGold = document.getElementById('tempered-gold').value.trim();
+            const dustVal = document.getElementById('gold-dust').value.trim();
+
+            if (trueGold1 === "" || tempGold === "" || dustVal === "") {
+                alert("Please enter 0 if you don't have these resources.");
+                return;
+            }
+
+            // 2. التحقق من تحديد المواعيد مع التأكيد في حال عدم الاختيار
             const checkedD1 = document.querySelectorAll('input[name="slots_d1"]:checked');
             const checkedD2 = document.querySelectorAll('input[name="slots_d2"]:checked');
             const checkedD4 = document.querySelectorAll('input[name="slots_d4"]:checked');
 
-            if (checkedD1.length < 4 || checkedD2.length < 4 || checkedD4.length < 4) {
-                alert("Please select at least 4 time slots for EACH day (Day 1, Day 2, and Day 4).");
+            if (checkedD1.length === 0) {
+                const confirmD1 = confirm("Are you sure you don't want an appointment for Day 1?");
+                if (!confirmD1) return;
+            } else if (checkedD1.length < 4) {
+                alert("Please select at least 4 slots for Day 1 if you choose to book slots for that day.");
+                return;
+            }
+
+            if (checkedD2.length === 0) {
+                const confirmD2 = confirm("Are you sure you don't want an appointment for Day 2?");
+                if (!confirmD2) return;
+            } else if (checkedD2.length < 4) {
+                alert("Please select at least 4 slots for Day 2 if you choose to book slots for that day.");
+                return;
+            }
+
+            if (checkedD4.length === 0) {
+                const confirmD4 = confirm("Are you sure you don't want an appointment for Day 4?");
+                if (!confirmD4) return;
+            } else if (checkedD4.length < 4) {
+                alert("Please select at least 4 slots for Day 4 if you choose to book slots for that day.");
                 return;
             }
 
@@ -511,127 +575,127 @@
                     
                     constSpeedups: document.getElementById('const-speedups').value,
                     genSpeedupsD1: document.getElementById('gen-speedups-d1').value,
-                    trueGoldD1: document.getElementById('true-gold-d1').value,
-                    temperedGold: document.getElementById('tempered-gold').value,
+                    trueGoldD1: trueGold1,
+                    temperedGold: tempGold,
 
                     researchSpeedups: document.getElementById('research-speedups').value,
                     genSpeedupsD2: document.getElementById('gen-speedups-d2').value,
-                    trueGoldD2: document.getElementById('true-gold-d2').value,
+                    goldDust: dustVal,
 
                     trainSpeedups: document.getElementById('train-speedups').value,
                     genSpeedupsD4: document.getElementById('gen-speedups-d4').value,
 
                     comments: document.getElementById('player-comments').value,
-                    
-                    slotsD1: Array.from(checkedD1).map(el => el.value),
-                    slotsD2: Array.from(checkedD2).map(el => el.value),
-                    slotsD4: Array.from(checkedD4).map(el => el.value),
+
+                    slotsD1: Array.from(checkedD1).map(c => c.value),
+                    slotsD2: Array.from(checkedD2).map(c => c.value),
+                    slotsD4: Array.from(checkedD4).map(c => c.value),
 
                     resourceProof: resImg,
                     speedupProof: speedImg,
                     timestamp: new Date().toISOString()
                 });
 
-                alert("Thank you for saving your resources for the KVK\nyour application has been sent successfully");
+                alert("Booking successfully saved!");
                 location.reload();
-            } catch (err) {
-                alert("Error: " + err.message);
+            } catch (error) {
+                console.error("Error saving booking: ", error);
+                alert("An error occurred while saving: " + error.message);
+            } finally {
                 btn.disabled = false;
                 btn.innerText = "Submit / Update Booking Request";
             }
         };
 
-        window.openModal = (resImg, speedImg) => {
-            if (!resImg && !speedImg) {
-                alert("No image proof attached.");
-                return;
-            }
-            document.getElementById('modal-res-img').src = resImg || '';
-            document.getElementById('modal-speed-img').src = speedImg || '';
-            document.getElementById('image-modal').classList.remove('hidden');
-        };
-
-        window.closeModal = () => {
+        // Modal Controls
+        window.closeModal = function() {
             document.getElementById('image-modal').classList.add('hidden');
         };
 
-        window.adminLogin = async () => {
-            try {
-                const provider = new GoogleAuthProvider();
-                const result = await signInWithPopup(auth, provider);
-                const userEmail = result.user.email;
+        window.openModal = function(resUrl, speedUrl) {
+            document.getElementById('modal-res-img').src = resUrl || '';
+            document.getElementById('modal-speed-img').src = speedUrl || '';
+            document.getElementById('image-modal').classList.remove('hidden');
+        };
 
-                const adminRef = doc(db, "admins", userEmail);
-                const adminSnap = await getDoc(adminRef);
-
-                if (adminSnap.exists()) {
-                    document.getElementById('admin-dashboard').classList.remove('hidden');
-                    loadAdminTable();
-                } else {
-                    alert("Access Denied.");
-                }
-            } catch (err) {
-                alert("Login failed: " + err.message);
+        // Admin Access Logic
+        window.adminLogin = async function() {
+            const pass = prompt("Enter Admin Password:");
+            if (pass === "1269ADMIN" || pass === "1269") {
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                loadAdminTable();
+            } else {
+                alert("Invalid Admin Password!");
             }
         };
 
         async function loadAdminTable() {
-            const querySnapshot = await getDocs(collection(db, "appointment_requests"));
             const tbody = document.getElementById('table-body');
-            tbody.innerHTML = "";
-            querySnapshot.forEach((docSnap) => {
+            tbody.innerHTML = '<tr><td colspan="15" class="p-4 text-center">Loading data...</td></tr>';
+            const snapshot = await getDocs(collection(db, "appointment_requests"));
+            tbody.innerHTML = '';
+
+            snapshot.forEach(docSnap => {
                 const data = docSnap.data();
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-700/50 transition border-b border-gray-700 text-xs';
+                
+                const d1Total = (parseFloat(data.constSpeedups) || 0) + (parseFloat(data.genSpeedupsD1) || 0);
+                const d2Total = (parseFloat(data.researchSpeedups) || 0) + (parseFloat(data.genSpeedupsD2) || 0);
+                const d4Total = (parseFloat(data.trainSpeedups) || 0) + (parseFloat(data.genSpeedupsD4) || 0);
 
-                const d1Total = (Number(data.constSpeedups) || 0) + (Number(data.genSpeedupsD1) || 0);
-                const d2Total = (Number(data.researchSpeedups) || 0) + (Number(data.genSpeedupsD2) || 0);
-                const d4Total = (Number(data.trainSpeedups) || 0) + (Number(data.genSpeedupsD4) || 0);
+                // تحويل صيغة أوقات المواعيد إلى بداية الموعد فقط
+                const d1Formatted = (data.slotsD1 || []).map(formatSlotTime).join(', ');
+                const d2Formatted = (data.slotsD2 || []).map(formatSlotTime).join(', ');
+                const d4Formatted = (data.slotsD4 || []).map(formatSlotTime).join(', ');
 
-                tbody.innerHTML += `
-                    <tr class="hover:bg-gray-700/50">
-                        <td class="p-3">${data.nickname || '-'}</td>
-                        <td class="p-3">${data.playerId || '-'}</td>
-                        <td class="p-3 font-semibold text-amber-400">${data.alliance || '-'}</td>
-                        <td class="p-3 font-bold text-emerald-400">${d1Total} mins</td>
-                        <td class="p-3 font-bold text-emerald-400">${d2Total} mins</td>
-                        <td class="p-3 font-bold text-emerald-400">${d4Total} mins</td>
-                        <td class="p-3">${data.trueGoldD1 || 0}</td>
-                        <td class="p-3">${data.trueGoldD2 || 0}</td>
-                        <td class="p-3">${data.temperedGold || 0}</td>
-                        <td class="p-3 text-xs">${data.slotsD1 ? data.slotsD1.join(', ') : ''}</td>
-                        <td class="p-3 text-xs">${data.slotsD2 ? data.slotsD2.join(', ') : ''}</td>
-                        <td class="p-3 text-xs">${data.slotsD4 ? data.slotsD4.join(', ') : ''}</td>
-                        <td class="p-3 text-xs italic text-gray-300">${data.comments || '-'}</td>
-                        <td class="p-3">
-                            <button onclick="openModal('${data.resourceProof || ''}', '${data.speedupProof || ''}')" class="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-xs text-white">View Proofs</button>
-                        </td>
-                        <td class="p-3 text-xs text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
-                    </tr>
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-amber-400">${data.nickname || ''}</td>
+                    <td class="p-3">${data.playerId || ''}</td>
+                    <td class="p-3 font-bold">${data.alliance || ''}</td>
+                    <td class="p-3">${d1Total} mins</td>
+                    <td class="p-3">${d2Total} mins</td>
+                    <td class="p-3">${d4Total} mins</td>
+                    <td class="p-3">${data.trueGoldD1 || 0}</td>
+                    <td class="p-3">${data.goldDust !== undefined ? data.goldDust : (data.trueGoldD2 || 0)}</td>
+                    <td class="p-3">${data.temperedGold || 0}</td>
+                    <td class="p-3">${d1Formatted || '-'}</td>
+                    <td class="p-3">${d2Formatted || '-'}</td>
+                    <td class="p-3">${d4Formatted || '-'}</td>
+                    <td class="p-3 max-w-xs truncate">${data.comments || '-'}</td>
+                    <td class="p-3">
+                        <button onclick="openModal('${data.resourceProof}', '${data.speedupProof}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button>
+                    </td>
+                    <td class="p-3 text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
                 `;
+                tbody.appendChild(tr);
             });
 
-            try {
+            if (window.Tablesort) {
                 new Tablesort(document.getElementById('data-table'));
-            } catch(e) {}
+            }
         }
 
-        window.resetMonthlyData = async () => {
-            if (confirm("Are you sure you want to reset all data for the new month? This will delete all current submissions.")) {
-                try {
-                    const querySnapshot = await getDocs(collection(db, "appointment_requests"));
-                    const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "appointment_requests", d.id)));
-                    await Promise.all(deletePromises);
-                    alert("Dashboard has been reset successfully!");
-                    loadAdminTable();
-                } catch (err) {
-                    alert("Error resetting data: " + err.message);
-                }
-            }
+        window.exportToExcel = function() {
+            const table = document.getElementById('data-table');
+            const wb = XLSX.utils.table_to_book(table, { sheet: "KvK Appointments" });
+            XLSX.writeFile(wb, "Kingdom1269_Appointments.xlsx");
         };
 
-        window.exportToExcel = () => {
-            const table = document.getElementById("data-table");
-            const wb = XLSX.utils.table_to_book(table, { sheet: "Requests Report" });
-            XLSX.writeFile(wb, "Kingdom1269_Appointments.xlsx");
+        window.resetMonthlyData = async function() {
+            if (confirm("Are you sure you want to delete ALL submitted appointment data? This cannot be undone.")) {
+                const pass = prompt("Confirm Admin Password to execute RESET:");
+                if (pass === "1269ADMIN" || pass === "1269") {
+                    const snapshot = await getDocs(collection(db, "appointment_requests"));
+                    for (const docSnap of snapshot.docs) {
+                        await deleteDoc(doc(db, "appointment_requests", docSnap.id));
+                    }
+                    alert("All data cleared successfully!");
+                    loadAdminTable();
+                } else {
+                    alert("Incorrect Password!");
+                }
+            }
         };
     </script>
 </body>
