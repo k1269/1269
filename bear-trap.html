@@ -80,8 +80,8 @@
                     <input type="number" id="s3" value="90000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
                 </div>
 
-                <!-- S4, S5, S6 Dropdowns -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- S4, S5, S6, S11 Dropdowns -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- S4: Valora 1st skill -->
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">S4 = Valora 1st skill (Dance of the Hunt)</label>
@@ -131,6 +131,23 @@
                             <option value="12000">Level 8: 12,000</option>
                             <option value="13500">Level 9: 13,500</option>
                             <option value="15000" selected>Level 10: 15,000</option>
+                        </select>
+                    </div>
+                    <!-- S11: Great Moose Pet -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Great Moose LVL</label>
+                        <select id="s11" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="0" selected>Level 0: 0</option>
+                            <option value="60000">Level 1: 60,000</option>
+                            <option value="70000">Level 2: 70,000</option>
+                            <option value="80000">Level 3: 80,000</option>
+                            <option value="90000">Level 4: 90,000</option>
+                            <option value="100000">Level 5: 100,000</option>
+                            <option value="110000">Level 6: 110,000</option>
+                            <option value="120000">Level 7: 120,000</option>
+                            <option value="130000">Level 8: 130,000</option>
+                            <option value="140000">Level 9: 140,000</option>
+                            <option value="150000">Level 10: 150,000</option>
                         </select>
                     </div>
                 </div>
@@ -184,16 +201,17 @@
             const S4 = parseFloat(document.getElementById('s4').value) || 0;
             const S5 = parseFloat(document.getElementById('s5').value) || 0;
             const S6 = parseFloat(document.getElementById('s6').value) || 0;
+            const S11 = parseFloat(document.getElementById('s11').value) || 0;
 
             const r1Input = document.getElementById('r1').value;
             const r2Input = document.getElementById('r2').value;
             const r3Input = document.getElementById('r3').value;
 
-            // Equations
-            const S7 = S2 + S4 + S5 + S6; // Your rally capacity
-            const S8 = S1 + S6 + S5;       // Hidden calculation base
+            // Equations (Added S11 Great Moose to S7)
+            const S7 = S2 + S4 + S5 + S6 + S11; // Your rally capacity
+            const S8 = S1 + S6 + S5;            // Hidden calculation base
             const S9 = 14 * S3;
-            const S10 = S7 - S9;          // Squad deployment of YOUR Rally (hidden from standalone page text)
+            const S10 = S7 - S9;               // Squad deployment of YOUR Rally
 
             const contentDiv = document.getElementById('resultContent');
 
