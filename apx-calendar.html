@@ -1,1 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kingdom 1269 - APX Leaders Calendar</title>
+  
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-card: #121824;
+      --bg-header: #1a2233;
+      --gold-primary: #d4af37;
+      --gold-hover: #f3cf55;
+      --text-main: #f0f4fc;
+      --text-muted: #8b9bb4;
+      --border-color: #26334d;
+      --danger-color: #ff4d4d;
+      --success-color: #00e676;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4, .brand-title {
+      font-family: 'Rajdhani', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Header & Navigation */
+    header {
+      background: var(--bg-header);
+      border-bottom: 2px solid var(--border-color);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .brand i {
+      font-size: 2rem;
+      color: var(--gold-primary);
+    }
+
+    .brand-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold-primary);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .user-role {
+      font-size: 0.75rem;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-primary);
+    }
+
+    .btn-login, .btn-logout, .btn-action {
+      background: linear-gradient(135deg, var(--gold-primary), #997a15);
+      color: #000;
+      border: none;
+      padding: 8px 18px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-login:hover, .btn-action:hover {
+      background: var(--gold-hover);
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-logout {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-logout:hover {
+      background: #ff4d4d22;
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    /* Main Layout */
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 25px;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    /* Login Overlay */
+    #login-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      text-align: center;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-top: 40px;
+    }
+
+    #login-screen i {
+      font-size: 4rem;
+      color: var(--gold-primary);
+      margin-bottom: 20px;
+    }
+
+    /* Dashboard Content Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      color: var(--gold-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Google Calendar Embed Container */
+    .calendar-iframe-container {
+      position: relative;
+      padding-bottom: 65%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .calendar-iframe-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Rule Violations & Notes Forms */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      background: #080b12;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--gold-primary);
+    }
+
+    select.form-control {
+      cursor: pointer;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Logs Table */
+    .logs-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .logs-table th, .logs-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .logs-table th {
+      background: var(--bg-header);
+      color: var(--gold-primary);
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-critical { background: #ff4d4d33; color: #ff4d4d; border: 1px solid #ff4d4d; }
+    .badge-medium { background: #ff980033; color: #ff9800; border: 1px solid #ff9800; }
+    .badge-low { background: #00e67633; color: #00e676; border: 1px solid #00e676; }
+
+    /* Webhook Indicator */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success-color);
+      box-shadow: 0 0 8px var(--success-color);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <div class="brand">
+      <i class="fa-solid fa-crown"></i>
+      <div>
+        <div class="brand-title">Kingdom 1269</div>
+        <div style="font-size:0.75rem; color:var(--text-muted);">APX Alliance Leadership Portal</div>
+      </div>
+    </div>
+
+    <!-- User Auth Area -->
+    <div id="auth-area">
+      <button id="btn-google-login" class="btn-login">
+        <i class="fa-brands fa-google"></i> Leader Login with Google
+      </button>
+
+      <div id="user-profile" class="user-profile" style="display: none;">
+        <img id="user-avatar" class="avatar" src="" alt="Leader Avatar">
+        <div class="user-info">
+          <div id="user-display-name" class="user-name">Leader Name</div>
+          <div class="user-role">APX Leader</div>
+        </div>
+        <button id="btn-logout" class="btn-logout">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <div class="container">
+
+    <!-- Login Screen placeholder (Shown if not logged in) -->
+    <div id="login-screen">
+      <i class="fa-solid fa-shield-halved"></i>
+      <h2>APX Leaders Command Access</h2>
+      <p style="color: var(--text-muted); margin: 10px 0 25px;">Please authenticate using your authorized Google account to view the schedule, strategy notes, and rule compliance logs.</p>
+      <button class="btn-login" onclick="loginWithGoogle()">
+        <i class="fa-brands fa-google"></i> Sign In via Google Account
+      </button>
+    </div>
+
+    <!-- Protected Dashboard (Hidden by default until login) -->
+    <div id="dashboard-content" style="display: none;">
+
+      <!-- Top Status Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div class="status-bar">
+          <span class="dot"></span> Connected to Discord Webhook Notifications (#apx-announcements)
+        </div>
+        <button class="btn-logout" onclick="sendTestWebhook()"><i class="fa-brands fa-discord"></i> Test Discord Webhook</button>
+      </div>
+
+      <div class="dashboard-grid">
+
+        <!-- Left Column: Google Calendar Embed -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fa-solid fa-calendar-days"></i> APX Events & War Calendar</div>
+            <span style="font-size: 0.8rem; color: var(--gold-primary);">ID: kdn1269@gmail.com</span>
+          </div>
+
+          <!-- Embedded Interactive Google Calendar -->
+          <div class="calendar-iframe-container">
+            <iframe src="https://calendar.google.com/calendar/embed?src=kdn1269%40gmail.com&ctz=UTC&mode=MONTH&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=0&showTz=0&bgcolor=%23121824" style="border: 0" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>
+          </div>
+        </div>
+
+        <!-- Right Column: Rule Violators Log Form & Notes -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+
+          <!-- Rule Violators Log Form Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title" style="color: var(--danger-color);"><i class="fa-solid fa-triangle-exclamation"></i> Log Rule Violator</div>
+            </div>
+
+            <form id="rule-violator-form">
+              <div class="form-group">
+                <label>Player Name / Alliance Tag</label>
+                <input type="text" id="violator-name" class="form-control" placeholder="e.g. APX-PlayerOne" required>
+              </div>
+
+              <div class="form-group">
+                <label>Violation Type / Details</label>
+                <input type="text" id="violation-reason" class="form-control" placeholder="e.g. Hit tile during NAP / Off-schedule rallying" required>
+              </div>
+
+              <div class="form-group">
+                <label>Severity Level</label>
+                <select id="violation-severity" class="form-control">
+                  <option value="Low">Low - First Warning</option>
+                  <option value="Medium" selected>Medium - Resource Fine Required</option>
+                  <option value="Critical">Critical - Zeroing / Alliance Kick</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Notes & Evidence Link</label>
+                <textarea id="violation-notes" class="form-control" placeholder="Add screenshots URL or additional context..."></textarea>
+              </div>
+
+              <button type="submit" class="btn-action" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #ff4d4d, #990000); color: white;">
+                <i class="fa-solid fa-paper-plane"></i> Submit & Dispatch to Discord
+              </button>
+            </form>
+          </div>
+
+          <!-- Strategy Notes Quick Form -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fa-solid fa-note-sticky"></i> APX Strategy Announcement</div>
+            </div>
+
+            <form id="strategy-note-form">
+              <div class="form-group">
+                <label>Event Title / Topic</label>
+                <input type="text" id="note-topic" class="form-control" placeholder="e.g. Bear Trap Rally Formations" required>
+              </div>
+
+              <div class="form-group">
+                <label>Leader Instructions</label>
+                <textarea id="note-content" class="form-control" placeholder="Write leadership guidelines or army setup instructions..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn-action" style="width: 100%; justify-content: center;">
+                <i class="fa-solid fa-bullhorn"></i> Post Note & Notify Discord
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Bottom Table: Recent Rule Violations Log -->
+      <div class="card" style="margin-top: 25px;">
+        <div class="card-header">
+          <div class="card-title"><i class="fa-solid fa-list-check"></i> Recent Rule Violations & Compliance History</div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="logs-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Player / Tag</th>
+                <th>Violation Detail</th>
+                <th>Severity</th>
+                <th>Reported By</th>
+              </tr>
+            </thead>
+            <tbody id="violators-list">
+              <!-- Dynamic Rows inserted via JavaScript -->
+              <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No rule violations recorded yet. All alliance members compliant.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // ------------------------------------------------------------------
+    // 1. FIREBASE CONFIGURATION
+    // Replace with your actual Firebase Project Configuration credentials
+    // ------------------------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // ------------------------------------------------------------------
+    // 2. DISCORD WEBHOOK INTEGRATION
+    // ------------------------------------------------------------------
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1554060552647741460/XVdUsJxa04iDiO_fvdDqNfU1UNK24NLVEq4-guj8cR4bMCOSA3feN469Vh-D8Fvpb-aG";
+
+    function sendDiscordEmbed(embedData) {
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "APX Leadership System",
+          avatar_url: "https://i.imgur.com/8N4I4X0.png",
+          embeds: [embedData]
+        })
+      }).then(res => {
+        if(res.ok) console.log("Discord alert sent successfully!");
+      }).catch(err => console.error("Error sending Discord webhook:", err));
+    }
+
+    function sendTestWebhook() {
+      sendDiscordEmbed({
+        title: "⚙️ Webhook Test Connection",
+        description: "The APX Leaders Calendar dashboard is successfully connected to Discord!",
+        color: 5763719,
+        footer: { text: "Kingdom 1269 • APX Leaders Portal" },
+        timestamp: new Date().toISOString()
+      });
+      alert("Test alert sent to Discord!");
+    }
+
+    // ------------------------------------------------------------------
+    // 3. AUTHENTICATION (GOOGLE SIGN-IN)
+    // ------------------------------------------------------------------
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    function loginWithGoogle() {
+      auth.signInWithPopup(provider).catch(error => {
+        console.error("Login failed:", error);
+        alert("Google Sign-In Failed: " + error.message);
+      });
+    }
+
+    document.getElementById("btn-google-login").addEventListener("click", loginWithGoogle);
+    document.getElementById("btn-logout").addEventListener("click", () => auth.signOut());
+
+    auth.onAuthStateChanged(user => {
+      const loginScreen = document.getElementById("login-screen");
+      const dashboardContent = document.getElementById("dashboard-content");
+      const btnGoogleLogin = document.getElementById("btn-google-login");
+      const userProfile = document.getElementById("user-profile");
+
+      if (user) {
+        // User is authenticated
+        loginScreen.style.display = "none";
+        dashboardContent.style.display = "block";
+        btnGoogleLogin.style.display = "none";
+        userProfile.style.display = "flex";
+
+        document.getElementById("user-display-name").textContent = user.displayName || user.email;
+        document.getElementById("user-avatar").src = user.photoURL || "https://via.placeholder.com/40";
+
+        // Load logged violations from Firestore
+        listenToViolationsLog();
+      } else {
+        // User signed out
+        loginScreen.style.display = "flex";
+        dashboardContent.style.display = "none";
+        btnGoogleLogin.style.display = "inline-flex";
+        userProfile.style.display = "none";
+      }
+    });
+
+    // ------------------------------------------------------------------
+    // 4. RULE VIOLATORS LOG LOGIC
+    // ------------------------------------------------------------------
+    document.getElementById("rule-violator-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const violatorName = document.getElementById("violator-name").value;
+      const reason = document.getElementById("violation-reason").value;
+      const severity = document.getElementById("violation-severity").value;
+      const notes = document.getElementById("violation-notes").value;
+
+      const logData = {
+        violatorName: violatorName,
+        reason: reason,
+        severity: severity,
+        notes: notes,
+        reportedBy: user.displayName || user.email,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        createdAt: new Date().toLocaleString()
+      };
+
+      // Save to Firestore DB
+      db.collection("apx_rule_violators").add(logData).then(() => {
+        // Send alert to Discord Webhook
+        let colorCode = severity === 'Critical' ? 16724813 : (severity === 'Medium' ? 16750848 : 65142);
+        
+        sendDiscordEmbed({
+          title: `🚨 Rule Violation Recorded: ${violatorName}`,
+          color: colorCode,
+          fields: [
+            { name: "Player / Tag", value: violatorName, inline: true },
+            { name: "Severity", value: severity, inline: true },
+            { name: "Reported By", value: user.displayName || user.email, inline: true },
+            { name: "Violation Detail", value: reason },
+            { name: "Notes / Evidence", value: notes || "None provided" }
+          ],
+          footer: { text: "Kingdom 1269 • APX Compliance System" },
+          timestamp: new Date().toISOString()
+        });
+
+        alert("Rule violation recorded and dispatched to Discord!");
+        document.getElementById("rule-violator-form").reset();
+      }).catch(err => {
+        console.error("Error saving violation:", err);
+        alert("Failed to save violation: " + err.message);
+      });
+    });
+
+    // Fetch and display real-time violations list from Firestore
+    function listenToViolationsLog() {
+      db.collection("apx_rule_violators")
+        .orderBy("timestamp", "desc")
+        .limit(10)
+        .onSnapshot(snapshot => {
+          const tableBody = document.getElementById("violators-list");
+          tableBody.innerHTML = "";
+
+          if (snapshot.empty) {
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No rule violations recorded yet. All alliance members compliant.</td></tr>`;
+            return;
+          }
+
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const badgeClass = data.severity === 'Critical' ? 'badge-critical' : (data.severity === 'Medium' ? 'badge-medium' : 'badge-low');
+            
+            const row = `
+              <tr>
+                <td>${data.createdAt || 'Just now'}</td>
+                <td style="font-weight:700; color:var(--gold-primary);">${data.violatorName}</td>
+                <td>${data.reason}</td>
+                <td><span class="badge ${badgeClass}">${data.severity}</span></td>
+                <td>${data.reportedBy}</td>
+              </tr>
+            `;
+                tableBody.innerHTML += row;
+          });
+        });
+    }
+
+    // ------------------------------------------------------------------
+    // 5. STRATEGY NOTE FORM LOGIC
+    // ------------------------------------------------------------------
+    document.getElementById("strategy-note-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const topic = document.getElementById("note-topic").value;
+      const content = document.getElementById("note-content").value;
+
+      sendDiscordEmbed({
+        title: `📢 APX Strategy Announcement: ${topic}`,
+        description: content,
+        color: 13938487, // Gold color
+        author: { name: user.displayName || "APX Leader", icon_url: user.photoURL },
+        footer: { text: "Kingdom 1269 • APX Leadership Announcement" },
+        timestamp: new Date().toISOString()
+      });
+
+      alert("Strategy announcement posted to Discord!");
+      document.getElementById("strategy-note-form").reset();
+    });
+  </script>
+</body>
+</html>
