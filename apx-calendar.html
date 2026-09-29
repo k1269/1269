@@ -1,7 +1,12 @@
 <div id="auth-area">
-  <button id="btn-google-login" class="btn-gold">
-    <i class="fa-brands fa-google"></i> Leader Login
-  </button>
+  <div class="auth-buttons" id="auth-buttons-unlogged">
+    <button class="btn-discord" onclick="loginWithDiscord()">
+      <i class="fa-brands fa-discord"></i> Discord Login
+    </button>
+    <button class="btn-gold" onclick="loginWithGoogle()">
+      <i class="fa-brands fa-google"></i> Google Login
+    </button>
+  </div>
 
   <div id="user-profile" class="user-profile" style="display: none;">
     <img id="user-avatar" class="avatar" src="" alt="Leader Avatar">
@@ -18,27 +23,33 @@
 
 <!-- Unauthenticated State View -->
 <div id="login-screen">
-  <i class="fa-solid fa-shield-halved"></i>
-  <h2 class="font-cinzel" style="color: #ffffff; margin-bottom: 10px;">APX Leadership Authentication</h2>
-  <p style="color: var(--text-muted); margin-bottom: 28px; line-height: 1.6;">
-    Secure access restricted to Kingdom 1269 APX Alliance Leaders.<br>Authenticate using your Google account to access strategy notes, event details, and compliance logs.
+  <i class="fa-solid fa-shield-halved main-icon"></i>
+  <h2 class="font-cinzel" style="color: #ffffff; margin-bottom: 12px;">APX Leadership Authentication</h2>
+  <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.6;">
+    Restricted Command Portal for Kingdom 1269 APX Alliance Officers.<br>Sign in using your authorized Discord or Google account to access strategy notes, event details, and compliance logs.
   </p>
-  <button class="btn-gold" onclick="loginWithGoogle()">
-    <i class="fa-brands fa-google"></i> Authenticate with Google
-  </button>
+  
+  <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+    <button class="btn-discord" style="padding: 12px 28px; font-size: 1rem;" onclick="loginWithDiscord()">
+      <i class="fa-brands fa-discord"></i> Login with Discord
+    </button>
+    <button class="btn-gold" style="padding: 12px 28px; font-size: 1rem;" onclick="loginWithGoogle()">
+      <i class="fa-brands fa-google"></i> Login with Google
+    </button>
+  </div>
 </div>
 
 <!-- Authenticated Dashboard View -->
 <div id="dashboard-content" style="display: none;">
 
   <!-- Live Discord Status Bar -->
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; background: #0b101b; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border-dark);">
-    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-muted);">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #0b101b; padding: 12px 20px; border-radius: 10px; border: 1px solid var(--border-dark);">
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--text-muted);">
       <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--success-green); box-shadow: 0 0 8px var(--success-green);"></span>
       Discord Webhook Dispatcher Active (#apx-announcements)
     </div>
-    <button class="btn-outline" style="padding: 4px 12px; font-size: 0.8rem;" onclick="sendTestWebhook()">
-      <i class="fa-brands fa-discord"></i> Test Discord Signal
+    <button class="btn-outline" style="padding: 6px 14px; font-size: 0.8rem;" onclick="sendTestWebhook()">
+      <i class="fa-brands fa-discord"></i> Test Webhook Signal
     </button>
   </div>
 
@@ -50,7 +61,7 @@
       <div class="card">
         <div class="card-header">
           <div class="card-title font-rajdhani"><i class="fa-solid fa-calendar-check"></i> Master Operations Calendar</div>
-          <span style="font-size: 0.8rem; color: var(--gold-primary);" class="font-rajdhani">kdn1269@gmail.com</span>
+          <span style="font-size: 0.85rem; color: var(--gold-primary);" class="font-rajdhani">kdn1269@gmail.com</span>
         </div>
         
         <div id="calendar"></div>
@@ -63,7 +74,7 @@
             <i class="fa-solid fa-list-ul" style="color: var(--gold-primary);"></i>
             <span id="selected-date-label">Today's Scheduled Operations & Directives</span>
           </div>
-          <span id="event-count-badge" style="font-size: 0.8rem; color: var(--gold-primary); font-weight: 700;">0 Events</span>
+          <span id="event-count-badge" style="font-size: 0.85rem; color: var(--gold-primary); font-weight: 700;">0 Events</span>
         </div>
 
         <!-- Dynamic Feed of Events -->
