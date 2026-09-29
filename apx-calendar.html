@@ -1,5 +1,5 @@
 <div id="auth-area">
-  <div class="auth-buttons" id="auth-buttons-unlogged">
+  <div id="auth-buttons-unlogged" style="display: flex; gap: 10px;">
     <button class="btn-discord" onclick="loginWithDiscord()">
       <i class="fa-brands fa-discord"></i> Discord Login
     </button>
@@ -21,11 +21,11 @@
 </div>
 
 
-<!-- Unauthenticated State View -->
+<!-- Unauthenticated Login View -->
 <div id="login-screen">
   <i class="fa-solid fa-shield-halved main-icon"></i>
   <h2 class="font-cinzel" style="color: #ffffff; margin-bottom: 12px;">APX Leadership Authentication</h2>
-  <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.6;">
+  <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.6; max-width: 600px;">
     Restricted Command Portal for Kingdom 1269 APX Alliance Officers.<br>Sign in using your authorized Discord or Google account to access strategy notes, event details, and compliance logs.
   </p>
   
@@ -43,7 +43,7 @@
 <div id="dashboard-content" style="display: none;">
 
   <!-- Live Discord Status Bar -->
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #0b101b; padding: 12px 20px; border-radius: 10px; border: 1px solid var(--border-dark);">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #0b101a; padding: 12px 20px; border-radius: 10px; border: 1px solid var(--border-dark);">
     <div style="display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--text-muted);">
       <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--success-green); box-shadow: 0 0 8px var(--success-green);"></span>
       Discord Webhook Dispatcher Active (#apx-announcements)
@@ -67,7 +67,7 @@
         <div id="calendar"></div>
       </div>
 
-      <!-- Selected Day's Event Details (Mobile/Desktop Clear Notes View) -->
+      <!-- Selected Day's Event Details (Mobile & Desktop Notes View) -->
       <div class="day-events-container">
         <div class="day-events-header">
           <div class="day-events-title font-rajdhani">
