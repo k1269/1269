@@ -1,186 +1,1286 @@
-<div id="auth-area">
-  <div id="auth-buttons-unlogged" style="display: flex; gap: 10px;">
-    <button class="btn-discord" onclick="loginWithDiscord()">
-      <i class="fa-brands fa-discord"></i> Discord Login
-    </button>
-    <button class="btn-gold" onclick="loginWithGoogle()">
-      <i class="fa-brands fa-google"></i> Google Login
-    </button>
-  </div>
-
-  <div id="user-profile" class="user-profile" style="display: none;">
-    <img id="user-avatar" class="avatar" src="" alt="Leader Avatar">
-    <div style="text-align: right;">
-      <div id="user-display-name" style="font-weight: 700; font-size: 0.95rem;">Leader</div>
-      <div style="font-size: 0.75rem; color: var(--gold-primary); font-weight: 700;" class="font-rajdhani">APX COMMANDER</div>
-    </div>
-    <button id="btn-logout" class="btn-outline">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </button>
-  </div>
-</div>
-
-
-<!-- Unauthenticated Login View -->
-<div id="login-screen">
-  <i class="fa-solid fa-shield-halved main-icon"></i>
-  <h2 class="font-cinzel" style="color: #ffffff; margin-bottom: 12px;">APX Leadership Authentication</h2>
-  <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.6; max-width: 600px;">
-    Restricted Command Portal for Kingdom 1269 APX Alliance Officers.<br>Sign in using your authorized Discord or Google account to access strategy notes, event details, and compliance logs.
-  </p>
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APX Leaders Portal | Kingdom 1269</title>
   
-  <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
-    <button class="btn-discord" style="padding: 12px 28px; font-size: 1rem;" onclick="loginWithDiscord()">
-      <i class="fa-brands fa-discord"></i> Login with Discord
-    </button>
-    <button class="btn-gold" style="padding: 12px 28px; font-size: 1rem;" onclick="loginWithGoogle()">
-      <i class="fa-brands fa-google"></i> Login with Google
-    </button>
-  </div>
-</div>
+  <!-- Fonts: Cinzel for headers, Rajdhani for subheaders/badges, Inter for body text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            apxDark: '#0a0e17',
+            apxCard: '#121824',
+            apxCardHover: '#182030',
+            apxBorder: '#26334d',
+            goldLight: '#f3cf55',
+            goldBase: '#d4af37',
+            goldDark: '#aa7c11',
+          },
+          fontFamily: {
+            cinzel: ['Cinzel', 'serif'],
+            rajdhani: ['Rajdhani', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
 
-<!-- Authenticated Dashboard View -->
-<div id="dashboard-content" style="display: none;">
+  <!-- FullCalendar v6 core + Google Calendar plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.10/index.global.min.js"></script>
 
-  <!-- Live Discord Status Bar -->
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #0b101a; padding: 12px 20px; border-radius: 10px; border: 1px solid var(--border-dark);">
-    <div style="display: flex; align-items: center; gap: 10px; font-size: 0.88rem; color: var(--text-muted);">
-      <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--success-green); box-shadow: 0 0 8px var(--success-green);"></span>
-      Discord Webhook Dispatcher Active (#apx-announcements)
-    </div>
-    <button class="btn-outline" style="padding: 6px 14px; font-size: 0.8rem;" onclick="sendTestWebhook()">
-      <i class="fa-brands fa-discord"></i> Test Webhook Signal
-    </button>
-  </div>
+  <!-- Firebase Compat SDK v9.23.0 -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <div class="dashboard-grid">
+  <style>
+    /* Dark Metallic Gold Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #26334d;
+      border-radius: 4px;
+      border: 1px solid #d4af37;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #d4af37;
+    }
 
-    <!-- Left Column: Interactive Calendar & Daily Events Feed -->
-    <div>
-      <!-- Calendar Card -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title font-rajdhani"><i class="fa-solid fa-calendar-check"></i> Master Operations Calendar</div>
-          <span style="font-size: 0.85rem; color: var(--gold-primary);" class="font-rajdhani">kdn1269@gmail.com</span>
+    /* Luxury Gold Gradients & Text Glow */
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #fff2a3 0%, #d4af37 50%, #aa7c11 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-gradient-bg {
+      background: linear-gradient(135deg, #d4af37 0%, #f3cf55 50%, #aa7c11 100%);
+    }
+    .gold-border-glow {
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    .gold-border-glow:hover {
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
+      border-color: rgba(212, 175, 55, 0.7);
+    }
+
+    /* FullCalendar Dark Gold Luxury Overrides */
+    .fc {
+      --fc-border-color: #26334d;
+      --fc-page-bg-color: #121824;
+      --fc-neutral-bg-color: #1a2336;
+      --fc-list-event-hover-bg-color: #1f2b42;
+      --fc-today-bg-color: rgba(212, 175, 55, 0.1) !important;
+      font-family: 'Inter', sans-serif;
+    }
+    .fc-toolbar-title {
+      font-family: 'Cinzel', serif !important;
+      color: #f3cf55 !important;
+      font-size: 1.35rem !important;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .fc-button-primary {
+      background: #1a2336 !important;
+      border: 1px solid #3b4d6e !important;
+      color: #d4af37 !important;
+      font-family: 'Rajdhani', sans-serif !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.05em !important;
+      text-transform: uppercase !important;
+      transition: all 0.2s ease !important;
+    }
+    .fc-button-primary:hover {
+      background: #d4af37 !important;
+      color: #0a0e17 !important;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    }
+    .fc-button-active {
+      background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%) !important;
+      color: #0a0e17 !important;
+      border-color: #f3cf55 !important;
+    }
+    .fc-col-header-cell-cushion {
+      color: #d4af37 !important;
+      font-family: 'Rajdhani', sans-serif !important;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      padding: 8px 0 !important;
+    }
+    .fc-daygrid-day-number {
+      color: #94a3b8;
+      font-weight: 600;
+      padding: 4px 8px !important;
+    }
+    .fc-daygrid-day:hover {
+      background-color: rgba(212, 175, 55, 0.05);
+      cursor: pointer;
+    }
+    .fc-event {
+      border: none !important;
+      border-radius: 4px !important;
+      padding: 2px 5px !important;
+      font-size: 0.8rem !important;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .fc-event:hover {
+      transform: scale(1.02);
+      filter: brightness(1.2);
+    }
+
+    /* Custom Toast Animations */
+    @keyframes slideIn {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .toast-anim {
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="bg-apxDark text-slate-200 min-h-screen flex flex-col font-sans selection:bg-goldBase selection:text-apxDark">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+  <!-- Header / Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-[#0a0e17]/95 backdrop-blur-md border-b border-apxBorder">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Kingdom 1269 APX Logo -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-goldBase via-goldLight to-goldDark p-[1px] flex items-center justify-center shadow-lg shadow-goldBase/10">
+          <div class="w-full h-full bg-apxCard rounded-[11px] flex items-center justify-center">
+            <i class="fa-solid font-bold fa-crown text-goldLight text-2xl"></i>
+          </div>
         </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-cinzel text-xl sm:text-2xl font-black tracking-wider gold-gradient-text">APX LEADERS</span>
+            <span class="bg-goldBase/10 text-goldLight text-xs px-2 py-0.5 rounded border border-goldBase/30 font-rajdhani font-bold">K1269</span>
+          </div>
+          <p class="text-xs text-slate-400 font-rajdhani tracking-widest uppercase">Kingdom Operations & Strategy Command</p>
+        </div>
+      </div>
+
+      <!-- Live Sync Status & User Profile Area -->
+      <div class="flex items-center gap-4">
+        <!-- Live Status Indicators (Desktop) -->
+        <div class="hidden md:flex items-center gap-3 text-xs font-rajdhani border-r border-apxBorder pr-4">
+          <div class="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-apxBorder">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="text-slate-300">Firebase: <span id="firebaseStatus" class="text-emerald-400 font-bold">Online</span></span>
+          </div>
+          <div class="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-apxBorder">
+            <i class="fa-regular fa-calendar-check text-goldLight"></i>
+            <span class="text-slate-300">Google Cal: <span id="gcalStatus" class="text-goldLight font-bold">Synced</span></span>
+          </div>
+        </div>
+
+        <!-- Authentication Section -->
+        <div id="authSection" class="flex items-center gap-2">
+          <!-- Logged Out State Button -->
+          <button id="googleLoginBtn" onclick="handleGoogleLogin()" class="flex items-center gap-2 bg-gradient-to-r from-goldBase to-goldDark text-apxDark font-rajdhani font-bold px-4 py-2 rounded-lg text-sm hover:brightness-110 transition shadow-md shadow-goldBase/20">
+            <i class="fa-brands fa-google"></i>
+            <span>Google Sign-In</span>
+          </button>
+          
+          <button id="leaderQuickAuthBtn" onclick="openQuickAuthModal()" class="hidden sm:flex items-center gap-2 bg-apxCard text-slate-300 hover:text-goldLight border border-apxBorder hover:border-goldBase/50 font-rajdhani font-semibold px-3 py-2 rounded-lg text-sm transition">
+            <i class="fa-solid fa-user-shield text-goldLight"></i>
+            <span>Leader Key</span>
+          </button>
+        </div>
+
+        <!-- Logged In User Profile Box (Initially Hidden) -->
+        <div id="userProfileBox" class="hidden flex items-center gap-3 bg-apxCard p-1.5 pl-3 rounded-xl border border-goldBase/30">
+          <img id="userAvatar" src="https://placehold.co/100x100/121824/d4af37?text=APX" alt="Leader Avatar" class="w-8 h-8 rounded-lg object-cover border border-goldBase/40">
+          <div class="hidden sm:block text-left">
+            <div id="userName" class="text-xs font-bold text-slate-200 line-clamp-1">APX Leader</div>
+            <div class="text-[10px] text-goldLight font-rajdhani font-bold uppercase tracking-wider flex items-center gap-1">
+              <i class="fa-solid fa-shield-halved text-[9px]"></i>
+              <span>APX Officer</span>
+            </div>
+          </div>
+          <button onclick="handleLogout()" class="text-slate-400 hover:text-rose-400 p-2 rounded-lg transition" title="Logout">
+            <i class="fa-solid fa-power-off"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Dashboard Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
+    <!-- Top Command Metrics Row -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-apxCard p-4 rounded-xl border border-apxBorder gold-border-glow transition flex items-center justify-between">
+        <div>
+          <p class="text-xs font-rajdhani uppercase tracking-wider text-slate-400 font-semibold">Kingdom Directive</p>
+          <h3 id="metricDirective" class="text-lg sm:text-xl font-cinzel font-bold text-goldLight mt-1">KvK Prep Phase</h3>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-goldBase/10 border border-goldBase/20 flex items-center justify-center text-goldLight">
+          <i class="fa-solid fa-flag text-lg"></i>
+        </div>
+      </div>
+
+      <div class="bg-apxCard p-4 rounded-xl border border-apxBorder gold-border-glow transition flex items-center justify-between">
+        <div>
+          <p class="text-xs font-rajdhani uppercase tracking-wider text-slate-400 font-semibold">Calendar Sync</p>
+          <h3 id="metricEventsCount" class="text-lg sm:text-xl font-cinzel font-bold text-slate-100 mt-1">kdn1269 Live</h3>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <i class="fa-solid fa-calendar-days text-lg"></i>
+        </div>
+      </div>
+
+      <div class="bg-apxCard p-4 rounded-xl border border-apxBorder gold-border-glow transition flex items-center justify-between">
+        <div>
+          <p class="text-xs font-rajdhani uppercase tracking-wider text-slate-400 font-semibold">Logged Violations</p>
+          <h3 id="metricViolationsCount" class="text-lg sm:text-xl font-cinzel font-bold text-rose-400 mt-1">0 Active</h3>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+          <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+        </div>
+      </div>
+
+      <div class="bg-apxCard p-4 rounded-xl border border-apxBorder gold-border-glow transition flex items-center justify-between">
+        <div>
+          <p class="text-xs font-rajdhani uppercase tracking-wider text-slate-400 font-semibold">Discord Webhook</p>
+          <h3 class="text-lg sm:text-xl font-cinzel font-bold text-indigo-400 mt-1">Connected</h3>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+          <i class="fa-brands fa-discord text-lg"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- Calendar & Selected Date Events Feed Area -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- FullCalendar Container (LG: 8 Cols) -->
+      <div class="lg:col-span-8 bg-apxCard p-4 sm:p-6 rounded-2xl border border-apxBorder gold-border-glow">
+        <div class="flex items-center justify-between mb-4 pb-3 border-b border-apxBorder">
+          <div class="flex items-center gap-3">
+            <i class="fa-regular fa-calendar-check text-goldLight text-xl"></i>
+            <div>
+              <h2 class="font-cinzel text-lg font-bold text-slate-100">Kingdom 1269 Master Calendar</h2>
+              <p class="text-xs text-slate-400 font-rajdhani">Google Calendar ID: <span class="text-goldLight">kdn1269@gmail.com</span></p>
+            </div>
+          </div>
+          <button onclick="openAddTacticalEventModal()" class="bg-slate-900 hover:bg-goldBase/10 text-goldLight border border-goldBase/30 px-3 py-1.5 rounded-lg text-xs font-rajdhani font-bold flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Directive</span>
+          </button>
+        </div>
+
+        <!-- FullCalendar Render Mount Point -->
+        <div id="calendar" class="min-h-[500px]"></div>
+      </div>
+
+      <!-- Selected Date Strategy & Events Feed (LG: 4 Cols & Mobile Priority) -->
+      <div class="lg:col-span-4 bg-apxCard p-5 rounded-2xl border border-apxBorder gold-border-glow space-y-4">
         
-        <div id="calendar"></div>
+        <!-- Header for Selected Date Feed -->
+        <div class="bg-gradient-to-r from-slate-900 to-apxCard p-4 rounded-xl border border-goldBase/30">
+          <div class="flex items-center justify-between text-xs text-goldLight font-rajdhani font-bold uppercase tracking-wider mb-1">
+            <span>Selected Strategy Day</span>
+            <i class="fa-solid fa-bullseye text-goldBase"></i>
+          </div>
+          <h3 id="selectedDateTitle" class="font-cinzel text-lg font-bold text-slate-100">Today's Schedule</h3>
+          <p id="selectedDateSubtitle" class="text-xs text-slate-400 mt-1">Click any calendar date or event to inspect tactical notes.</p>
+        </div>
+
+        <!-- Dynamic Selected Day Events List Container -->
+        <div id="selectedDateFeed" class="space-y-3 max-h-[550px] overflow-y-auto pr-1">
+          <!-- Feed items inserted dynamically by JavaScript -->
+        </div>
+
+        <!-- Direct Action Button for Selected Day -->
+        <button onclick="openAddTacticalEventModal()" class="w-full bg-gradient-to-r from-goldBase/20 via-goldLight/20 to-goldDark/20 hover:from-goldBase/30 hover:to-goldDark/30 text-goldLight border border-goldBase/40 py-2.5 rounded-xl text-sm font-rajdhani font-bold flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>Log Strategy Note for Selected Date</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Leader Operations Center: Rule Violators & Discord Strategy Dispatch -->
+    <section class="bg-apxCard p-6 rounded-2xl border border-apxBorder gold-border-glow space-y-6">
+      
+      <!-- Operations Header with Tabs -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-apxBorder pb-4">
+        <div>
+          <h2 class="font-cinzel text-xl font-bold text-slate-100 flex items-center gap-2">
+            <i class="fa-solid fa-shield-cat text-goldLight"></i>
+            <span>Leader Operations Console</span>
+          </h2>
+          <p class="text-xs text-slate-400 font-rajdhani">Execute Alliance Leadership Directives, Log Infractions, & Broadcast Strategy</p>
+        </div>
+
+        <!-- Operation Tabs -->
+        <div class="flex items-center bg-slate-900/90 p-1 rounded-xl border border-apxBorder">
+          <button id="tabViolatorBtn" onclick="switchOpTab('violator')" class="px-4 py-2 rounded-lg text-xs font-rajdhani font-bold transition bg-goldBase text-apxDark shadow-md">
+            <i class="fa-solid fa-user-slash mr-1"></i> Log Rule Violator
+          </button>
+          <button id="tabBroadcastBtn" onclick="switchOpTab('broadcast')" class="px-4 py-2 rounded-lg text-xs font-rajdhani font-bold text-slate-400 hover:text-slate-200 transition">
+            <i class="fa-brands fa-discord mr-1"></i> Broadcast Strategy
+          </button>
+        </div>
       </div>
 
-      <!-- Selected Day's Event Details (Mobile & Desktop Notes View) -->
-      <div class="day-events-container">
-        <div class="day-events-header">
-          <div class="day-events-title font-rajdhani">
-            <i class="fa-solid fa-list-ul" style="color: var(--gold-primary);"></i>
-            <span id="selected-date-label">Today's Scheduled Operations & Directives</span>
-          </div>
-          <span id="event-count-badge" style="font-size: 0.85rem; color: var(--gold-primary); font-weight: 700;">0 Events</span>
-        </div>
-
-        <!-- Dynamic Feed of Events -->
-        <div id="daily-events-feed">
-          <div style="text-align: center; color: var(--text-muted); padding: 25px;">
-            Loading operations schedule...
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Column: Compliance Logger & Strategy Post -->
-    <div style="display: flex; flex-direction: column; gap: 24px;">
-
-      <!-- Rule Violator Entry Form -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title font-rajdhani" style="color: var(--danger-red);">
-            <i class="fa-solid fa-triangle-exclamation"></i> Log Rule Violator
-          </div>
-        </div>
-
-        <form id="rule-violator-form">
-          <div class="form-group">
-            <label>Player Name / Tag</label>
-            <input type="text" id="violator-name" class="form-control" placeholder="e.g. APX-PlayerOne" required>
+      <!-- Tab Content 1: Log Rule Violator Form -->
+      <div id="violatorFormTab" class="space-y-4">
+        <form id="violatorForm" onsubmit="handleViolatorSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase tracking-wider mb-1">Player Name & Alliance Tag *</label>
+            <input type="text" id="violatorName" required placeholder="e.g., [APX] Destroyer99 (Governor ID: 12345)" class="w-full bg-slate-900/80 border border-apxBorder rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-goldBase transition">
           </div>
 
-          <div class="form-group">
-            <label>Violation Details</label>
-            <input type="text" id="violation-reason" class="form-control" placeholder="e.g. Gathering on tile during NAP" required>
-          </div>
-
-          <div class="form-group">
-            <label>Severity Level</label>
-            <select id="violation-severity" class="form-control">
-              <option value="Low">Low - Official Warning</option>
-              <option value="Medium" selected>Medium - Fine & Compensation</option>
-              <option value="Critical">Critical - Zeroing / Alliance Ban</option>
+          <div>
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase tracking-wider mb-1">Violation Category *</label>
+            <select id="violatorType" required class="w-full bg-slate-900/80 border border-apxBorder rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-goldBase transition">
+              <option value="Resource Tile Stealing / Hitting">Resource Tile Stealing / Hitting</option>
+              <option value="Unsanctioned City Attack (NAP Breach)">Unsanctioned City Attack (NAP Breach)</option>
+              <option value="KvK Pass / Fort Disobedience">KvK Pass / Fort Disobedience</option>
+              <option value="AFK During Scheduled Kingdom Event">AFK During Scheduled Kingdom Event</option>
+              <option value="Chat Toxicity / Insubordination">Chat Toxicity / Insubordination</option>
+              <option value="Other Alliance Rule Infraction">Other Alliance Rule Infraction</option>
             </select>
           </div>
 
-          <div class="form-group">
-            <label>Evidence Link / Field Notes</label>
-            <textarea id="violation-notes" class="form-control" placeholder="Provide screenshots link or tactical context..."></textarea>
+          <div>
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase tracking-wider mb-1">Severity Level *</label>
+            <select id="violatorSeverity" required class="w-full bg-slate-900/80 border border-apxBorder rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-goldBase transition">
+              <option value="Critical">Critical (Immediate Zeroing / Dismissal)</option>
+              <option value="High">High (Official Warning + Fine)</option>
+              <option value="Medium" selected>Medium (First Offense / Strike 1)</option>
+              <option value="Low">Low (Minor Discrepancy)</option>
+            </select>
           </div>
 
-          <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color: #fff;">
-            <i class="fa-solid fa-paper-plane"></i> Record & Broadcast to Discord
-          </button>
+          <div>
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase tracking-wider mb-1">Coordinates / Location Evidence</label>
+            <input type="text" id="violatorCoords" placeholder="e.g., X: 450 Y: 820 (Zone 3)" class="w-full bg-slate-900/80 border border-apxBorder rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-goldBase transition">
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase tracking-wider mb-1">Detailed Case Notes & Action Taken *</label>
+            <textarea id="violatorNotes" rows="3" required placeholder="Describe what happened, screenshot links, or recommended punishment..." class="w-full bg-slate-900/80 border border-apxBorder rounded-xl p-4 text-sm text-slate-100 focus:outline-none focus:border-goldBase transition"></textarea>
+          </div>
+
+          <div class="md:col-span-2 flex items-center justify-between pt-2">
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300 font-rajdhani">
+              <input type="checkbox" id="violatorDiscordSync" checked class="w-4 h-4 rounded accent-goldBase">
+              <span>Dispatch Rich Alert Embed to Discord Webhook</span>
+            </label>
+
+            <button type="submit" class="bg-gradient-to-r from-rose-600 to-rose-800 hover:from-rose-500 hover:to-rose-700 text-white font-rajdhani font-bold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-rose-900/30 flex items-center gap-2">
+              <i class="fa-solid fa-gavel"></i>
+              <span>Log Infraction & Notify Discord</span>
+            </button>
+          </div>
         </form>
       </div>
 
-      <!-- Strategy Announcement Form -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title font-rajdhani"><i class="fa-solid fa-bullhorn"></i> Dispatch Strategy Note</div>
+      <!-- Tab Content 2: Strategic Announcement Dispatcher (Hidden initially) -->
+      <div id="broadcastFormTab" class="hidden space-y-4">
+        <form id="broadcastForm" onsubmit="handleBroadcastSubmit(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase tracking-wider mb-1">Strategy Topic / Title *</label>
+            <input type="text" id="broadcastTopic" required placeholder="e.g., Ark of Osiris Squad Placement & Rally Time" class="w-full bg-slate-900/80 border border-apxBorder rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-goldBase transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase tracking-wider mb-1">Target Squad / Audience *</label>
+            <select id="broadcastAudience" class="w-full bg-slate-900/80 border border-apxBorder rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-goldBase transition">
+              <option value="All APX Alliance Members">All APX Alliance Members</option>
+              <option value="R4/R5 Officers Council">R4/R5 Officers Council</option>
+              <option value="KvK Frontline Rally Commanders">KvK Frontline Rally Commanders</option>
+              <option value="Ark of Osiris Team A">Ark of Osiris Team A</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase tracking-wider mb-1">Tactical Instructions & Rally Coordinates *</label>
+            <textarea id="broadcastContent" rows="4" required placeholder="Enter full strategy instructions, march commanders required, equipment specs, and gather times..." class="w-full bg-slate-900/80 border border-apxBorder rounded-xl p-4 text-sm text-slate-100 focus:outline-none focus:border-goldBase transition"></textarea>
+          </div>
+
+          <div class="md:col-span-2 flex items-center justify-between pt-2">
+            <div class="text-xs text-slate-400 font-rajdhani">
+              <i class="fa-brands fa-discord text-indigo-400 mr-1"></i> Dispatches directly to APX Discord Announcements
+            </div>
+
+            <button type="submit" class="bg-gradient-to-r from-indigo-600 to-indigo-800 hover:from-indigo-500 hover:to-indigo-700 text-white font-rajdhani font-bold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-indigo-900/30 flex items-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Broadcast Strategy Directive</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- Compliance History Table -->
+    <section class="bg-apxCard p-6 rounded-2xl border border-apxBorder gold-border-glow space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="font-cinzel text-lg font-bold text-slate-100 flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check text-goldLight"></i>
+            <span>Rule Violator & Compliance Log</span>
+          </h2>
+          <p class="text-xs text-slate-400 font-rajdhani">Real-time Firestore sync of logged infractions and officer disciplinary reports</p>
         </div>
 
-        <form id="strategy-note-form">
-          <div class="form-group">
-            <label>Directive Topic / Event</label>
-            <input type="text" id="note-topic" class="form-control" placeholder="e.g. KvK Fortress Rally Timings" required>
+        <!-- Filter & Search Input -->
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-xs text-slate-500"></i>
+            <input type="text" id="violatorSearchInput" oninput="filterViolatorsTable()" placeholder="Search governor or violation..." class="bg-slate-900 border border-apxBorder rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-goldBase w-48 sm:w-64">
           </div>
-
-          <div class="form-group">
-            <label>Leader Guidelines & Instructions</label>
-            <textarea id="note-content" class="form-control" placeholder="Write army setups, rally leads, and tactical notes..." required></textarea>
-          </div>
-
-          <button type="submit" class="btn-gold" style="width: 100%; justify-content: center;">
-            <i class="fa-solid fa-share-nodes"></i> Post Directive to Discord
-          </button>
-        </form>
+        </div>
       </div>
 
-    </div>
+      <!-- Live Table -->
+      <div class="overflow-x-auto rounded-xl border border-apxBorder">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-900/90 text-goldLight font-rajdhani font-bold uppercase tracking-wider border-b border-apxBorder">
+            <tr>
+              <th class="p-3.5">Timestamp</th>
+              <th class="p-3.5">Governor / Player</th>
+              <th class="p-3.5">Infraction Category</th>
+              <th class="p-3.5">Severity</th>
+              <th class="p-3.5">Reporter</th>
+              <th class="p-3.5">Notes</th>
+              <th class="p-3.5 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="violatorsTableBody" class="divide-y divide-apxBorder bg-apxCard/50">
+            <!-- Dynamic Rows populated via Firestore Listener -->
+            <tr>
+              <td colspan="7" class="p-8 text-center text-slate-500 italic">Loading compliance data from Firestore...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
+  </main>
+
+  <!-- Modal 1: Add Tactical Strategy Note for Selected Day -->
+  <div id="tacticalEventModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-apxCard border border-goldBase/40 rounded-2xl max-w-md w-full p-6 shadow-2xl gold-border-glow space-y-4 relative">
+      <button onclick="closeAddTacticalEventModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-2 border-b border-apxBorder pb-3">
+        <i class="fa-solid fa-pen-nib text-goldLight text-xl"></i>
+        <h3 class="font-cinzel text-lg font-bold text-slate-100">Add Directive / Event</h3>
+      </div>
+
+      <form id="tacticalNoteForm" onsubmit="handleSaveTacticalNote(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase mb-1">Target Date *</label>
+          <input type="date" id="modalEventDate" required class="w-full bg-slate-900 border border-apxBorder rounded-xl px-3 py-2 text-sm text-slate-100 focus:border-goldBase">
+        </div>
+
+        <div>
+          <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase mb-1">Event / Directive Title *</label>
+          <input type="text" id="modalEventTitle" required placeholder="e.g., Ark of Osiris Registration" class="w-full bg-slate-900 border border-apxBorder rounded-xl px-3 py-2 text-sm text-slate-100 focus:border-goldBase">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase mb-1">Time (UTC / Kingdom)</label>
+            <input type="time" id="modalEventTime" value="19:00" class="w-full bg-slate-900 border border-apxBorder rounded-xl px-3 py-2 text-sm text-slate-100 focus:border-goldBase">
+          </div>
+          <div>
+            <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase mb-1">Category Badge</label>
+            <select id="modalEventCategory" class="w-full bg-slate-900 border border-apxBorder rounded-xl px-3 py-2 text-sm text-slate-100 focus:border-goldBase">
+              <option value="Ark of War">Ark of War</option>
+              <option value="KvK Battle">KvK Battle</option>
+              <option value="Council Meeting">Council Meeting</option>
+              <option value="Resource Pause">Resource Pause</option>
+              <option value="Kingdom Decree">Kingdom Decree</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-rajdhani font-bold text-slate-300 uppercase mb-1">Strategic Instructions / Notes</label>
+          <textarea id="modalEventNotes" rows="3" placeholder="Provide details, rally commanders, or march restrictions..." class="w-full bg-slate-900 border border-apxBorder rounded-xl p-3 text-sm text-slate-100 focus:border-goldBase"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" onclick="closeAddTacticalEventModal()" class="px-4 py-2 rounded-xl text-xs font-rajdhani font-bold text-slate-400 hover:bg-slate-800">Cancel</button>
+          <button type="submit" class="bg-gradient-to-r from-goldBase to-goldDark text-apxDark font-rajdhani font-bold px-5 py-2 rounded-xl text-xs hover:brightness-110 shadow-md">
+            Save Directive
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <!-- Bottom Compliance History Table -->
-  <div class="card" style="margin-top: 28px;">
-    <div class="card-header">
-      <div class="card-title font-rajdhani"><i class="fa-solid fa-shield-cat"></i> Field Compliance & Infractions Log</div>
-    </div>
+  <!-- Modal 2: Quick Leader Key Login Modal -->
+  <div id="quickAuthModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-apxCard border border-goldBase/40 rounded-2xl max-w-sm w-full p-6 shadow-2xl gold-border-glow space-y-4 relative">
+      <button onclick="closeQuickAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
 
-    <div style="overflow-x: auto;">
-      <table class="logs-table">
-        <thead>
+      <div class="text-center space-y-1">
+        <i class="fa-solid fa-user-shield text-goldLight text-3xl"></i>
+        <h3 class="font-cinzel text-lg font-bold text-slate-100">Leader Quick Access</h3>
+        <p class="text-xs text-slate-400 font-rajdhani">Enter your Leader Tag or Handle to authenticate session</p>
+      </div>
+
+      <div class="space-y-3">
+        <input type="text" id="quickLeaderName" placeholder="e.g., General_Hell [R5]" class="w-full bg-slate-900 border border-apxBorder rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:border-goldBase">
+        <button onclick="submitQuickAuth()" class="w-full bg-gradient-to-r from-goldBase to-goldDark text-apxDark font-rajdhani font-bold py-2.5 rounded-xl text-sm hover:brightness-110 transition shadow-md">
+          Authenticate Session
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with Signature "Designed by Hell" -->
+  <footer class="mt-auto border-t border-apxBorder bg-[#070a10] py-8 text-center relative overflow-hidden">
+    <!-- Subtle Gold Line Accent -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-goldBase to-transparent"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 space-y-3">
+      <div class="flex items-center justify-center gap-2 text-goldLight">
+        <i class="fa-solid fa-crown text-sm animate-pulse"></i>
+        <span class="font-cinzel text-sm font-bold tracking-widest uppercase">Kingdom 1269 Leadership Realm</span>
+        <i class="fa-solid fa-crown text-sm animate-pulse"></i>
+      </div>
+
+      <!-- Embedded Designer Signature -->
+      <p class="text-xs font-rajdhani tracking-widest text-slate-400">
+        APX LEADERS COMMAND PORTAL &bull; 
+        <span class="font-cinzel font-black text-sm text-goldLight drop-shadow-[0_0_8px_rgba(212,175,55,0.4)] hover:text-white transition-colors cursor-default">
+          Designed by Hell
+        </span>
+      </p>
+
+      <div class="text-[10px] text-slate-600 font-sans">
+        Powered by FullCalendar v6 &bull; Firebase Compat v9.23.0 &bull; Discord Webhook Engine
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ==========================================================================
+       1. EMBEDDED API KEYS & CONFIGURATIONS
+       ========================================================================== */
+    const GOOGLE_CALENDAR_API_KEY = "AIzaSyCCz7OUw1xqmFInhxrZWn1eU2y5UyEZ-Mw";
+    const CALENDAR_ID = "kdn1269@gmail.com";
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1554060552647741460/XVdUsJxa04iDiO_fvdDqNfU1UNK24NLVEq4-guj8cR4bMCOSA3feN469Vh-D8Fvpb-aG";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+      authDomain: "kingdom-1269-portal.firebaseapp.com",
+      projectId: "kingdom-1269-portal",
+      storageBucket: "kingdom-1269-portal.firebasestorage.app",
+      messagingSenderId: "1007373803222",
+      appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+    };
+
+    // Firebase App Artifact Scope Rule
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'kingdom-1269-portal';
+
+    /* ==========================================================================
+       2. GLOBAL STATE VARIABLES
+       ========================================================================== */
+    let calendar = null;
+    let currentUser = null;
+    let allViolatorsCache = [];
+    let localTacticalNotes = [];
+    let selectedDateISO = new Date().toISOString().split('T')[0];
+
+    // Default Sample Strategy Notes for Initial Demo Feed
+    const initialTacticalDirectives = [
+      {
+        id: "tactical-1",
+        date: new Date().toISOString().split('T')[0],
+        time: "19:00 UTC",
+        title: "Ark of Osiris Matchday Preparation",
+        category: "Ark of War",
+        notes: "All main team members must gather on Discord Voice 15 minutes prior. Check equipment and load infantry/cavalry marches."
+      },
+      {
+        id: "tactical-2",
+        date: new Date().toISOString().split('T')[0],
+        time: "22:30 UTC",
+        title: "KvK Pass 4 Defense Muster",
+        category: "KvK Battle",
+        notes: "Keep garrison commanders refreshed. No unsanctioned marches outside flag radius."
+      }
+    ];
+
+    /* ==========================================================================
+       3. FIREBASE INITIALIZATION & AUTHENTICATION
+       ========================================================================== */
+    let db = null;
+    let auth = null;
+
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      auth = firebase.auth();
+      db = firebase.firestore();
+
+      document.getElementById('firebaseStatus').innerText = "Online";
+    } catch (e) {
+      console.warn("Firebase Init fallback:", e);
+      document.getElementById('firebaseStatus').innerText = "Offline Mode";
+    }
+
+    // Auth State Changed Observer
+    if (auth) {
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          currentUser = {
+            displayName: user.displayName || user.email || "APX Officer",
+            photoURL: user.photoURL || "https://placehold.co/100x100/121824/d4af37?text=APX",
+            uid: user.uid
+          };
+          updateUserUI();
+          showToast("Welcome back, Commander " + currentUser.displayName, "success");
+        } else {
+          // Fall back check if session local key exists
+          const savedKey = localStorage.getItem("apx_leader_handle");
+          if (savedKey) {
+            currentUser = {
+              displayName: savedKey,
+              photoURL: "https://placehold.co/100x100/121824/d4af37?text=LEADER",
+              uid: "leader-quick-" + Date.now()
+            };
+            updateUserUI();
+          } else {
+            currentUser = null;
+            updateUserUI();
+          }
+        }
+      });
+    }
+
+    function handleGoogleLogin() {
+      if (!auth) {
+        openQuickAuthModal();
+        return;
+      }
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch((error) => {
+        console.error("Google Auth error:", error);
+        showToast("Google Auth popup standard fallback engaged. Using Leader Access.", "info");
+        openQuickAuthModal();
+      });
+    }
+
+    function openQuickAuthModal() {
+      document.getElementById('quickAuthModal').classList.remove('hidden');
+    }
+
+    function closeQuickAuthModal() {
+      document.getElementById('quickAuthModal').classList.add('hidden');
+    }
+
+    function submitQuickAuth() {
+      const handle = document.getElementById('quickLeaderName').value.trim();
+      if (!handle) {
+        showToast("Please enter a valid Leader Tag or Handle", "warning");
+        return;
+      }
+      localStorage.setItem("apx_leader_handle", handle);
+      currentUser = {
+        displayName: handle,
+        photoURL: "https://placehold.co/100x100/121824/d4af37?text=APX",
+        uid: "leader-" + Date.now()
+      };
+      updateUserUI();
+      closeQuickAuthModal();
+      showToast("Leader Access Granted: " + handle, "success");
+    }
+
+    function handleLogout() {
+      localStorage.removeItem("apx_leader_handle");
+      if (auth) {
+        auth.signOut();
+      }
+      currentUser = null;
+      updateUserUI();
+      showToast("Logged out successfully", "info");
+    }
+
+    function updateUserUI() {
+      const loginBtn = document.getElementById('googleLoginBtn');
+      const quickBtn = document.getElementById('leaderQuickAuthBtn');
+      const profileBox = document.getElementById('userProfileBox');
+
+      if (currentUser) {
+        if (loginBtn) loginBtn.classList.add('hidden');
+        if (quickBtn) quickBtn.classList.add('hidden');
+        if (profileBox) {
+          profileBox.classList.remove('hidden');
+          document.getElementById('userName').innerText = currentUser.displayName;
+          document.getElementById('userAvatar').src = currentUser.photoURL;
+        }
+      } else {
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (quickBtn) quickBtn.classList.remove('hidden');
+        if (profileBox) profileBox.classList.add('hidden');
+      }
+    }
+
+    /* ==========================================================================
+       4. FULLCALENDAR v6 INITIALIZATION
+       ========================================================================== */
+    document.addEventListener('DOMContentLoaded', function() {
+      initCalendar();
+      setupFirestoreListeners();
+      renderSelectedDateFeed();
+    });
+
+    function initCalendar() {
+      const calendarEl = document.getElementById('calendar');
+      if (!calendarEl) return;
+
+      calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,listWeek'
+        },
+        googleCalendarApiKey: GOOGLE_CALENDAR_API_KEY,
+        eventSources: [
+          {
+            googleCalendarId: CALENDAR_ID,
+            className: 'gcal-event-style',
+            color: '#d4af37',
+            textColor: '#0a0e17'
+          }
+        ],
+        dateClick: function(info) {
+          selectedDateISO = info.dateStr;
+          updateSelectedDateUI(info.dateStr);
+          renderSelectedDateFeed();
+          showToast(`Selected Date: ${info.dateStr}`, 'info');
+        },
+        eventClick: function(info) {
+          info.jsEvent.preventDefault();
+          const startDate = info.event.startStr.split('T')[0];
+          selectedDateISO = startDate;
+          updateSelectedDateUI(startDate);
+          
+          // Render item details in Toast or modal
+          const title = info.event.title;
+          const desc = info.event.extendedProps.description || "Official Google Calendar Kingdom Event";
+          showEventDetailModal(title, startDate, desc);
+        },
+        eventSourceSuccess: function() {
+          document.getElementById('gcalStatus').innerText = "Connected";
+          document.getElementById('gcalStatus').className = "text-emerald-400 font-bold";
+        },
+        eventSourceFailure: function(error) {
+          console.warn("Google Calendar fetch notice:", error);
+          document.getElementById('gcalStatus').innerText = "Local Directives";
+          document.getElementById('gcalStatus').className = "text-goldLight font-bold";
+        }
+      });
+
+      calendar.render();
+    }
+
+    /* ==========================================================================
+       5. SELECTED DATE STRATEGY & EVENTS FEED
+       ========================================================================== */
+    function updateSelectedDateUI(dateStr) {
+      const dateObj = new Date(dateStr + "T00:00:00");
+      const formattedDate = dateObj.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      
+      document.getElementById('selectedDateTitle').innerText = formattedDate;
+      document.getElementById('modalEventDate').value = dateStr;
+    }
+
+    function renderSelectedDateFeed() {
+      const feedContainer = document.getElementById('selectedDateFeed');
+      if (!feedContainer) return;
+
+      feedContainer.innerHTML = '';
+
+      // Collect all local tactical directives for this selectedDateISO
+      const matchedTacticals = [...initialTacticalDirectives, ...localTacticalNotes].filter(item => item.date === selectedDateISO);
+
+      // Check if calendar has events for this date
+      let calendarEvents = [];
+      if (calendar) {
+        calendarEvents = calendar.getEvents().filter(e => {
+          const eDate = e.startStr ? e.startStr.split('T')[0] : '';
+          return eDate === selectedDateISO;
+        });
+      }
+
+      if (matchedTacticals.length === 0 && calendarEvents.length === 0) {
+        feedContainer.innerHTML = `
+          <div class="text-center py-8 px-4 bg-slate-900/50 rounded-xl border border-dashed border-apxBorder">
+            <i class="fa-regular fa-calendar-xmark text-slate-500 text-3xl mb-2"></i>
+            <p class="text-xs text-slate-400 font-rajdhani">No directives or events logged for this date.</p>
+            <button onclick="openAddTacticalEventModal()" class="mt-3 text-xs text-goldLight underline font-bold">
+              + Log New Tactical Note
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // Render Tactical Strategy Notes
+      matchedTacticals.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-slate-900/90 p-3.5 rounded-xl border border-goldBase/30 space-y-2 hover:border-goldBase transition";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="bg-goldBase/20 text-goldLight text-[10px] px-2 py-0.5 rounded font-rajdhani font-bold border border-goldBase/30">
+              <i class="fa-solid fa-shield-halved mr-1"></i> ${item.category || 'Kingdom Strategy'}
+            </span>
+            <span class="text-[11px] text-slate-400 font-mono"><i class="fa-regular fa-clock mr-1"></i>${item.time || 'All Day'}</span>
+          </div>
+          <h4 class="font-cinzel text-sm font-bold text-slate-100">${item.title}</h4>
+          <p class="text-xs text-slate-300 leading-relaxed font-sans">${item.notes || 'No description attached.'}</p>
+          <div class="pt-2 border-t border-apxBorder flex items-center justify-between text-[11px]">
+            <span class="text-goldLight font-rajdhani font-bold">APX Tactical Command</span>
+            <button onclick="dispatchNoteToDiscord('${escapeQuotes(item.title)}', '${escapeQuotes(item.notes)}')" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+              <i class="fa-brands fa-discord"></i> Send to Discord
+            </button>
+          </div>
+        `;
+        feedContainer.appendChild(card);
+      });
+
+      // Render Google Calendar Synced Events
+      calendarEvents.forEach(e => {
+        const card = document.createElement('div');
+        card.className = "bg-slate-900/90 p-3.5 rounded-xl border border-indigo-500/30 space-y-2";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="bg-indigo-500/20 text-indigo-300 text-[10px] px-2 py-0.5 rounded font-rajdhani font-bold border border-indigo-500/30">
+              <i class="fa-brands fa-google mr-1"></i> Google Calendar
+            </span>
+            <span class="text-[11px] text-slate-400 font-mono">${e.start ? e.start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'All Day'}</span>
+          </div>
+          <h4 class="font-cinzel text-sm font-bold text-slate-100">${e.title}</h4>
+          <p class="text-xs text-slate-300 leading-relaxed font-sans">${e.extendedProps.description || 'Synced from Google Calendar: kdn1269@gmail.com'}</p>
+        `;
+        feedContainer.appendChild(card);
+      });
+    }
+
+    function openAddTacticalEventModal() {
+      document.getElementById('modalEventDate').value = selectedDateISO;
+      document.getElementById('tacticalEventModal').classList.remove('hidden');
+    }
+
+    function closeAddTacticalEventModal() {
+      document.getElementById('tacticalEventModal').classList.add('hidden');
+    }
+
+    function handleSaveTacticalNote(e) {
+      e.preventDefault();
+      const date = document.getElementById('modalEventDate').value;
+      const title = document.getElementById('modalEventTitle').value.trim();
+      const time = document.getElementById('modalEventTime').value;
+      const category = document.getElementById('modalEventCategory').value;
+      const notes = document.getElementById('modalEventNotes').value.trim();
+
+      const newDirective = {
+        id: "tactical-" + Date.now(),
+        date: date,
+        time: time + " UTC",
+        title: title,
+        category: category,
+        notes: notes
+      };
+
+      localTacticalNotes.push(newDirective);
+      
+      // If Firestore is connected, save under strict path: /artifacts/{appId}/public/data/tactical_notes
+      if (db) {
+        try {
+          db.collection('artifacts').doc(appId).collection('public').doc('data').collection('tactical_notes').add({
+            ...newDirective,
+            createdDate: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } catch(err) {
+          console.warn("Firestore note save warning:", err);
+        }
+      }
+
+      closeAddTacticalEventModal();
+      document.getElementById('tacticalNoteForm').reset();
+      
+      selectedDateISO = date;
+      updateSelectedDateUI(date);
+      renderSelectedDateFeed();
+      showToast("Strategy directive saved successfully", "success");
+    }
+
+    /* ==========================================================================
+       6. LEADER OPERATIONS & DISCORD WEBHOOK INTEGRATION
+       ========================================================================== */
+    function switchOpTab(tabName) {
+      const vTab = document.getElementById('violatorFormTab');
+      const bTab = document.getElementById('broadcastFormTab');
+      const vBtn = document.getElementById('tabViolatorBtn');
+      const bBtn = document.getElementById('tabBroadcastBtn');
+
+      if (tabName === 'violator') {
+        vTab.classList.remove('hidden');
+        bTab.classList.add('hidden');
+        vBtn.className = "px-4 py-2 rounded-lg text-xs font-rajdhani font-bold transition bg-goldBase text-apxDark shadow-md";
+        bBtn.className = "px-4 py-2 rounded-lg text-xs font-rajdhani font-bold text-slate-400 hover:text-slate-200 transition";
+      } else {
+        bTab.classList.remove('hidden');
+        vTab.classList.add('hidden');
+        bBtn.className = "px-4 py-2 rounded-lg text-xs font-rajdhani font-bold transition bg-goldBase text-apxDark shadow-md";
+        vBtn.className = "px-4 py-2 rounded-lg text-xs font-rajdhani font-bold text-slate-400 hover:text-slate-200 transition";
+      }
+    }
+
+    async function handleViolatorSubmit(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('violatorName').value.trim();
+      const type = document.getElementById('violatorType').value;
+      const severity = document.getElementById('violatorSeverity').value;
+      const coords = document.getElementById('violatorCoords').value.trim();
+      const notes = document.getElementById('violatorNotes').value.trim();
+      const sendDiscord = document.getElementById('violatorDiscordSync').checked;
+
+      const reporter = currentUser ? currentUser.displayName : "APX Leader Command";
+
+      const record = {
+        name,
+        type,
+        severity,
+        coords: coords || "N/A",
+        notes,
+        reporter,
+        timestamp: new Date().toLocaleString()
+      };
+
+      // 1. Save to Firestore under mandatory path
+      if (db) {
+        try {
+          await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('violators').add({
+            ...record,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } catch (err) {
+          console.error("Firestore Save Error:", err);
+        }
+      }
+
+      // Local fallback push
+      allViolatorsCache.unshift(record);
+      renderViolatorsTable(allViolatorsCache);
+
+      // 2. Dispatch to Discord Webhook
+      if (sendDiscord) {
+        let colorCode = 15158332; // Red
+        if (severity === 'High') colorCode = 15844367; // Orange
+        if (severity === 'Medium') colorCode = 16562450; // Yellow
+        if (severity === 'Low') colorCode = 3447003; // Blue
+
+        const discordPayload = {
+          username: "APX Compliance Command",
+          avatar_url: "https://img.icons8.com/color/96/crown.png",
+          embeds: [{
+            title: `🚨 RULE VIOLATION LOGGED [K1269]`,
+            color: colorCode,
+            fields: [
+              { name: "Governor / Player", value: name, inline: true },
+              { name: "Severity", value: severity.toUpperCase(), inline: true },
+              { name: "Violation Category", value: type, inline: false },
+              { name: "Coordinates / Location", value: coords || "Not Specified", inline: true },
+              { name: "Reported By Officer", value: reporter, inline: true },
+              { name: "Case Details & Action Required", value: notes, inline: false }
+            ],
+            footer: { text: "Kingdom 1269 • APX Leadership System" },
+            timestamp: new Date().toISOString()
+          }]
+        };
+
+        sendDiscordWebhook(discordPayload);
+      }
+
+      document.getElementById('violatorForm').reset();
+      showToast(`Rule infraction logged for ${name}`, "success");
+    }
+
+    function handleBroadcastSubmit(e) {
+      e.preventDefault();
+
+      const topic = document.getElementById('broadcastTopic').value.trim();
+      const audience = document.getElementById('broadcastAudience').value;
+      const content = document.getElementById('broadcastContent').value.trim();
+      const sender = currentUser ? currentUser.displayName : "APX Leader Command";
+
+      const discordPayload = {
+        username: "APX War Directives",
+        avatar_url: "https://img.icons8.com/color/96/crown.png",
+        embeds: [{
+          title: `⚔️ STRATEGY DIRECTIVE: ${topic.toUpperCase()}`,
+          color: 13807415, // Gold color
+          fields: [
+            { name: "Target Audience", value: audience, inline: true },
+            { name: "Issued By", value: sender, inline: true },
+            { name: "Tactical Instructions", value: content, inline: false }
+          ],
+          footer: { text: "Kingdom 1269 • APX Operations Command" },
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      sendDiscordWebhook(discordPayload);
+      document.getElementById('broadcastForm').reset();
+      showToast("Strategy broadcast dispatched to Discord!", "success");
+    }
+
+    function dispatchNoteToDiscord(title, notes) {
+      const discordPayload = {
+        username: "APX Calendar Directives",
+        avatar_url: "https://img.icons8.com/color/96/crown.png",
+        embeds: [{
+          title: `📌 TACTICAL NOTE: ${title}`,
+          color: 13807415,
+          description: notes,
+          footer: { text: `Kingdom 1269 • Target Date: ${selectedDateISO}` }
+        }]
+      };
+
+      sendDiscordWebhook(discordPayload);
+      showToast("Note posted to Discord channel", "success");
+    }
+
+    function sendDiscordWebhook(payload) {
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => {
+        if (res.ok) {
+          showToast("Discord Webhook delivered successfully", "success");
+        } else {
+          showToast("Discord Webhook response warning", "warning");
+        }
+      })
+      .catch(err => {
+        console.error("Webhook error:", err);
+        showToast("Unable to reach Discord API", "error");
+      });
+    }
+
+    /* ==========================================================================
+       7. FIRESTORE REAL-TIME SYNC & COMPLIANCE TABLE
+       ========================================================================== */
+    function setupFirestoreListeners() {
+      if (!db) return;
+
+      try {
+        // Strict path: /artifacts/{appId}/public/data/violators
+        db.collection('artifacts').doc(appId).collection('public').doc('data').collection('violators')
+          .onSnapshot((snapshot) => {
+            const items = [];
+            snapshot.forEach(doc => {
+              items.push({ id: doc.id, ...doc.data() });
+            });
+            allViolatorsCache = items;
+            renderViolatorsTable(items);
+            
+            const violCountEl = document.getElementById('metricViolationsCount');
+            if (violCountEl) violCountEl.innerText = items.length + " Logged";
+          }, (error) => {
+            console.warn("Firestore snapshot listener guard:", error);
+          });
+
+        // Strict path: /artifacts/{appId}/public/data/tactical_notes
+        db.collection('artifacts').doc(appId).collection('public').doc('data').collection('tactical_notes')
+          .onSnapshot((snapshot) => {
+            const notes = [];
+            snapshot.forEach(doc => {
+              notes.push({ id: doc.id, ...doc.data() });
+            });
+            if (notes.length > 0) {
+              localTacticalNotes = notes;
+              renderSelectedDateFeed();
+            }
+          }, (err) => {
+            console.warn("Tactical notes listener guard:", err);
+          });
+
+      } catch (err) {
+        console.warn("Firestore setup exception:", err);
+      }
+    }
+
+    function renderViolatorsTable(data) {
+      const tbody = document.getElementById('violatorsTableBody');
+      if (!tbody) return;
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `
           <tr>
-            <th>Date & Time</th>
-            <th>Player / Alliance Tag</th>
-            <th>Violation Detail</th>
-            <th>Severity</th>
-            <th>Reporting Leader</th>
-          </tr>
-        </thead>
-        <tbody id="violators-list">
-          <tr>
-            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">
-              No rule violations recorded. APX Alliance field discipline compliant.
+            <td colspan="7" class="p-6 text-center text-slate-500 font-rajdhani">
+              No rule violations currently recorded in Kingdom 1269.
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+        `;
+        return;
+      }
 
-</div>
+      tbody.innerHTML = '';
+
+      data.forEach(item => {
+        let severityBadge = '<span class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded text-[10px] font-bold">Low</span>';
+        if (item.severity === 'Critical') {
+          severityBadge = '<span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-[10px] font-bold animate-pulse">Critical</span>';
+        } else if (item.severity === 'High') {
+          severityBadge = '<span class="bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded text-[10px] font-bold">High</span>';
+        } else if (item.severity === 'Medium') {
+          severityBadge = '<span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded text-[10px] font-bold">Medium</span>';
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition";
+        tr.innerHTML = `
+          <td class="p-3.5 text-slate-400 font-mono text-[11px]">${item.timestamp || 'Recent'}</td>
+          <td class="p-3.5 font-bold text-slate-200">${item.name}</td>
+          <td class="p-3.5 text-slate-300">${item.type}</td>
+          <td class="p-3.5">${severityBadge}</td>
+          <td class="p-3.5 text-goldLight font-rajdhani font-semibold">${item.reporter || 'Officer'}</td>
+          <td class="p-3.5 text-slate-300 max-w-xs truncate" title="${escapeQuotes(item.notes)}">${item.notes}</td>
+          <td class="p-3.5 text-right">
+            <button onclick="copyViolatorCase('${escapeQuotes(item.name)}', '${escapeQuotes(item.type)}', '${escapeQuotes(item.notes)}')" class="text-slate-400 hover:text-goldLight px-2 py-1" title="Copy Details">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterViolatorsTable() {
+      const query = document.getElementById('violatorSearchInput').value.toLowerCase();
+      const filtered = allViolatorsCache.filter(v => 
+        (v.name && v.name.toLowerCase().includes(query)) ||
+        (v.type && v.type.toLowerCase().includes(query)) ||
+        (v.notes && v.notes.toLowerCase().includes(query))
+      );
+      renderViolatorsTable(filtered);
+    }
+
+    function copyViolatorCase(name, type, notes) {
+      const text = `APX KINGDOM 1269 CASE LOG:\nPlayer: ${name}\nViolation: ${type}\nNotes: ${notes}`;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Case details copied to clipboard", "info");
+      }).catch(() => {
+        const tempElem = document.createElement('textarea');
+        tempElem.value = text;
+        document.body.appendChild(tempElem);
+        tempElem.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempElem);
+        showToast("Case details copied to clipboard", "info");
+      });
+    }
+
+    /* ==========================================================================
+       8. UTILITY FUNCTIONS & TOAST SYSTEM
+       ========================================================================== */
+    function showToast(message, type = "info") {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = "toast-anim flex items-center gap-3 bg-apxCard border p-3.5 rounded-xl shadow-2xl pointer-events-auto min-w-[260px] max-w-md";
+      
+      let borderClass = "border-goldBase/50 text-goldLight";
+      let icon = "fa-circle-info";
+
+      if (type === "success") {
+        borderClass = "border-emerald-500/50 text-emerald-400";
+        icon = "fa-circle-check";
+      } else if (type === "warning") {
+        borderClass = "border-amber-500/50 text-amber-400";
+        icon = "fa-triangle-exclamation";
+      } else if (type === "error") {
+        borderClass = "border-rose-500/50 text-rose-400";
+        icon = "fa-circle-xmark";
+      }
+
+      toast.classList.add(...borderClass.split(" "));
+
+      toast.innerHTML = `
+        <i class="fa-solid ${icon} text-lg"></i>
+        <div class="text-xs font-sans text-slate-200 font-medium leading-snug flex-grow">${message}</div>
+        <button onclick="this.parentElement.remove()" class="text-slate-500 hover:text-slate-300">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        if (toast.parentElement) {
+          toast.remove();
+        }
+      }, 4500);
+    }
+
+    function showEventDetailModal(title, date, desc) {
+      showToast(`[${date}] ${title}: ${desc}`, "info");
+    }
+
+    function escapeQuotes(str) {
+      if (!str) return '';
+      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>
