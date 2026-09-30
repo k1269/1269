@@ -48,19 +48,35 @@
       </div>
       
       <p class="text-gray-400 text-xs leading-relaxed">
-        Sign in using your authorized Discord or Google account. New accounts are assigned standard <span class="text-amber-400 font-bold">R3</span> viewer access automatically.
+        Sign in using Google or Discord. New accounts default to <span class="text-amber-400 font-bold">R3</span> access.
       </p>
 
       <div class="space-y-3 pt-2">
         <button onclick="loginWithGoogle()" class="w-full py-3 px-4 bg-white text-gray-900 hover:bg-gray-100 font-semibold rounded-xl flex items-center justify-center gap-3 transition shadow-lg">
-          <i class="fa-brands fa-google text-red-500 text-lg"></i> Continue with Gmail
+          <i class="fa-brands fa-google text-red-500 text-lg"></i> Sign in with Gmail
         </button>
         <button onclick="loginWithDiscord()" class="w-full py-3 px-4 bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold rounded-xl flex items-center justify-center gap-3 transition shadow-lg">
-          <i class="fa-brands fa-discord text-lg"></i> Continue with Discord
+          <i class="fa-brands fa-discord text-lg"></i> Sign in with Discord
         </button>
       </div>
 
       <p id="auth-error" class="text-red-400 text-xs bg-red-950/50 border border-red-800/50 p-3 rounded-lg hidden"></p>
+    </div>
+  </div>
+
+  <!-- NICKNAME SETUP MODAL -->
+  <div id="nickname-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-card border border-amber-500/50 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl text-center">
+      <i class="fa-solid fa-id-card text-amber-500 text-3xl"></i>
+      <h3 class="text-lg font-bold text-white">Set In-Game Nickname</h3>
+      <p class="text-gray-400 text-xs">Enter your exact in-game name so alliance leadership can identify you instead of displaying your email address.</p>
+      
+      <form onsubmit="saveNickname(event)" class="space-y-3">
+        <input type="text" id="input-nickname" required placeholder="e.g. APX-PlayerOne" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white text-center text-sm outline-none focus:border-amber-500">
+        <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition shadow-lg text-xs">
+          Save Nickname & Continue
+        </button>
+      </form>
     </div>
   </div>
 
@@ -69,7 +85,6 @@
     <!-- NAVBAR -->
     <header class="bg-card border-b border-gray-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-xl">
       <div class="flex items-center gap-4">
-        <!-- LOGO IMAGE -->
         <img src="APXlogo2.png" alt="APX Logo" class="h-10 w-auto object-contain">
         <div>
           <span class="text-xl font-black tracking-wider text-amber-500 block leading-none">APX COMMAND CENTER</span>
@@ -87,11 +102,17 @@
           </button>
         </div>
 
-        <!-- USER ROLE BADGE -->
+        <!-- USER PROFILE BADGE & LINKING -->
         <div id="user-badge" class="flex items-center gap-2 bg-gray-900/80 px-3 py-1.5 rounded-lg border border-gray-800">
-          <i class="fa-solid fa-user-shield text-amber-500 text-xs"></i>
-          <span id="user-email" class="text-xs text-gray-300 max-w-[120px] sm:max-w-none truncate"></span>
+          <div id="provider-badges" class="flex gap-1 text-xs">
+            <i id="badge-google" class="fa-brands fa-google text-red-500 hidden"></i>
+            <i id="badge-discord" class="fa-brands fa-discord text-indigo-400 hidden"></i>
+          </div>
+          <span id="user-nickname" class="text-xs font-bold text-amber-400"></span>
           <span id="user-role" class="text-xs font-black px-2 py-0.5 rounded bg-amber-500 text-black">R3</span>
+          <button id="link-account-btn" onclick="openLinkAccountMenu()" class="text-[10px] bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 px-2 py-1 rounded ml-1 transition" title="Link other login provider">
+            <i class="fa-solid fa-link"></i> Link
+          </button>
         </div>
 
         <!-- SETTINGS (R5 ONLY) -->
@@ -131,7 +152,6 @@
             <h1 class="text-xl font-bold text-white">Kingdom Operations Calendar</h1>
             <p class="text-xs text-gray-400">Live event schedule and strategy directives for Kingdom 1269</p>
           </div>
-          <!-- ADD EVENT BUTTON (R4 & R5 ONLY) -->
           <button id="add-event-btn" onclick="openAddEventModal()" class="hidden px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg transition">
             <i class="fa-solid fa-plus"></i> + Add Operations Event
           </button>
@@ -158,14 +178,12 @@
 
       <!-- TAB 2: VIOLATIONS & GAMEPLAY NOTES -->
       <section id="tab-violations" class="hidden space-y-6">
-        <!-- DISCLAIMER BANNER -->
         <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-center gap-3">
           <i class="fa-solid fa-triangle-exclamation text-xl text-amber-500"></i>
           <span><strong>Leadership Note:</strong> Logged items are not necessarily strict violations, but gameplay and conduct notes for leadership observation and tracking.</span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- FORM TO LOG NOTE/VIOLATION -->
           <div class="bg-card border border-gray-800 rounded-2xl p-5 space-y-4 shadow-xl">
             <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2 flex items-center gap-2">
               <i class="fa-solid fa-pen-to-square text-amber-500"></i> Log Gameplay Observation
@@ -198,7 +216,6 @@
             </form>
           </div>
 
-          <!-- LIST OF LOGGED ITEMS -->
           <div class="lg:col-span-2 bg-card border border-gray-800 rounded-2xl p-5 space-y-4 shadow-xl">
             <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Observation Records</h3>
             <div id="violations-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
@@ -217,7 +234,7 @@
           </div>
 
           <form onsubmit="handleAssignRole(event)" class="flex flex-wrap gap-3 text-xs">
-            <input type="email" id="role-email" placeholder="Member Email Address" required class="flex-1 min-w-[200px] bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none">
+            <input type="email" id="role-email" placeholder="Member Email / ID" required class="flex-1 min-w-[200px] bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none">
             <select id="role-select" class="bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none">
               <option value="R3">R3 (Calendar Viewer Only)</option>
               <option value="R4">R4 (Officer / Notes & Event Editor)</option>
@@ -234,7 +251,8 @@
               <table class="w-full text-xs text-left">
                 <thead class="bg-gray-900 text-gray-400 border-b border-gray-800">
                   <tr>
-                    <th class="p-3">Email / Account</th>
+                    <th class="p-3">Nickname</th>
+                    <th class="p-3">Email / Identifier</th>
                     <th class="p-3">Rank Level</th>
                     <th class="p-3 text-right">Actions</th>
                   </tr>
@@ -327,27 +345,43 @@
 
     let currentUser = null;
     let currentUserRole = "R3";
+    let userNickname = "";
     let discordRemindersEnabled = true;
     let fullCalendarInstance = null;
 
     function loginWithGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(err => {
-        showAuthError(err.message);
-      });
+      auth.signInWithPopup(provider).catch(err => showAuthError(err.message));
     }
 
     function loginWithDiscord() {
       const provider = new firebase.auth.OAuthProvider('oidc.kingdom-1269');
-      auth.signInWithPopup(provider).catch(err => {
-        showAuthError("Discord Provider Notice: Make sure Discord OIDC provider is enabled in Firebase Console. Error: " + err.message);
-      });
+      auth.signInWithPopup(provider).catch(err => showAuthError("Discord Sign-In: " + err.message));
+    }
+
+    function openLinkAccountMenu() {
+      const isGoogleLinked = auth.currentUser.providerData.some(p => p.providerId === 'google.com');
+      const isDiscordLinked = auth.currentUser.providerData.some(p => p.providerId.includes('discord'));
+
+      if (!isGoogleLinked) {
+        if (confirm("Would you like to link your Google account to this profile?")) {
+          auth.currentUser.linkWithPopup(new firebase.auth.GoogleAuthProvider())
+            .then(() => { alert("Google account linked successfully!"); window.location.reload(); })
+            .catch(err => alert("Linking failed: " + err.message));
+        }
+      } else if (!isDiscordLinked) {
+        if (confirm("Would you like to link your Discord account to this profile?")) {
+          auth.currentUser.linkWithPopup(new firebase.auth.OAuthProvider('oidc.kingdom-1269'))
+            .then(() => { alert("Discord account linked successfully!"); window.location.reload(); })
+            .catch(err => alert("Linking failed: " + err.message));
+        }
+      } else {
+        alert("Your account already has both Google and Discord logins linked!");
+      }
     }
 
     function logout() {
-      auth.signOut().then(() => {
-        window.location.reload();
-      });
+      auth.signOut().then(() => window.location.reload());
     }
 
     function showAuthError(msg) {
@@ -356,41 +390,55 @@
       el.classList.remove("hidden");
     }
 
-    // AUTH & AUTOMATIC R3 DEFAULT RANKING
+    // AUTH & AUTOMATIC R3 DEFAULT RANKING + NICKNAME CHECK
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         currentUser = user;
-        const emailLower = (user.email || "").toLowerCase();
+        const emailLower = (user.email || user.uid).toLowerCase();
+
+        // Update provider icons badge
+        user.providerData.forEach(p => {
+          if (p.providerId === 'google.com') document.getElementById('badge-google').classList.remove('hidden');
+          if (p.providerId.includes('discord')) document.getElementById('badge-discord').classList.remove('hidden');
+        });
 
         let role = "R3";
+        let nickname = "";
+
         try {
           const userDoc = await db.collection("users").doc(emailLower).get();
           if (userDoc.exists) {
-            role = userDoc.data().role;
+            const data = userDoc.data();
+            role = data.role || "R3";
+            nickname = data.nickname || "";
           } else {
             if (emailLower === "kdn1269@gmail.com" || emailLower.includes("kdn1269")) {
               role = "R5";
             }
-            await db.collection("users").doc(emailLower).set({ role: role, email: emailLower });
+            await db.collection("users").doc(emailLower).set({ role, email: emailLower, nickname: "" });
           }
         } catch (fsErr) {
-          console.warn("Firestore Role Check Warning:", fsErr);
+          console.warn("Firestore Check Warning:", fsErr);
         }
 
         currentUserRole = role;
+        userNickname = nickname;
 
         document.getElementById("auth-overlay").classList.add("hidden");
-        document.getElementById("app-content").classList.remove("hidden");
 
-        document.getElementById("user-email").innerText = user.email || "Leader";
-        document.getElementById("user-role").innerText = currentUserRole;
+        if (!userNickname) {
+          document.getElementById("nickname-modal").classList.remove("hidden");
+        } else {
+          document.getElementById("app-content").classList.remove("hidden");
+          document.getElementById("user-nickname").innerText = userNickname;
+          document.getElementById("user-role").innerText = currentUserRole;
 
-        applyRolePermissions();
-        
-        try { initCalendar(); } catch(e) { console.error("Calendar load error:", e); }
-        try { loadViolations(); } catch(e) { console.error("Violations load error:", e); }
-        if (currentUserRole === "R5") {
-          try { loadUsersList(); } catch(e) { console.error("Users list load error:", e); }
+          applyRolePermissions();
+          try { initCalendar(); } catch(e) {}
+          try { loadViolations(); } catch(e) {}
+          if (currentUserRole === "R5") {
+            try { loadUsersList(); } catch(e) {}
+          }
         }
 
       } else {
@@ -398,6 +446,28 @@
         document.getElementById("app-content").classList.add("hidden");
       }
     });
+
+    async function saveNickname(e) {
+      e.preventDefault();
+      const nick = document.getElementById("input-nickname").value.trim();
+      if (!nick) return;
+
+      const emailLower = (currentUser.email || currentUser.uid).toLowerCase();
+      await db.collection("users").doc(emailLower).update({ nickname: nick });
+
+      userNickname = nick;
+      document.getElementById("nickname-modal").classList.add("hidden");
+      document.getElementById("app-content").classList.remove("hidden");
+      document.getElementById("user-nickname").innerText = userNickname;
+      document.getElementById("user-role").innerText = currentUserRole;
+
+      applyRolePermissions();
+      try { initCalendar(); } catch(e) {}
+      try { loadViolations(); } catch(e) {}
+      if (currentUserRole === "R5") {
+        try { loadUsersList(); } catch(e) {}
+      }
+    }
 
     function applyRolePermissions() {
       if (currentUserRole === "R5") {
@@ -411,7 +481,6 @@
       }
     }
 
-    // CALENDAR INTEGRATION (GOOGLE CALENDAR + FIRESTORE DYNAMIC EVENTS)
     function initCalendar() {
       const calendarEl = document.getElementById('calendar');
       fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
@@ -422,9 +491,7 @@
           right: 'dayGridMonth,timeGridWeek,listWeek'
         },
         googleCalendarApiKey: GOOGLE_CALENDAR_API_KEY,
-        events: {
-          googleCalendarId: CALENDAR_ID
-        },
+        events: { googleCalendarId: CALENDAR_ID },
         dateClick: function(info) {
           showDateStrategy(info.dateStr, "No special Google Calendar event for this day. Follow standard APX alliance rotation.");
         },
@@ -438,8 +505,6 @@
       });
 
       fullCalendarInstance.render();
-
-      // Listen to Custom Firestore Events and push them live to FullCalendar
       loadCustomCalendarEvents();
     }
 
@@ -518,10 +583,8 @@
       const details = document.getElementById("e-details").value;
 
       await db.collection("custom_events").add({
-        title,
-        date,
-        details,
-        createdBy: currentUser.email,
+        title, date, details,
+        createdBy: userNickname || currentUser.email,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
 
@@ -532,7 +595,7 @@
             color: 16105739,
             fields: [
               { name: "Date", value: date, inline: true },
-              { name: "Posted By", value: currentUser.email, inline: true },
+              { name: "Posted By", value: userNickname || currentUser.email, inline: true },
               { name: "Directives", value: details || "No extra notes" }
             ]
           }]
@@ -569,7 +632,7 @@
 
       const record = {
         player, category, details,
-        loggedBy: currentUser.email,
+        loggedBy: userNickname || currentUser.email,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       };
 
@@ -585,7 +648,7 @@
               { name: "Player", value: player, inline: true },
               { name: "Category", value: category, inline: true },
               { name: "Details", value: details },
-              { name: "Logged By", value: currentUser.email }
+              { name: "Logged By", value: userNickname || currentUser.email }
             ]
           }]
         });
@@ -622,7 +685,7 @@
       const email = document.getElementById("role-email").value.toLowerCase();
       const role = document.getElementById("role-select").value;
 
-      await db.collection("users").doc(email).set({ email, role });
+      await db.collection("users").doc(email).set({ role }, { merge: true });
       document.getElementById("role-email").value = "";
       alert(`Rank updated to ${role} for ${email}`);
     }
@@ -636,10 +699,11 @@
           const tr = document.createElement("tr");
           tr.className = "border-b border-gray-800 hover:bg-gray-900/50";
           tr.innerHTML = `
-            <td class="p-3 text-white">${u.email}</td>
+            <td class="p-3 font-bold text-amber-400">${u.nickname || 'Not Set'}</td>
+            <td class="p-3 text-white">${u.email || doc.id}</td>
             <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">${u.role}</span></td>
             <td class="p-3 text-right">
-              <button onclick="deleteRole('${u.email}')" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="deleteRole('${doc.id}')" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
             </td>
           `;
           tbody.appendChild(tr);
