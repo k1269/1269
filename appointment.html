@@ -1,4 +1,4 @@
-[cite: 1]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -309,15 +309,10 @@
                                 <div id="slots-d4-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-gray-800 rounded-xl"></div>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">1. Resources Screenshot Proof</label>
-                                    <input type="file" id="res-proof-d4" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Speedups Screenshot Proof</label>
-                                    <input type="file" id="speed-proof-d4" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
-                                </div>
+                            <!-- Day 4 Screenshot Proof (Only Speedups Proof Required) -->
+                            <div class="pt-2">
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Speedups Screenshot Proof</label>
+                                <input type="file" id="speed-proof-d4" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
                             </div>
 
                             <div>
@@ -518,14 +513,15 @@
             "DTM": "E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png"
         };
 
+        // Viking Passwords Setup
         const alliancePasswords = {
-            "APX": "AlwaysRightBarbie",
-            "SVG": "DramaticBarbie",
-            "NDT": "TooMuchBarbie",
-            "WAR": "WarBarbie",
-            "DUN": "BossyBarbie",
-            "69A": "69Barbie",
-            "DTM": "JealousBarbie"
+            "APX": "RolloCan'tWait1Week",
+            "SVG": "8StuipedPPL",
+            "NDT": "KVKjustStarted",
+            "WAR": "RolloForgotThePassword",
+            "DUN": "FlokiAteThePassword",
+            "69A": "OdinNeedsAClue",
+            "DTM": "RagnarDidIt"
         };
 
         let currentMember = null;
@@ -571,12 +567,12 @@
             document.getElementById('gen-speedups-d4').value = Math.round((total * d4Pct) / 100);
         };
 
-        // Time slot generator per day
+        // Time slot generator per day (Starts at 00:00)
         function generateDaySlots(containerId, dayPrefix, counterId, checkboxName) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            let currentMinutes = 23 * 60 + 45;
+            let currentMinutes = 0; // Starts from 00:00 AM
             for (let i = 0; i < 48; i++) {
                 const startH = Math.floor((currentMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
                 const startM = (currentMinutes % 60).toString().padStart(2, '0');
@@ -776,14 +772,12 @@
                         alert("Please select at least 4 slots for Day 4."); btn.disabled = false; btn.innerText = "SUBMIT DAY 4 BOOKING"; return;
                     }
 
-                    resFile = document.getElementById('res-proof-d4').files[0];
                     speedFile = document.getElementById('speed-proof-d4').files[0];
 
                     docData.trainSpeedups = document.getElementById('train-speedups').value;
                     docData.genSpeedupsD4 = document.getElementById('gen-speedups-d4').value;
                     docData.slotsD4 = Array.from(checkedSlots).map(c => c.value);
                     docData.commentsD4 = document.getElementById('player-comments-d4').value;
-                    docData.resProofD4 = resFile ? await compressImage(resFile) : (prevData.resProofD4 || prevData.resourceProof || "");
                     docData.speedProofD4 = speedFile ? await compressImage(speedFile) : (prevData.speedProofD4 || prevData.speedupProof || "");
                     docData.d4Active = true;
                 }
@@ -928,7 +922,7 @@
                         <td class="p-3 font-bold text-amber-300">${d4Total} mins</td>
                         <td class="p-3 font-mono">${d4Slots || '-'}</td>
                         <td class="p-3 max-w-xs truncate text-gray-400">${data.commentsD4 || data.comments || '-'}</td>
-                        <td class="p-3"><button onclick="openModal('${data.resProofD4 || data.resourceProof || ''}', '${data.speedProofD4 || data.speedupProof || ''}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
+                        <td class="p-3"><button onclick="openModal('', '${data.speedProofD4 || data.speedupProof || ''}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
                         <td class="p-3 text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
                     `;
                     tbody4.appendChild(tr4);
@@ -965,7 +959,7 @@
                     } else if (dayNumber === 2) {
                         await updateDoc(docRef, { researchSpeedups: deleteField(), genSpeedupsD2: deleteField(), goldDust: deleteField(), slotsD2: deleteField(), commentsD2: deleteField(), resProofD2: deleteField(), speedProofD2: deleteField(), d2Active: deleteField() });
                     } else if (dayNumber === 4) {
-                        await updateDoc(docRef, { trainSpeedups: deleteField(), genSpeedupsD4: deleteField(), slotsD4: deleteField(), commentsD4: deleteField(), resProofD4: deleteField(), speedProofD4: deleteField(), d4Active: deleteField() });
+                        await updateDoc(docRef, { trainSpeedups: deleteField(), genSpeedupsD4: deleteField(), slotsD4: deleteField(), commentsD4: deleteField(), speedProofD4: deleteField(), d4Active: deleteField() });
                     }
                 }
                 alert(`Day ${dayNumber} data successfully reset!`);
