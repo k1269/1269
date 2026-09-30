@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>APX Command Center - Kingdom 1269</title>
 
-  <!-- Tailwind CSS & FontAwesome -->
+  <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,63 +18,149 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+  <!-- Custom Aesthetic Styles -->
   <style>
-    body { background-color: #0b0f17; color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .bg-card { background-color: #131924; }
-    .gold-border { border-color: #d97706; }
-    .gold-text { color: #f59e0b; }
-    .fc-theme-standard td, .fc-theme-standard th { border-color: #2d3748 !important; }
-    .fc-header-toolbar { padding: 12px; border-radius: 8px; background: #131924; margin-bottom: 1rem !important; }
-    .fc-button-primary { background-color: #d97706 !important; border-color: #b45309 !important; color: #fff !important; font-weight: 600 !important; }
-    .fc-button-primary:hover { background-color: #b45309 !important; }
-    .fc-daygrid-day-number { color: #f59e0b !important; font-weight: bold; }
-    .fc-event { cursor: pointer; border-radius: 4px; padding: 2px 4px; font-size: 0.85rem; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+    
+    body {
+      background-color: #0b0f17;
+      color: #e2e8f0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    .bg-card {
+      background-color: #131924;
+    }
+
+    .bg-card-hover:hover {
+      background-color: #1a2332;
+    }
+
+    .gold-glow {
+      box-shadow: 0 0 20px rgba(217, 119, 6, 0.25);
+    }
+
+    .gold-border {
+      border-color: rgba(217, 119, 6, 0.4);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #273346;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #d97706;
+    }
+
+    /* FullCalendar Dark Theme Customization */
+    .fc-theme-standard td, .fc-theme-standard th {
+      border-color: #232d3f !important;
+    }
+    .fc-header-toolbar {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      background: #131924;
+      margin-bottom: 1.25rem !important;
+      border: 1px solid #232d3f;
+    }
+    .fc-toolbar-title {
+      font-size: 1.15rem !important;
+      font-weight: 800 !important;
+      color: #f59e0b !important;
+      letter-spacing: 0.05em;
+    }
+    .fc-button-primary {
+      background-color: #d97706 !important;
+      border-color: #b45309 !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      font-size: 0.75rem !important;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 0.5rem !important;
+      transition: all 0.2s ease;
+    }
+    .fc-button-primary:hover {
+      background-color: #f59e0b !important;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    }
+    .fc-daygrid-day-number {
+      color: #f59e0b !important;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .fc-daygrid-day {
+      transition: background-color 0.2s ease;
+    }
+    .fc-daygrid-day:hover {
+      background-color: rgba(217, 119, 6, 0.08) !important;
+    }
+    .fc-event {
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none !important;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
 
-  <!-- LOGIN / AUTH OVERLAY -->
-  <div id="auth-overlay" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-card border border-amber-600/40 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl space-y-6">
+  <!-- AUTHENTICATION OVERLAY MODAL -->
+  <div id="auth-overlay" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg flex items-center justify-center p-4">
+    <div class="bg-card border border-amber-600/40 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl gold-glow space-y-6">
       
       <!-- APX LOGO -->
       <div class="flex justify-center">
-        <img src="APXlogo2.png" alt="APX Logo" class="h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(217,119,6,0.5)]">
+        <img src="APXlogo2.png" alt="APX Logo" onerror="this.onerror=null; this.src='https://placehold.co/160x60/131924/f59e0b?text=APX+1269';" class="h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(217,119,6,0.6)]">
       </div>
 
       <div>
-        <h2 class="text-2xl font-black tracking-wide text-white">APX COMMAND CENTER</h2>
-        <p class="text-amber-500/80 text-xs font-semibold mt-1">Kingdom 1269 Tactical Operations</p>
+        <h2 class="text-2xl font-black tracking-wider text-white">APX COMMAND CENTER</h2>
+        <p class="text-amber-500 text-xs font-semibold tracking-widest uppercase mt-1">Kingdom 1269 Operations Portal</p>
       </div>
       
       <p class="text-gray-400 text-xs leading-relaxed">
-        Sign in using Google or Discord. New accounts default to <span class="text-amber-400 font-bold">R3</span> access.
+        Welcome Commander. Authenticate via Gmail or Discord to access kingdom strategy and alliance logs. New members default to <span class="text-amber-400 font-bold">R3</span> access.
       </p>
 
       <div class="space-y-3 pt-2">
-        <button onclick="loginWithGoogle()" class="w-full py-3 px-4 bg-white text-gray-900 hover:bg-gray-100 font-semibold rounded-xl flex items-center justify-center gap-3 transition shadow-lg">
-          <i class="fa-brands fa-google text-red-500 text-lg"></i> Sign in with Gmail
+        <button onclick="loginWithGoogle()" class="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-lg text-xs tracking-wide">
+          <i class="fa-brands fa-google text-red-500 text-base"></i> Sign in with Gmail
         </button>
-        <button onclick="loginWithDiscord()" class="w-full py-3 px-4 bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold rounded-xl flex items-center justify-center gap-3 transition shadow-lg">
-          <i class="fa-brands fa-discord text-lg"></i> Sign in with Discord
+        <button onclick="loginWithDiscord()" class="w-full py-3 px-4 bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-lg text-xs tracking-wide">
+          <i class="fa-brands fa-discord text-base"></i> Sign in with Discord
         </button>
       </div>
 
-      <p id="auth-error" class="text-red-400 text-xs bg-red-950/50 border border-red-800/50 p-3 rounded-lg hidden"></p>
+      <p id="auth-error" class="text-red-400 text-xs bg-red-950/60 border border-red-800/60 p-3 rounded-xl hidden text-left leading-relaxed"></p>
     </div>
   </div>
 
-  <!-- NICKNAME SETUP MODAL -->
+  <!-- IN-GAME NICKNAME SETUP MODAL -->
   <div id="nickname-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-card border border-amber-500/50 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl text-center">
-      <i class="fa-solid fa-id-card text-amber-500 text-3xl"></i>
+    <div class="bg-card border border-amber-500/50 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl text-center gold-glow">
+      <div class="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-500 text-xl">
+        <i class="fa-solid fa-id-card"></i>
+      </div>
       <h3 class="text-lg font-bold text-white">Set In-Game Nickname</h3>
-      <p class="text-gray-400 text-xs">Enter your exact in-game name so alliance leadership can identify you instead of displaying your email address.</p>
+      <p class="text-gray-400 text-xs leading-relaxed">
+        Enter your exact in-game name (e.g., <span class="text-amber-400 font-semibold">APX-King1269</span>). This replaces your bare email address across all alliance activity logs.
+      </p>
       
-      <form onsubmit="saveNickname(event)" class="space-y-3">
-        <input type="text" id="input-nickname" required placeholder="e.g. APX-PlayerOne" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white text-center text-sm outline-none focus:border-amber-500">
-        <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition shadow-lg text-xs">
-          Save Nickname & Continue
+      <form onsubmit="saveNickname(event)" class="space-y-4 pt-2">
+        <input type="text" id="input-nickname" required placeholder="e.g., APX-PlayerOne" class="w-full bg-gray-900 border border-gray-700 focus:border-amber-500 rounded-xl p-3 text-white text-center font-semibold text-sm outline-none transition">
+        <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition shadow-lg text-xs tracking-wide uppercase">
+          Save Nickname & Proceed
         </button>
       </form>
     </div>
@@ -82,77 +168,79 @@
 
   <!-- MAIN APP WRAPPER -->
   <div id="app-content" class="hidden flex-1 flex flex-col">
-    <!-- NAVBAR -->
-    <header class="bg-card border-b border-gray-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-xl">
-      <div class="flex items-center gap-4">
-        <img src="APXlogo2.png" alt="APX Logo" class="h-10 w-auto object-contain">
+    <!-- NAVIGATION NAVBAR -->
+    <header class="bg-card border-b border-gray-800/80 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 shadow-xl sticky top-0 z-30 backdrop-blur-md">
+      <div class="flex items-center gap-3">
+        <img src="APXlogo2.png" alt="APX Logo" onerror="this.onerror=null; this.src='https://placehold.co/120x40/131924/f59e0b?text=APX+1269';" class="h-10 w-auto object-contain">
         <div>
-          <span class="text-xl font-black tracking-wider text-amber-500 block leading-none">APX COMMAND CENTER</span>
-          <span class="text-[10px] font-semibold text-gray-400">Kingdom 1269 Portal</span>
+          <span class="text-lg font-black tracking-wider text-amber-500 block leading-none">APX COMMAND CENTER</span>
+          <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Kingdom 1269 Portal</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3">
         <!-- DISCORD REMINDER TOGGLE -->
-        <div class="flex items-center gap-2 bg-gray-900/80 border border-gray-800 px-3 py-1.5 rounded-lg">
+        <div class="flex items-center gap-2 bg-gray-900/90 border border-gray-800 px-3 py-1.5 rounded-xl">
           <i class="fa-brands fa-discord text-indigo-400 text-sm"></i>
-          <span class="text-xs text-gray-300 font-medium hidden sm:inline">Discord Reminders</span>
-          <button id="reminder-toggle-btn" onclick="toggleDiscordReminders()" class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-amber-600 transition-colors duration-200 ease-in-out focus:outline-none">
+          <span class="text-xs text-gray-300 font-semibold hidden sm:inline">Discord Reminders</span>
+          <button id="reminder-toggle-btn" onclick="toggleDiscordReminders()" class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-amber-600 transition-colors duration-200 ease-in-out focus:outline-none" title="Toggle Discord Webhook Reminders">
             <span id="reminder-toggle-circle" class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-4"></span>
           </button>
         </div>
 
         <!-- USER PROFILE BADGE & LINKING -->
-        <div id="user-badge" class="flex items-center gap-2 bg-gray-900/80 px-3 py-1.5 rounded-lg border border-gray-800">
-          <div id="provider-badges" class="flex gap-1 text-xs">
-            <i id="badge-google" class="fa-brands fa-google text-red-500 hidden"></i>
-            <i id="badge-discord" class="fa-brands fa-discord text-indigo-400 hidden"></i>
+        <div id="user-badge" class="flex items-center gap-2 bg-gray-900/90 px-3 py-1.5 rounded-xl border border-gray-800">
+          <div id="provider-badges" class="flex items-center gap-1.5 text-xs">
+            <i id="badge-google" class="fa-brands fa-google text-red-500 hidden" title="Google Provider Linked"></i>
+            <i id="badge-discord" class="fa-brands fa-discord text-indigo-400 hidden" title="Discord Provider Linked"></i>
           </div>
-          <span id="user-nickname" class="text-xs font-bold text-amber-400"></span>
-          <span id="user-role" class="text-xs font-black px-2 py-0.5 rounded bg-amber-500 text-black">R3</span>
-          <button id="link-account-btn" onclick="openLinkAccountMenu()" class="text-[10px] bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 px-2 py-1 rounded ml-1 transition" title="Link other login provider">
-            <i class="fa-solid fa-link"></i> Link
+          <span id="user-nickname" class="text-xs font-bold text-amber-400">...</span>
+          <span id="user-role" class="text-[11px] font-black px-2 py-0.5 rounded bg-amber-500 text-black uppercase tracking-wider">R3</span>
+          <button id="link-account-btn" onclick="openLinkAccountMenu()" class="text-[10px] bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 px-2 py-1 rounded-lg ml-1 font-semibold transition flex items-center gap-1" title="Link additional sign-in provider">
+            <i class="fa-solid fa-link text-amber-400"></i> Link
           </button>
         </div>
 
-        <!-- SETTINGS (R5 ONLY) -->
-        <button id="settings-btn" onclick="openSettingsModal()" class="hidden text-gray-400 hover:text-white p-2 rounded-lg bg-gray-900 border border-gray-800">
+        <!-- SETTINGS MODAL TRIGGER (R5 ONLY) -->
+        <button id="settings-btn" onclick="openSettingsModal()" class="hidden text-gray-400 hover:text-white p-2.5 rounded-xl bg-gray-900 border border-gray-800 transition" title="Webhook Settings">
           <i class="fa-solid fa-gear text-sm"></i>
         </button>
 
-        <!-- LOGOUT -->
-        <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-gray-900 border border-gray-800">
+        <!-- LOGOUT BUTTON -->
+        <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2.5 rounded-xl bg-gray-900 border border-gray-800 transition" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket text-sm"></i>
         </button>
       </div>
     </header>
 
     <!-- NAVIGATION TABS -->
-    <nav class="bg-gray-900/60 border-b border-gray-800 px-6">
-      <div class="flex space-x-6">
-        <button id="tab-btn-calendar" onclick="switchTab('calendar')" class="py-3 px-1 border-b-2 border-amber-500 text-amber-500 font-semibold text-sm flex items-center gap-2">
-          <i class="fa-solid fa-calendar-days"></i> Operations Calendar
+    <nav class="bg-gray-900/80 border-b border-gray-800 px-6">
+      <div class="flex space-x-6 max-w-7xl mx-auto">
+        <button id="tab-btn-calendar" onclick="switchTab('calendar')" class="py-3 px-1 border-b-2 border-amber-500 text-amber-500 font-bold text-xs flex items-center gap-2 uppercase tracking-wider">
+          <i class="fa-solid fa-calendar-days text-sm"></i> Operations Calendar
         </button>
-        <button id="tab-btn-violations" onclick="switchTab('violations')" class="hidden py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2">
-          <i class="fa-solid fa-clipboard-check"></i> Gameplay Notes & Violations
+        <button id="tab-btn-violations" onclick="switchTab('violations')" class="hidden py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs flex items-center gap-2 uppercase tracking-wider transition">
+          <i class="fa-solid fa-clipboard-check text-sm"></i> Gameplay Notes & Violations
         </button>
-        <button id="tab-btn-roles" onclick="switchTab('roles')" class="hidden py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2">
-          <i class="fa-solid fa-users-gear"></i> Member Ranks & Access
+        <button id="tab-btn-roles" onclick="switchTab('roles')" class="hidden py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs flex items-center gap-2 uppercase tracking-wider transition">
+          <i class="fa-solid fa-users-gear text-sm"></i> Member Ranks & Access
         </button>
       </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 p-4 md:p-6 max-w-7xl w-full mx-auto space-y-6">
 
-      <!-- TAB 1: CALENDAR & STRATEGY -->
+      <!-- TAB 1: OPERATIONS CALENDAR & STRATEGY -->
       <section id="tab-calendar" class="space-y-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 bg-card p-4 border border-gray-800 rounded-2xl">
           <div>
-            <h1 class="text-xl font-bold text-white">Kingdom Operations Calendar</h1>
-            <p class="text-xs text-gray-400">Live event schedule and strategy directives for Kingdom 1269</p>
+            <h1 class="text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-amber-500"></i> Kingdom Operations Calendar
+            </h1>
+            <p class="text-xs text-gray-400 mt-0.5">Live schedule, rally directives, and battle timings for Kingdom 1269</p>
           </div>
-          <button id="add-event-btn" onclick="openAddEventModal()" class="hidden px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg transition">
+          <button id="add-event-btn" onclick="openAddEventModal()" class="hidden px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg transition tracking-wide uppercase">
             <i class="fa-solid fa-plus"></i> + Add Operations Event
           </button>
         </div>
@@ -164,38 +252,39 @@
 
         <!-- SELECTED DATE STRATEGY FEED -->
         <div class="bg-card border border-amber-500/30 rounded-2xl p-6 space-y-4 shadow-xl">
-          <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+          <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
             <h3 class="font-bold text-amber-400 text-sm flex items-center gap-2">
               <i class="fa-solid fa-bullseye text-base"></i> Selected Date Strategy Feed
             </h3>
             <span id="selected-date-display" class="text-xs bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-amber-300 font-semibold">Select a date on calendar</span>
           </div>
           <div id="strategy-details" class="text-xs text-gray-300 leading-relaxed min-h-[60px]">
-            Click any date on the calendar above to inspect events, strategic directives, and daily alliance objectives.
+            Click any date on the calendar grid above to inspect scheduled events, tactical directives, and daily alliance objectives without navigating away.
           </div>
         </div>
       </section>
 
-      <!-- TAB 2: VIOLATIONS & GAMEPLAY NOTES -->
+      <!-- TAB 2: GAMEPLAY NOTES & VIOLATIONS LOG -->
       <section id="tab-violations" class="hidden space-y-6">
-        <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-center gap-3">
-          <i class="fa-solid fa-triangle-exclamation text-xl text-amber-500"></i>
+        <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-amber-300 text-xs flex items-center gap-3 shadow-lg">
+          <i class="fa-solid fa-triangle-exclamation text-xl text-amber-500 flex-shrink-0"></i>
           <span><strong>Leadership Note:</strong> Logged items are not necessarily strict violations, but gameplay and conduct notes for leadership observation and tracking.</span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- OBSERVATION FORM -->
           <div class="bg-card border border-gray-800 rounded-2xl p-5 space-y-4 shadow-xl">
-            <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2 flex items-center gap-2">
+            <h3 class="text-sm font-bold text-white border-b border-gray-800 pb-2.5 flex items-center gap-2">
               <i class="fa-solid fa-pen-to-square text-amber-500"></i> Log Gameplay Observation
             </h3>
-            <form id="violation-form" onsubmit="handleSaveViolation(event)" class="space-y-3 text-xs">
+            <form id="violation-form" onsubmit="handleSaveViolation(event)" class="space-y-3.5 text-xs">
               <div>
-                <label class="block text-gray-400 mb-1">Player Name / ID</label>
-                <input type="text" id="v-player" required placeholder="e.g., APX-PlayerOne" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none">
+                <label class="block text-gray-400 font-semibold mb-1">Player Name / In-Game ID</label>
+                <input type="text" id="v-player" required placeholder="e.g., APX-PlayerOne" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white focus:border-amber-500 outline-none transition">
               </div>
               <div>
-                <label class="block text-gray-400 mb-1">Violation Category</label>
-                <select id="v-category" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none">
+                <label class="block text-gray-400 font-semibold mb-1">Category</label>
+                <select id="v-category" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white focus:border-amber-500 outline-none transition">
                   <option value="spending in small events">spending in small events</option>
                   <option value="Battle related violation (KVK/Swordland/Sanctuary..etc)">Battle related violation (KVK/Swordland/Sanctuary..etc)</option>
                   <option value="Bear trap related (Formation,Skipping ..etc)">Bear trap related (Formation,Skipping ..etc)</option>
@@ -207,57 +296,63 @@
                 </select>
               </div>
               <div>
-                <label class="block text-gray-400 mb-1">Details & Remarks</label>
-                <textarea id="v-details" rows="3" required placeholder="Provide tactical context or observation details..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none"></textarea>
+                <label class="block text-gray-400 font-semibold mb-1">Details & Context</label>
+                <textarea id="v-details" rows="4" required placeholder="Provide tactical context or details..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white focus:border-amber-500 outline-none transition"></textarea>
               </div>
-              <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg transition shadow-lg">
+              <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition shadow-lg uppercase tracking-wider text-[11px]">
                 Submit & Broadcast to Discord
               </button>
             </form>
           </div>
 
+          <!-- RECORDS LIST -->
           <div class="lg:col-span-2 bg-card border border-gray-800 rounded-2xl p-5 space-y-4 shadow-xl">
-            <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Observation Records</h3>
-            <div id="violations-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-              <p class="text-xs text-gray-500">Loading records...</p>
+            <h3 class="text-sm font-bold text-white border-b border-gray-800 pb-2.5 flex items-center justify-between">
+              <span>Observation Records</span>
+              <span class="text-xs text-gray-500 font-normal">Real-Time Sync</span>
+            </h3>
+            <div id="violations-list" class="space-y-3 max-h-[520px] overflow-y-auto pr-1">
+              <p class="text-xs text-gray-500">Loading observation records...</p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- TAB 3: ROLE MANAGEMENT (R5 ONLY) -->
+      <!-- TAB 3: MEMBER RANKS & ACCESS (R5 ONLY) -->
       <section id="tab-roles" class="hidden space-y-6">
         <div class="bg-card border border-gray-800 rounded-2xl p-6 space-y-6 shadow-xl">
           <div>
             <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Assign & Promote Member Ranks</h3>
-            <p class="text-xs text-gray-400 mt-1">All newly registered members default to <span class="text-amber-400 font-bold">R3</span>. Promote authorized leaders to <span class="text-amber-400 font-bold">R4</span> or <span class="text-amber-400 font-bold">R5</span> below.</p>
+            <p class="text-xs text-gray-400 mt-1">
+              All newly registered alliance members default to <span class="text-amber-400 font-bold">R3</span>. Promote authorized leaders to <span class="text-amber-400 font-bold">R4</span> or <span class="text-amber-400 font-bold">R5</span> below.
+            </p>
           </div>
 
           <form onsubmit="handleAssignRole(event)" class="flex flex-wrap gap-3 text-xs">
-            <input type="email" id="role-email" placeholder="Member Email / ID" required class="flex-1 min-w-[200px] bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none">
-            <select id="role-select" class="bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none">
-              <option value="R3">R3 (Calendar Viewer Only)</option>
-              <option value="R4">R4 (Officer / Notes & Event Editor)</option>
+            <input type="email" id="role-email" placeholder="Member Email Address" required class="flex-1 min-w-[240px] bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-amber-500">
+            <select id="role-select" class="bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-amber-500">
+              <option value="R3">R3 (Calendar Viewer)</option>
+              <option value="R4">R4 (Officer / Event & Notes Editor)</option>
               <option value="R5">R5 (Full Command Center Leader)</option>
             </select>
-            <button type="submit" class="px-5 py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow-lg">
+            <button type="submit" class="px-5 py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow-lg transition uppercase tracking-wider text-[11px]">
               Update Rank
             </button>
           </form>
 
           <div class="mt-6">
-            <h4 class="text-xs font-bold text-gray-400 mb-3">Registered Users Directory</h4>
-            <div id="users-table-container" class="border border-gray-800 rounded-xl overflow-hidden">
+            <h4 class="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wider">Registered Users Directory</h4>
+            <div class="border border-gray-800 rounded-xl overflow-x-auto">
               <table class="w-full text-xs text-left">
-                <thead class="bg-gray-900 text-gray-400 border-b border-gray-800">
+                <thead class="bg-gray-900 text-gray-400 border-b border-gray-800 font-semibold">
                   <tr>
-                    <th class="p-3">Nickname</th>
-                    <th class="p-3">Email / Identifier</th>
+                    <th class="p-3">In-Game Nickname</th>
+                    <th class="p-3">Email / ID</th>
                     <th class="p-3">Rank Level</th>
                     <th class="p-3 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody id="users-list-body" class="divide-y divide-gray-800">
+                <tbody id="users-list-body" class="divide-y divide-gray-800/60">
                 </tbody>
               </table>
             </div>
@@ -269,64 +364,83 @@
 
     <!-- DISCORD WEBHOOKS SETTINGS MODAL (R5) -->
     <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-card border border-gray-700 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
-          <h3 class="text-base font-bold text-white">Discord Webhook Channels</h3>
-          <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      <div class="bg-card border border-gray-700 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl gold-glow">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2.5">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-brands fa-discord text-indigo-400"></i> Discord Webhook Integrations
+          </h3>
+          <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="space-y-3 text-xs">
+        <div class="space-y-3.5 text-xs">
           <div>
-            <label class="block text-gray-400 mb-1">Calendar & Reminders Webhook URL</label>
-            <input type="text" id="webhook-reminders" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none">
+            <label class="block text-gray-400 font-semibold mb-1">Calendar Operations Webhook URL</label>
+            <input type="text" id="webhook-reminders" placeholder="https://discord.com/api/webhooks/..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-500">
           </div>
           <div>
-            <label class="block text-gray-400 mb-1">Violations & Notes Webhook URL</label>
-            <input type="text" id="webhook-violations" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none">
+            <label class="block text-gray-400 font-semibold mb-1">Gameplay Notes & Violations Webhook URL</label>
+            <input type="text" id="webhook-violations" placeholder="https://discord.com/api/webhooks/..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-500">
           </div>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button onclick="closeSettingsModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold">Cancel</button>
-          <button onclick="saveWebhooks()" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold">Save Channels</button>
+          <button onclick="closeSettingsModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold">Cancel</button>
+          <button onclick="saveWebhooks()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold">Save Settings</button>
         </div>
       </div>
     </div>
 
-    <!-- ADD EVENT MODAL (R4 & R5 ONLY) -->
+    <!-- ADD CUSTOM OPERATIONS EVENT MODAL (R4/R5) -->
     <div id="add-event-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-card border border-gray-700 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
-          <h3 class="text-base font-bold text-white">Add Operations Event</h3>
-          <button onclick="closeAddEventModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      <div class="bg-card border border-gray-700 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl gold-glow">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2.5">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-calendar-plus text-amber-500"></i> Add Operations Event
+          </h3>
+          <button onclick="closeAddEventModal()" class="text-gray-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <form onsubmit="handleCreateEvent(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block text-gray-400 mb-1">Event Title</label>
-            <input type="text" id="e-title" required placeholder="e.g., Bear Trap / KVK Castle Battle" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none">
+            <label class="block text-gray-400 font-semibold mb-1">Event Title</label>
+            <input type="text" id="e-title" required placeholder="e.g., Bear Trap / KVK Castle Battle" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-500">
           </div>
           <div>
-            <label class="block text-gray-400 mb-1">Date</label>
-            <input type="date" id="e-date" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none">
+            <label class="block text-gray-400 font-semibold mb-1">Date</label>
+            <input type="date" id="e-date" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-500">
           </div>
           <div>
-            <label class="block text-gray-400 mb-1">Strategy Directives & Notes</label>
-            <textarea id="e-details" rows="3" placeholder="Army setup, rally leads, or guidelines..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none"></textarea>
+            <label class="block text-gray-400 font-semibold mb-1">Strategy Directives & Directives</label>
+            <textarea id="e-details" rows="3" placeholder="Army setup, rally leads, or rules..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-500"></textarea>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="closeAddEventModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold">Cancel</button>
-            <button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold">Post Event</button>
+            <button type="button" onclick="closeAddEventModal()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold">Post Directive</button>
           </div>
         </form>
       </div>
     </div>
 
+    <!-- CUSTOM DIALOG NOTIFICATION MODAL -->
+    <div id="notice-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-card border border-amber-500/50 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl text-center">
+        <div id="notice-icon" class="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-500 text-xl">
+          <i class="fa-solid fa-circle-info"></i>
+        </div>
+        <h3 id="notice-title" class="text-base font-bold text-white">Notice</h3>
+        <p id="notice-body" class="text-xs text-gray-300 leading-relaxed"></p>
+        <button onclick="closeNoticeModal()" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs transition">
+          Dismiss
+        </button>
+      </div>
+    </div>
+
     <!-- FOOTER -->
-    <footer class="bg-card border-t border-gray-800 py-4 text-center">
-      <p class="text-xs text-gray-500 font-semibold tracking-wider">Designed by Hell</p>
+    <footer class="bg-card border-t border-gray-800/80 py-4 text-center mt-auto">
+      <p class="text-xs text-gray-500 font-bold tracking-wider">Designed by Hell</p>
     </footer>
   </div>
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
       authDomain: "kingdom-1269-portal.firebaseapp.com",
@@ -336,9 +450,11 @@
       appId: "1:1007373803222:web:bcb85595a99da596aaf377"
     };
 
+    // Google Calendar Config
     const GOOGLE_CALENDAR_API_KEY = "AIzaSyCCz7OUw1xqmFInhxrZWn1eU2y5UyEZ-Mw";
     const CALENDAR_ID = "kdn1269@gmail.com";
 
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
@@ -349,6 +465,7 @@
     let discordRemindersEnabled = true;
     let fullCalendarInstance = null;
 
+    // LOGIN HANDLERS
     function loginWithGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).catch(err => showAuthError(err.message));
@@ -356,27 +473,47 @@
 
     function loginWithDiscord() {
       const provider = new firebase.auth.OAuthProvider('oidc.kingdom-1269');
-      auth.signInWithPopup(provider).catch(err => showAuthError("Discord Sign-In: " + err.message));
+      auth.signInWithPopup(provider).catch(err => showAuthError("Discord Login Failed: " + err.message));
     }
 
+    // ACCOUNT LINKING HANDLER WITH GRACEFUL DUPLICATE HANDLING
     function openLinkAccountMenu() {
+      if (!auth.currentUser) return;
+
       const isGoogleLinked = auth.currentUser.providerData.some(p => p.providerId === 'google.com');
       const isDiscordLinked = auth.currentUser.providerData.some(p => p.providerId.includes('discord'));
 
       if (!isGoogleLinked) {
-        if (confirm("Would you like to link your Google account to this profile?")) {
+        if (confirm("Link your Google account to this profile for seamless single sign-on?")) {
           auth.currentUser.linkWithPopup(new firebase.auth.GoogleAuthProvider())
-            .then(() => { alert("Google account linked successfully!"); window.location.reload(); })
-            .catch(err => alert("Linking failed: " + err.message));
+            .then(() => {
+              showNoticeModal("Account Linked", "Your Google account has been successfully linked to this profile.");
+              setTimeout(() => window.location.reload(), 1500);
+            })
+            .catch(err => handleLinkingError(err));
         }
       } else if (!isDiscordLinked) {
-        if (confirm("Would you like to link your Discord account to this profile?")) {
+        if (confirm("Link your Discord account to this profile for seamless single sign-on?")) {
           auth.currentUser.linkWithPopup(new firebase.auth.OAuthProvider('oidc.kingdom-1269'))
-            .then(() => { alert("Discord account linked successfully!"); window.location.reload(); })
-            .catch(err => alert("Linking failed: " + err.message));
+            .then(() => {
+              showNoticeModal("Account Linked", "Your Discord account has been successfully linked to this profile.");
+              setTimeout(() => window.location.reload(), 1500);
+            })
+            .catch(err => handleLinkingError(err));
         }
       } else {
-        alert("Your account already has both Google and Discord logins linked!");
+        showNoticeModal("Fully Linked", "Your profile is already linked with both Google and Discord logins.");
+      }
+    }
+
+    function handleLinkingError(err) {
+      if (err.code === 'auth/credential-already-in-use') {
+        showNoticeModal(
+          "Duplicate Account Found",
+          "Notice: This account is already associated with a separate profile. Please ask leadership to merge or remove duplicate accounts."
+        );
+      } else {
+        showNoticeModal("Linking Error", err.message);
       }
     }
 
@@ -390,7 +527,7 @@
       el.classList.remove("hidden");
     }
 
-    // AUTH & AUTOMATIC R3 DEFAULT RANKING + NICKNAME CHECK
+    // AUTH & ROLE STATE LISTENER
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         currentUser = user;
@@ -412,13 +549,14 @@
             role = data.role || "R3";
             nickname = data.nickname || "";
           } else {
+            // Default R5 for main alliance lead email
             if (emailLower === "kdn1269@gmail.com" || emailLower.includes("kdn1269")) {
               role = "R5";
             }
             await db.collection("users").doc(emailLower).set({ role, email: emailLower, nickname: "" });
           }
         } catch (fsErr) {
-          console.warn("Firestore Check Warning:", fsErr);
+          console.warn("Firestore user sync warning:", fsErr);
         }
 
         currentUserRole = role;
@@ -447,6 +585,7 @@
       }
     });
 
+    // SAVE NICKNAME
     async function saveNickname(e) {
       e.preventDefault();
       const nick = document.getElementById("input-nickname").value.trim();
@@ -469,6 +608,7 @@
       }
     }
 
+    // ROLE BASED VISIBILITY CONTROL
     function applyRolePermissions() {
       if (currentUserRole === "R5") {
         document.getElementById("tab-btn-violations").classList.remove("hidden");
@@ -481,6 +621,7 @@
       }
     }
 
+    // FULLCALENDAR V6 INITIALIZATION
     function initCalendar() {
       const calendarEl = document.getElementById('calendar');
       fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
@@ -493,13 +634,13 @@
         googleCalendarApiKey: GOOGLE_CALENDAR_API_KEY,
         events: { googleCalendarId: CALENDAR_ID },
         dateClick: function(info) {
-          showDateStrategy(info.dateStr, "No special Google Calendar event for this day. Follow standard APX alliance rotation.");
+          showDateStrategy(info.dateStr, "No Google Calendar entry for this date. Follow general APX alliance routines.");
         },
         eventClick: function(info) {
           info.jsEvent.preventDefault();
           const dateStr = info.event.startStr.split("T")[0];
           const title = info.event.title;
-          const desc = info.event.extendedProps.description || "Follow standard APX strategic directives.";
+          const desc = info.event.extendedProps.description || "Follow APX strategic guidelines.";
           showDateStrategy(dateStr, `<strong>${title}</strong><br><span class="text-gray-400">${desc}</span>`);
         }
       });
@@ -508,6 +649,7 @@
       loadCustomCalendarEvents();
     }
 
+    // FIRESTORE CUSTOM EVENTS LISTENER
     function loadCustomCalendarEvents() {
       db.collection("custom_events").onSnapshot(snapshot => {
         snapshot.forEach(doc => {
@@ -518,7 +660,7 @@
               id: doc.id,
               title: "⭐ " + d.title,
               start: d.date,
-              description: d.details || "Custom APX Operation",
+              description: d.details || "APX Custom Operation Directive",
               backgroundColor: '#d97706',
               borderColor: '#b45309',
               allDay: true
@@ -528,16 +670,18 @@
       });
     }
 
+    // DYNAMIC STRATEGY FEED UPDATE
     function showDateStrategy(dateStr, content) {
       document.getElementById("selected-date-display").innerText = dateStr;
       document.getElementById("strategy-details").innerHTML = `
         <div class="space-y-2">
-          <p class="text-amber-400 font-bold text-sm">Strategic Operations Directive (${dateStr}):</p>
+          <p class="text-amber-400 font-bold text-xs uppercase tracking-wider">Strategic Directive (${dateStr}):</p>
           <div class="p-3 bg-gray-900 border border-gray-800 rounded-xl leading-relaxed">${content}</div>
         </div>
       `;
     }
 
+    // DISCORD REMINDERS TOGGLE
     function toggleDiscordReminders() {
       discordRemindersEnabled = !discordRemindersEnabled;
       const circle = document.getElementById("reminder-toggle-circle");
@@ -551,6 +695,7 @@
       }
     }
 
+    // WEBHOOK SETTINGS MODAL
     function openSettingsModal() {
       document.getElementById("webhook-reminders").value = localStorage.getItem("wh_reminders") || "";
       document.getElementById("webhook-violations").value = localStorage.getItem("wh_violations") || "";
@@ -562,12 +707,13 @@
     }
 
     function saveWebhooks() {
-      localStorage.setItem("wh_reminders", document.getElementById("webhook-reminders").value);
-      localStorage.setItem("wh_violations", document.getElementById("webhook-violations").value);
+      localStorage.setItem("wh_reminders", document.getElementById("webhook-reminders").value.trim());
+      localStorage.setItem("wh_violations", document.getElementById("webhook-violations").value.trim());
       closeSettingsModal();
-      alert("Discord Webhook channels saved successfully!");
+      showNoticeModal("Settings Saved", "Discord Webhook integrations updated successfully.");
     }
 
+    // ADD EVENT MODAL
     function openAddEventModal() {
       document.getElementById("add-event-modal").classList.remove("hidden");
     }
@@ -578,9 +724,9 @@
 
     async function handleCreateEvent(e) {
       e.preventDefault();
-      const title = document.getElementById("e-title").value;
+      const title = document.getElementById("e-title").value.trim();
       const date = document.getElementById("e-date").value;
-      const details = document.getElementById("e-details").value;
+      const details = document.getElementById("e-details").value.trim();
 
       await db.collection("custom_events").add({
         title, date, details,
@@ -596,7 +742,7 @@
             fields: [
               { name: "Date", value: date, inline: true },
               { name: "Posted By", value: userNickname || currentUser.email, inline: true },
-              { name: "Directives", value: details || "No extra notes" }
+              { name: "Directives", value: details || "No additional directives provided." }
             ]
           }]
         });
@@ -606,10 +752,11 @@
       document.getElementById("e-title").value = "";
       document.getElementById("e-details").value = "";
 
-      alert("Event directive posted successfully!");
+      showNoticeModal("Directive Posted", "Custom operations event saved and broadcasted to Discord.");
       showDateStrategy(date, `<strong>${title}</strong><br><span class="text-gray-400">${details}</span>`);
     }
 
+    // DISCORD WEBHOOK DISPATCHER
     async function sendDiscordWebhook(urlKey, payload) {
       const url = localStorage.getItem(urlKey);
       if (!url) return;
@@ -620,15 +767,16 @@
           body: JSON.stringify(payload)
         });
       } catch (e) {
-        console.error("Discord Webhook Error:", e);
+        console.error("Discord Webhook Post Error:", e);
       }
     }
 
+    // GAMEPLAY OBSERVATION LOG HANDLER
     async function handleSaveViolation(e) {
       e.preventDefault();
-      const player = document.getElementById("v-player").value;
+      const player = document.getElementById("v-player").value.trim();
       const category = document.getElementById("v-category").value;
-      const details = document.getElementById("v-details").value;
+      const details = document.getElementById("v-details").value.trim();
 
       const record = {
         player, category, details,
@@ -657,7 +805,7 @@
 
     function loadViolations() {
       const listEl = document.getElementById("violations-list");
-      db.collection("violations").orderBy("timestamp", "desc").limit(20).onSnapshot(snapshot => {
+      db.collection("violations").orderBy("timestamp", "desc").limit(30).onSnapshot(snapshot => {
         listEl.innerHTML = "";
         if (snapshot.empty) {
           listEl.innerHTML = '<p class="text-xs text-gray-500">No observation records logged yet.</p>';
@@ -666,28 +814,31 @@
         snapshot.forEach(doc => {
           const d = doc.data();
           const item = document.createElement("div");
-          item.className = "bg-gray-900 border border-gray-800 p-3 rounded-xl text-xs space-y-1";
+          item.className = "bg-gray-900/90 border border-gray-800/80 p-3.5 rounded-xl text-xs space-y-1.5 shadow";
           item.innerHTML = `
-            <div class="flex justify-between font-bold text-gray-200">
-              <span class="text-amber-400">${d.player}</span>
-              <span class="text-gray-500 font-normal">${d.category}</span>
+            <div class="flex items-center justify-between font-bold">
+              <span class="text-amber-400 text-sm">${d.player}</span>
+              <span class="text-[10px] text-gray-400 bg-gray-800 px-2 py-0.5 rounded border border-gray-700">${d.category}</span>
             </div>
-            <p class="text-gray-300">${d.details}</p>
-            <div class="text-[10px] text-gray-500 pt-1">Logged by: ${d.loggedBy}</div>
+            <p class="text-gray-300 leading-relaxed">${d.details}</p>
+            <div class="text-[10px] text-gray-500 pt-1 border-t border-gray-800/60 flex justify-between">
+              <span>Logged by: <strong class="text-gray-400">${d.loggedBy}</strong></span>
+            </div>
           `;
           listEl.appendChild(item);
         });
       });
     }
 
+    // MEMBER RANKS MANAGEMENT (R5)
     async function handleAssignRole(e) {
       e.preventDefault();
-      const email = document.getElementById("role-email").value.toLowerCase();
+      const email = document.getElementById("role-email").value.trim().toLowerCase();
       const role = document.getElementById("role-select").value;
 
       await db.collection("users").doc(email).set({ role }, { merge: true });
       document.getElementById("role-email").value = "";
-      alert(`Rank updated to ${role} for ${email}`);
+      showNoticeModal("Rank Updated", `Role updated to ${role} for ${email}`);
     }
 
     function loadUsersList() {
@@ -697,13 +848,13 @@
         snapshot.forEach(doc => {
           const u = doc.data();
           const tr = document.createElement("tr");
-          tr.className = "border-b border-gray-800 hover:bg-gray-900/50";
+          tr.className = "border-b border-gray-800/60 hover:bg-gray-900/50 transition";
           tr.innerHTML = `
             <td class="p-3 font-bold text-amber-400">${u.nickname || 'Not Set'}</td>
-            <td class="p-3 text-white">${u.email || doc.id}</td>
-            <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">${u.role}</span></td>
+            <td class="p-3 text-white font-mono text-[11px]">${u.email || doc.id}</td>
+            <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-black border border-amber-500/30 text-[10px] uppercase">${u.role}</span></td>
             <td class="p-3 text-right">
-              <button onclick="deleteRole('${doc.id}')" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="deleteRole('${doc.id}')" class="text-red-400 hover:text-red-300 px-2 py-1 transition" title="Remove Member"><i class="fa-solid fa-trash-can"></i></button>
             </td>
           `;
           tbody.appendChild(tr);
@@ -712,26 +863,38 @@
     }
 
     async function deleteRole(email) {
-      if (confirm(`Remove access for ${email}?`)) {
+      if (confirm(`Remove access record for ${email}?`)) {
         await db.collection("users").doc(email).delete();
       }
     }
 
+    // TAB SWITCHER
     function switchTab(tab) {
       document.getElementById("tab-calendar").classList.add("hidden");
       document.getElementById("tab-violations").classList.add("hidden");
       document.getElementById("tab-roles").classList.add("hidden");
 
-      document.getElementById("tab-btn-calendar").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2";
-      document.getElementById("tab-btn-violations").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2";
-      document.getElementById("tab-btn-roles").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2";
+      document.getElementById("tab-btn-calendar").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs flex items-center gap-2 uppercase tracking-wider transition";
+      document.getElementById("tab-btn-violations").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs flex items-center gap-2 uppercase tracking-wider transition";
+      document.getElementById("tab-btn-roles").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs flex items-center gap-2 uppercase tracking-wider transition";
 
       document.getElementById(`tab-${tab}`).classList.remove("hidden");
-      document.getElementById(`tab-btn-${tab}`).className = "py-3 px-1 border-b-2 border-amber-500 text-amber-500 font-semibold text-sm flex items-center gap-2";
+      document.getElementById(`tab-btn-${tab}`).className = "py-3 px-1 border-b-2 border-amber-500 text-amber-500 font-bold text-xs flex items-center gap-2 uppercase tracking-wider";
 
       if (tab === 'calendar' && fullCalendarInstance) {
         fullCalendarInstance.updateSize();
       }
+    }
+
+    // NOTICE DIALOG HELPERS
+    function showNoticeModal(title, body) {
+      document.getElementById("notice-title").innerText = title;
+      document.getElementById("notice-body").innerText = body;
+      document.getElementById("notice-modal").classList.remove("hidden");
+    }
+
+    function closeNoticeModal() {
+      document.getElementById("notice-modal").classList.add("hidden");
     }
   </script>
 </body>
