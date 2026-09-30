@@ -5,392 +5,310 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>APX Command Center - Kingdom 1269</title>
 
-  <!-- Tailwind CSS & FontAwesome Icons -->
+  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- FullCalendar v6 -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.8/index.global.min.js"></script>
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+  <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.8/index.global.min.js'></script>
 
-  <!-- Firebase Compat SDKs (v9.23.0) -->
+  <!-- Firebase Compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <!-- Google Font: Inter / Titillium Web -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-
   <style>
-    body {
-      background-color: #0b0d12;
-      color: #e2e8f0;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    }
-    .bg-card { background-color: #131720; }
-    .bg-card-hover:hover { background-color: #1a202c; }
-    .border-glow { border-color: rgba(245, 158, 11, 0.3); }
-    .glow-amber { box-shadow: 0 0 25px -5px rgba(217, 119, 6, 0.25); }
-    .glow-gold { box-shadow: 0 0 15px 0px rgba(245, 158, 11, 0.2); }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0c0e12; }
-    ::-webkit-scrollbar-thumb { background: #2d3748; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #d97706; }
-
-    /* FullCalendar Dark Theme Overrides */
-    .fc { font-family: 'Inter', sans-serif; }
-    .fc-theme-standard td, .fc-theme-standard th { border-color: #1e293b !important; }
-    .fc-header-toolbar { padding: 14px; border-radius: 12px; background: #131720; border: 1px solid #1e293b; margin-bottom: 1.25rem !important; }
-    .fc-toolbar-title { font-size: 1.1rem !important; font-weight: 700 !important; color: #f3f4f6; text-transform: uppercase; letter-spacing: 0.05em; }
-    .fc-button-primary { background-color: #d97706 !important; border-color: #b45309 !important; color: #ffffff !important; font-weight: 600 !important; border-radius: 6px !important; text-transform: capitalize !important; font-size: 0.85rem !important; transition: all 0.2s; }
-    .fc-button-primary:hover { background-color: #b45309 !important; transform: translateY(-1px); }
-    .fc-button-active { background-color: #92400e !important; }
-    .fc-daygrid-day-number { color: #f59e0b !important; font-weight: 700; font-size: 0.85rem; padding: 6px !important; }
-    .fc-day-today { background-color: rgba(217, 119, 6, 0.06) !important; }
-    .fc-event { cursor: pointer; border-radius: 4px; padding: 2px 5px; font-size: 0.8rem; font-weight: 600; border: none !important; }
+    body { background-color: #0b0f17; color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .bg-card { background-color: #131924; }
+    .gold-border { border-color: #d97706; }
+    .gold-text { color: #f59e0b; }
+    .fc-theme-standard td, .fc-theme-standard th { border-color: #2d3748 !important; }
+    .fc-header-toolbar { padding: 12px; border-radius: 8px; background: #131924; margin-bottom: 1rem !important; }
+    .fc-button-primary { background-color: #d97706 !important; border-color: #b45309 !important; color: #fff !important; font-weight: 600 !important; }
+    .fc-button-primary:hover { background-color: #b45309 !important; }
+    .fc-daygrid-day-number { color: #f59e0b !important; font-weight: bold; }
+    .fc-event { cursor: pointer; border-radius: 4px; padding: 2px 4px; font-size: 0.85rem; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
+<body class="min-h-screen flex flex-col justify-between">
 
-  <!-- 1. LOGIN & REGISTER AUTH OVERLAY -->
-  <div id="auth-overlay" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-lg flex items-center justify-center p-4">
-    <div class="bg-card border border-amber-500/30 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl glow-amber relative overflow-hidden">
-
-      <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-      <!-- APX Emblem Header -->
-      <div class="w-20 h-20 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-500/40 shadow-inner">
-        <i class="fa-solid fa-shield-halved text-amber-500 text-4xl"></i>
-      </div>
-      <h2 class="text-2xl font-black tracking-wider text-white mb-1">APX COMMAND CENTER</h2>
-      <p class="text-amber-500/80 text-xs font-semibold tracking-widest uppercase mb-6">Kingdom 1269 Operations Portal</p>
-
-      <!-- Auth Switch Tabs -->
-      <div class="flex bg-gray-900/80 p-1 rounded-lg border border-gray-800 mb-6 text-xs font-medium">
-        <button id="auth-tab-signin" onclick="switchAuthMode('signin')" class="flex-1 py-2 rounded-md bg-amber-600 text-white font-bold transition">Sign In</button>
-        <button id="auth-tab-register" onclick="switchAuthMode('register')" class="flex-1 py-2 rounded-md text-gray-400 hover:text-white transition">Register Account</button>
-      </div>
-
-      <p id="auth-mode-desc" class="text-gray-400 text-xs mb-6">Welcome back commander. Choose your authentication method to access portal tools.</p>
+  <!-- LOGIN / AUTH OVERLAY -->
+  <div id="auth-overlay" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-card border border-amber-600/40 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl space-y-6">
       
-      <!-- Login Buttons -->
-      <div class="space-y-3">
-        <button onclick="loginWithGoogle()" class="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-bold rounded-xl flex items-center justify-center gap-3 transition shadow-lg text-sm">
-          <i class="fa-brands fa-google text-red-500 text-lg"></i>
-          <span id="google-btn-text">Continue with Google</span>
-        </button>
+      <!-- APX LOGO -->
+      <div class="flex justify-center">
+        <img src="APXlogo2.png" alt="APX Logo" class="h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(217,119,6,0.5)]">
+      </div>
 
-        <button onclick="loginWithDiscord()" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl flex items-center justify-center gap-3 transition shadow-lg text-sm">
-          <i class="fa-brands fa-discord text-xl"></i>
-          <span id="discord-btn-text">Continue with Discord</span>
+      <div>
+        <h2 class="text-2xl font-black tracking-wide text-white">APX COMMAND CENTER</h2>
+        <p class="text-amber-500/80 text-xs font-semibold mt-1">Kingdom 1269 Tactical Operations</p>
+      </div>
+      
+      <p class="text-gray-400 text-xs leading-relaxed">
+        Sign in using your authorized Discord or Google account. New accounts are assigned standard <span class="text-amber-400 font-bold">R3</span> viewer access automatically.
+      </p>
+
+      <div class="space-y-3 pt-2">
+        <button onclick="loginWithGoogle()" class="w-full py-3 px-4 bg-white text-gray-900 hover:bg-gray-100 font-semibold rounded-xl flex items-center justify-center gap-3 transition shadow-lg">
+          <i class="fa-brands fa-google text-red-500 text-lg"></i> Continue with Gmail
+        </button>
+        <button onclick="loginWithDiscord()" class="w-full py-3 px-4 bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold rounded-xl flex items-center justify-center gap-3 transition shadow-lg">
+          <i class="fa-brands fa-discord text-lg"></i> Continue with Discord
         </button>
       </div>
 
-      <!-- Error Message Box -->
-      <div id="auth-error-box" class="hidden mt-4 p-3 bg-red-950/60 border border-red-500/50 rounded-lg text-red-300 text-xs text-left leading-relaxed">
-        <p id="auth-error" class="font-medium"></p>
-      </div>
-
-      <div class="mt-6 pt-4 border-t border-gray-800/80 text-[11px] text-gray-500">
-        APX Alliance Authorization Required • Kingdom 1269
-      </div>
+      <p id="auth-error" class="text-red-400 text-xs bg-red-950/50 border border-red-800/50 p-3 rounded-lg hidden"></p>
     </div>
   </div>
 
-  <!-- 2. PENDING APPROVAL OVERLAY -->
-  <div id="pending-approval-screen" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-card border border-amber-500/40 rounded-2xl p-8 max-w-md w-full text-center shadow-2xl glow-amber">
-      <div class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/30">
-        <i class="fa-solid fa-hourglass-half text-amber-500 text-3xl animate-pulse"></i>
-      </div>
-      <h3 class="text-xl font-bold text-white mb-2">Registration Pending Approval</h3>
-      <p class="text-gray-300 text-xs mb-5">Your account request has been logged successfully into Kingdom 1269 database.</p>
-      
-      <div class="bg-gray-900/90 border border-gray-800 p-4 rounded-xl text-left text-xs text-gray-300 mb-6 space-y-2">
-        <div class="flex justify-between border-b border-gray-800 pb-1.5">
-          <span class="text-gray-500">Account:</span>
-          <strong class="text-amber-400 font-mono" id="pending-user-email">--</strong>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-500">Status:</span>
-          <span class="text-amber-500 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-spinner animate-spin text-[10px]"></i> Awaiting Leader Authorization</span>
-        </div>
-      </div>
-
-      <p class="text-gray-400 text-xs mb-6">Please inform an APX Leadership Member (R5) on Discord to approve your access rank (R3 / R4 / R5).</p>
-      
-      <button onclick="logout()" class="w-full py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-xs font-semibold transition border border-gray-700">
-        <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Sign Out / Switch Account
-      </button>
-    </div>
-  </div>
-
-  <!-- 3. MAIN APP WRAPPER -->
-  <div id="app-content" class="hidden flex-1 flex flex-col min-h-screen">
-    
+  <!-- MAIN APP WRAPPER -->
+  <div id="app-content" class="hidden flex-1 flex flex-col">
     <!-- NAVBAR -->
-    <header class="bg-card border-b border-gray-800/80 px-6 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-40">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-amber-500/10 border border-amber-500/40 rounded-xl flex items-center justify-center text-amber-500 font-black text-xl">
-          APX
-        </div>
+    <header class="bg-card border-b border-gray-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+      <div class="flex items-center gap-4">
+        <!-- LOGO IMAGE -->
+        <img src="APXlogo2.png" alt="APX Logo" class="h-10 w-auto object-contain">
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-bold text-white tracking-wide text-base">COMMAND CENTER</h1>
-            <span class="text-[10px] font-bold px-2 py-0.5 bg-amber-500/20 border border-amber-500/30 text-amber-400 rounded-full uppercase">Kingdom 1269</span>
-          </div>
-          <p class="text-[11px] text-gray-400">Tactical Strategy & Alliance Operations Dashboard</p>
+          <span class="text-xl font-black tracking-wider text-amber-500 block leading-none">APX COMMAND CENTER</span>
+          <span class="text-[10px] font-semibold text-gray-400">Kingdom 1269 Portal</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-4">
         <!-- DISCORD REMINDER TOGGLE -->
-        <div class="flex items-center gap-2.5 bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-xl shadow-inner">
+        <div class="flex items-center gap-2 bg-gray-900/80 border border-gray-800 px-3 py-1.5 rounded-lg">
           <i class="fa-brands fa-discord text-indigo-400 text-sm"></i>
-          <span class="text-xs text-gray-300 font-medium hidden sm:inline">Discord Webhooks</span>
+          <span class="text-xs text-gray-300 font-medium hidden sm:inline">Discord Reminders</span>
           <button id="reminder-toggle-btn" onclick="toggleDiscordReminders()" class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-amber-600 transition-colors duration-200 ease-in-out focus:outline-none">
             <span id="reminder-toggle-circle" class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-4"></span>
           </button>
         </div>
 
-        <!-- USER BADGE -->
-        <div id="user-badge" class="flex items-center gap-2.5 bg-gray-900 px-3 py-1.5 rounded-xl border border-gray-800">
+        <!-- USER ROLE BADGE -->
+        <div id="user-badge" class="flex items-center gap-2 bg-gray-900/80 px-3 py-1.5 rounded-lg border border-gray-800">
           <i class="fa-solid fa-user-shield text-amber-500 text-xs"></i>
-          <span id="user-email" class="text-xs text-gray-300 font-mono hidden md:inline"></span>
-          <span id="user-role" class="text-xs font-bold px-2 py-0.5 rounded-md bg-amber-500 text-black shadow">R3</span>
+          <span id="user-email" class="text-xs text-gray-300 max-w-[120px] sm:max-w-none truncate"></span>
+          <span id="user-role" class="text-xs font-black px-2 py-0.5 rounded bg-amber-500 text-black">R3</span>
         </div>
 
         <!-- SETTINGS (R5 ONLY) -->
-        <button id="settings-btn" onclick="openSettingsModal()" class="hidden text-gray-400 hover:text-white p-2 rounded-xl bg-gray-900 border border-gray-800 transition" title="Discord Webhooks Settings">
+        <button id="settings-btn" onclick="openSettingsModal()" class="hidden text-gray-400 hover:text-white p-2 rounded-lg bg-gray-900 border border-gray-800">
           <i class="fa-solid fa-gear text-sm"></i>
         </button>
 
         <!-- LOGOUT -->
-        <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2 rounded-xl bg-gray-900 border border-gray-800 transition" title="Sign Out">
-          <i class="fa-solid fa-power-off text-sm"></i>
+        <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-gray-900 border border-gray-800">
+          <i class="fa-solid fa-right-from-bracket text-sm"></i>
         </button>
       </div>
     </header>
 
     <!-- NAVIGATION TABS -->
-    <nav class="bg-gray-950 border-b border-gray-800/80 px-6">
-      <div class="flex space-x-8 max-w-7xl mx-auto">
-        <button id="tab-btn-calendar" onclick="switchTab('calendar')" class="py-3.5 px-1 border-b-2 border-amber-500 text-amber-500 font-bold text-xs sm:text-sm flex items-center gap-2 transition">
-          <i class="fa-solid fa-calendar-days text-sm"></i> Calendar & Operations
+    <nav class="bg-gray-900/60 border-b border-gray-800 px-6">
+      <div class="flex space-x-6">
+        <button id="tab-btn-calendar" onclick="switchTab('calendar')" class="py-3 px-1 border-b-2 border-amber-500 text-amber-500 font-semibold text-sm flex items-center gap-2">
+          <i class="fa-solid fa-calendar-days"></i> Operations Calendar
         </button>
-        <button id="tab-btn-violations" onclick="switchTab('violations')" class="hidden py-3.5 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs sm:text-sm flex items-center gap-2 transition">
-          <i class="fa-solid fa-clipboard-check text-sm"></i> Gameplay Observations
+        <button id="tab-btn-violations" onclick="switchTab('violations')" class="hidden py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2">
+          <i class="fa-solid fa-clipboard-check"></i> Gameplay Notes & Violations
         </button>
-        <button id="tab-btn-roles" onclick="switchTab('roles')" class="hidden py-3.5 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs sm:text-sm flex items-center gap-2 transition">
-          <i class="fa-solid fa-users-gear text-sm"></i> Member Approvals & Ranks
+        <button id="tab-btn-roles" onclick="switchTab('roles')" class="hidden py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2">
+          <i class="fa-solid fa-users-gear"></i> Member Ranks & Access
         </button>
       </div>
     </nav>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 p-4 md:p-6 max-w-7xl w-full mx-auto space-y-6">
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
 
       <!-- TAB 1: CALENDAR & STRATEGY -->
       <section id="tab-calendar" class="space-y-6">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-crosshairs text-amber-500"></i> Kingdom Schedule & Event Planning
-            </h2>
-            <p class="text-xs text-gray-400">Click any date or scheduled event on the calendar below to view strategic details and tasks.</p>
+            <h1 class="text-xl font-bold text-white">Kingdom Operations Calendar</h1>
+            <p class="text-xs text-gray-400">Live event schedule and strategy directives for Kingdom 1269</p>
           </div>
+          <!-- ADD EVENT BUTTON (R4 & R5 ONLY) -->
+          <button id="add-event-btn" onclick="openAddEventModal()" class="hidden px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg transition">
+            <i class="fa-solid fa-plus"></i> + Add Operations Event
+          </button>
         </div>
 
         <!-- FULLCALENDAR CONTAINER -->
-        <div class="bg-card border border-gray-800 rounded-2xl p-4 md:p-6 shadow-xl">
+        <div class="bg-card border border-gray-800 rounded-2xl p-4 shadow-2xl">
           <div id="calendar"></div>
         </div>
 
-        <!-- DAILY STRATEGY & EVENTS FEED -->
-        <div class="bg-card border border-amber-500/30 rounded-2xl p-6 shadow-2xl space-y-4">
-          <div class="flex flex-wrap items-center justify-between border-b border-gray-800 pb-3 gap-2">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-center text-amber-500">
-                <i class="fa-solid fa-list-check text-lg"></i>
-              </div>
-              <div>
-                <h3 class="font-bold text-amber-400 text-sm md:text-base">Daily Schedule & Operations Inspector</h3>
-                <p id="selected-date-display" class="text-xs text-gray-400">Select any date from calendar above to inspect details</p>
-              </div>
-            </div>
-            <span class="text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1 rounded-full font-semibold">Live Feed</span>
+        <!-- SELECTED DATE STRATEGY FEED -->
+        <div class="bg-card border border-amber-500/30 rounded-2xl p-6 space-y-4 shadow-xl">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+            <h3 class="font-bold text-amber-400 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-bullseye text-base"></i> Selected Date Strategy Feed
+            </h3>
+            <span id="selected-date-display" class="text-xs bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-amber-300 font-semibold">Select a date on calendar</span>
           </div>
-
-          <!-- DETAILED CONTENT AREA -->
-          <div id="strategy-details" class="p-4 bg-gray-900/90 border border-gray-800 rounded-xl min-h-[110px] flex items-center justify-center text-center text-xs md:text-sm text-gray-400">
-            <div>
-              <i class="fa-solid fa-hand-pointer text-amber-500 text-lg mb-2 block"></i>
-              Select any day or event on the calendar above to list detailed instructions and mission objectives.
-            </div>
+          <div id="strategy-details" class="text-xs text-gray-300 leading-relaxed min-h-[60px]">
+            Click any date on the calendar above to inspect events, strategic directives, and daily alliance objectives.
           </div>
         </div>
       </section>
 
-      <!-- TAB 2: VIOLATIONS & GAMEPLAY NOTES (R4 / R5) -->
+      <!-- TAB 2: VIOLATIONS & GAMEPLAY NOTES -->
       <section id="tab-violations" class="hidden space-y-6">
+        <!-- DISCLAIMER BANNER -->
         <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-center gap-3">
-          <i class="fa-solid fa-shield-cat text-xl text-amber-400 flex-shrink-0"></i>
-          <span><strong>Leadership Note:</strong> Records logged here represent member activities, KvK conduct, and performance remarks for R4/R5 tracking.</span>
+          <i class="fa-solid fa-triangle-exclamation text-xl text-amber-500"></i>
+          <span><strong>Leadership Note:</strong> Logged items are not necessarily strict violations, but gameplay and conduct notes for leadership observation and tracking.</span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- FORM -->
-          <div class="bg-card border border-gray-800 rounded-2xl p-5 space-y-4 h-fit">
-            <h3 class="text-sm font-bold text-white border-b border-gray-800 pb-3 flex items-center gap-2">
+          <!-- FORM TO LOG NOTE/VIOLATION -->
+          <div class="bg-card border border-gray-800 rounded-2xl p-5 space-y-4 shadow-xl">
+            <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2 flex items-center gap-2">
               <i class="fa-solid fa-pen-to-square text-amber-500"></i> Log Gameplay Observation
             </h3>
-            <form id="violation-form" onsubmit="handleSaveViolation(event)" class="space-y-3.5 text-xs">
+            <form id="violation-form" onsubmit="handleSaveViolation(event)" class="space-y-3 text-xs">
               <div>
-                <label class="block text-gray-400 mb-1 font-semibold">Player Name / In-Game ID</label>
-                <input type="text" id="v-player" placeholder="e.g. PlayerOne" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none transition">
+                <label class="block text-gray-400 mb-1">Player Name / ID</label>
+                <input type="text" id="v-player" required placeholder="e.g., APX-PlayerOne" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none">
               </div>
               <div>
-                <label class="block text-gray-400 mb-1 font-semibold">Category</label>
-                <select id="v-category" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none transition">
-                  <option value="spending in small events">Spending in small events</option>
-                  <option value="Battle related violation (KVK/Swordland/Sanctuary..etc)">Battle related violation (KVK/Swordland/Sanctuary)</option>
-                  <option value="Bear trap related (Formation,Skipping ..etc)">Bear Trap related (Formation, Skipping)</option>
-                  <option value="Ignoring Leaders messages">Ignoring Leadership Messages</option>
-                  <option value="Attacking NAP members">Attacking NAP Members</option>
-                  <option value="Attacking Alliance members in Arena">Attacking Alliance Members in Arena</option>
-                  <option value="Personal behaviors (Harassment & Bullying,Verbal Abuse,Racism & Discrimination ..etc)">Personal Behaviors (Harassment, Verbal Abuse, etc)</option>
+                <label class="block text-gray-400 mb-1">Violation Category</label>
+                <select id="v-category" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none">
+                  <option value="spending in small events">spending in small events</option>
+                  <option value="Battle related violation (KVK/Swordland/Sanctuary..etc)">Battle related violation (KVK/Swordland/Sanctuary..etc)</option>
+                  <option value="Bear trap related (Formation,Skipping ..etc)">Bear trap related (Formation,Skipping ..etc)</option>
+                  <option value="Ignoring Leaders messages">Ignoring Leaders messages</option>
+                  <option value="Attacking NAP members">Attacking NAP members</option>
+                  <option value="Attacking Alliance members in Arena">Attacking Alliance members in Arena</option>
+                  <option value="Personal behaviors (Harassment & Bullying,Verbal Abuse,Racism & Discrimination ..etc)">Personal behaviors (Harassment & Bullying, Verbal Abuse, Racism...)</option>
                   <option value="Others">Others</option>
                 </select>
               </div>
               <div>
-                <label class="block text-gray-400 mb-1 font-semibold">Details & Remarks</label>
-                <textarea id="v-details" rows="3" placeholder="Describe the occurrence..." required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none transition"></textarea>
+                <label class="block text-gray-400 mb-1">Details & Remarks</label>
+                <textarea id="v-details" rows="3" required placeholder="Provide tactical context or observation details..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white focus:border-amber-500 outline-none"></textarea>
               </div>
-              <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i> Save & Broadcast to Discord
+              <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg transition shadow-lg">
+                Submit & Broadcast to Discord
               </button>
             </form>
           </div>
 
-          <!-- OBSERVATIONS LIST -->
-          <div class="lg:col-span-2 bg-card border border-gray-800 rounded-2xl p-5 space-y-4">
-            <h3 class="text-sm font-bold text-white border-b border-gray-800 pb-3 flex items-center justify-between">
-              <span class="flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-amber-500"></i> Observation Logs Feed</span>
-              <span class="text-xs text-gray-500 font-normal">Latest 20 Records</span>
-            </h3>
-            <div id="violations-list" class="space-y-3 max-h-[520px] overflow-y-auto pr-2">
+          <!-- LIST OF LOGGED ITEMS -->
+          <div class="lg:col-span-2 bg-card border border-gray-800 rounded-2xl p-5 space-y-4 shadow-xl">
+            <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Observation Records</h3>
+            <div id="violations-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
               <p class="text-xs text-gray-500">Loading records...</p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- TAB 3: MEMBER APPROVALS & ROLES (R5 ONLY) -->
+      <!-- TAB 3: ROLE MANAGEMENT (R5 ONLY) -->
       <section id="tab-roles" class="hidden space-y-6">
-        
-        <!-- PENDING SIGN-UP REQUESTS -->
-        <div class="bg-card border border-amber-500/30 rounded-2xl p-5 space-y-4 shadow-xl">
-          <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-            <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-              <i class="fa-solid fa-user-clock"></i> Pending Sign-Up Requests
-            </h3>
-            <span id="pending-count" class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 rounded-full font-bold">0 Pending</span>
+        <div class="bg-card border border-gray-800 rounded-2xl p-6 space-y-6 shadow-xl">
+          <div>
+            <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Assign & Promote Member Ranks</h3>
+            <p class="text-xs text-gray-400 mt-1">All newly registered members default to <span class="text-amber-400 font-bold">R3</span>. Promote authorized leaders to <span class="text-amber-400 font-bold">R4</span> or <span class="text-amber-400 font-bold">R5</span> below.</p>
           </div>
-          <p class="text-xs text-gray-400">Review new member registration requests and grant them portal authorization by assigning their rank.</p>
-          
-          <div id="pending-users-list" class="space-y-2.5">
-            <p class="text-xs text-gray-500">No pending approval requests.</p>
-          </div>
-        </div>
 
-        <!-- MANUAL ADD MEMBER (SOLUTION FOR PREVIOUS / MISSING MEMBERS) -->
-        <div class="bg-card border border-gray-800 rounded-2xl p-5 space-y-4">
-          <div class="border-b border-gray-800 pb-3 flex items-center justify-between">
-            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-user-plus text-amber-500"></i> Direct Member Addition / Restoration
-            </h3>
-            <span class="text-[11px] text-gray-500">Instant Access (Bypasses Approval)</span>
-          </div>
-          <p class="text-xs text-gray-400">If previous members who registered with Google are missing, add their email directly below to grant immediate access:</p>
-
-          <form onsubmit="handleManualAddMember(event)" class="flex flex-wrap items-center gap-3 text-xs">
-            <input type="email" id="manual-member-email" placeholder="Member Email (e.g. name@gmail.com)" required class="flex-1 min-w-[240px] bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none focus:border-amber-500">
-            <select id="manual-member-role" class="bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none focus:border-amber-500 font-semibold">
-              <option value="R3">Assign R3</option>
-              <option value="R4">Assign R4</option>
-              <option value="R5">Assign R5</option>
+          <form onsubmit="handleAssignRole(event)" class="flex flex-wrap gap-3 text-xs">
+            <input type="email" id="role-email" placeholder="Member Email Address" required class="flex-1 min-w-[200px] bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none">
+            <select id="role-select" class="bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none">
+              <option value="R3">R3 (Calendar Viewer Only)</option>
+              <option value="R4">R4 (Officer / Notes & Event Editor)</option>
+              <option value="R5">R5 (Full Command Center Leader)</option>
             </select>
-            <button type="submit" class="py-2.5 px-4 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg transition shadow flex items-center gap-2">
-              <i class="fa-solid fa-check"></i> Authorize Member
+            <button type="submit" class="px-5 py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow-lg">
+              Update Rank
             </button>
           </form>
-        </div>
 
-        <!-- APPROVED MEMBERS ROSTER TABLE -->
-        <div class="bg-card border border-gray-800 rounded-2xl p-5 space-y-4">
-          <h3 class="text-sm font-bold text-white border-b border-gray-800 pb-3 flex items-center justify-between">
-            <span class="flex items-center gap-2"><i class="fa-solid fa-users text-amber-500"></i> Authorized Alliance Roster</span>
-          </h3>
-          <div class="border border-gray-800 rounded-xl overflow-hidden">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-gray-900 text-gray-400 border-b border-gray-800 uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th class="p-3">User Email Account</th>
-                  <th class="p-3">Role Rank</th>
-                  <th class="p-3 text-right">Rank Action / Revoke</th>
-                </tr>
-              </thead>
-              <tbody id="users-list-body" class="divide-y divide-gray-800/80">
-              </tbody>
-            </table>
+          <div class="mt-6">
+            <h4 class="text-xs font-bold text-gray-400 mb-3">Registered Users Directory</h4>
+            <div id="users-table-container" class="border border-gray-800 rounded-xl overflow-hidden">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-gray-900 text-gray-400 border-b border-gray-800">
+                  <tr>
+                    <th class="p-3">Email / Account</th>
+                    <th class="p-3">Rank Level</th>
+                    <th class="p-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="users-list-body" class="divide-y divide-gray-800">
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-
       </section>
 
     </main>
 
-    <!-- SETTINGS MODAL -->
+    <!-- DISCORD WEBHOOKS SETTINGS MODAL (R5) -->
     <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div class="bg-card border border-gray-700 rounded-2xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-          <h3 class="text-sm font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-gear text-amber-500"></i> Discord Webhooks Configuration
-          </h3>
-          <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+          <h3 class="text-base font-bold text-white">Discord Webhook Channels</h3>
+          <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="space-y-3.5 text-xs">
+        <div class="space-y-3 text-xs">
           <div>
-            <label class="block text-gray-400 mb-1 font-semibold">Calendar Alerts Webhook URL</label>
-            <input type="text" id="webhook-reminders" placeholder="https://discord.com/api/webhooks/..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none focus:border-amber-500 font-mono text-[11px]">
+            <label class="block text-gray-400 mb-1">Calendar & Reminders Webhook URL</label>
+            <input type="text" id="webhook-reminders" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none">
           </div>
           <div>
-            <label class="block text-gray-400 mb-1 font-semibold">Violations / Observations Webhook URL</label>
-            <input type="text" id="webhook-violations" placeholder="https://discord.com/api/webhooks/..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none focus:border-amber-500 font-mono text-[11px]">
+            <label class="block text-gray-400 mb-1">Violations & Notes Webhook URL</label>
+            <input type="text" id="webhook-violations" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none">
           </div>
         </div>
-        <div class="flex justify-end gap-2 pt-2 border-t border-gray-800">
-          <button onclick="closeSettingsModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold hover:bg-gray-700 transition">Cancel</button>
-          <button onclick="saveWebhooks()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-bold transition">Save Webhooks</button>
+        <div class="flex justify-end gap-2 pt-2">
+          <button onclick="closeSettingsModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold">Cancel</button>
+          <button onclick="saveWebhooks()" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold">Save Channels</button>
         </div>
       </div>
     </div>
 
+    <!-- ADD EVENT MODAL (R4 & R5 ONLY) -->
+    <div id="add-event-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-card border border-gray-700 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+          <h3 class="text-base font-bold text-white">Add Operations Event</h3>
+          <button onclick="closeAddEventModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <form onsubmit="handleCreateEvent(event)" class="space-y-3 text-xs">
+          <div>
+            <label class="block text-gray-400 mb-1">Event Title</label>
+            <input type="text" id="e-title" required placeholder="e.g., Bear Trap / KVK Castle Battle" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none">
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Date</label>
+            <input type="date" id="e-date" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none">
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Strategy Directives & Notes</label>
+            <textarea id="e-details" rows="3" placeholder="Army setup, rally leads, or guidelines..." class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none"></textarea>
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="closeAddEventModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg text-xs font-semibold">Cancel</button>
+            <button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold">Post Event</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- FOOTER -->
-    <footer class="bg-card border-t border-gray-800/80 py-4 text-center mt-auto">
-      <p class="text-xs text-gray-500 font-semibold tracking-widest uppercase">
-        APX Command Center • Kingdom 1269 Operations | Designed by <span class="text-amber-500 font-bold">Hell</span>
-      </p>
+    <footer class="bg-card border-t border-gray-800 py-4 text-center">
+      <p class="text-xs text-gray-500 font-semibold tracking-wider">Designed by Hell</p>
     </footer>
   </div>
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // 1. FIREBASE CONFIGURATION
     const firebaseConfig = {
       apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
       authDomain: "kingdom-1269-portal.firebaseapp.com",
@@ -408,56 +326,21 @@
     const db = firebase.firestore();
 
     let currentUser = null;
-    let currentUserRole = null;
+    let currentUserRole = "R3"; // Default rank
     let discordRemindersEnabled = true;
     let fullCalendarInstance = null;
-    let authMode = 'signin'; // 'signin' or 'register'
 
-    // AUTH TAB TOGGLE
-    function switchAuthMode(mode) {
-      authMode = mode;
-      const tabSignIn = document.getElementById("auth-tab-signin");
-      const tabRegister = document.getElementById("auth-tab-register");
-      const desc = document.getElementById("auth-mode-desc");
-      const gBtn = document.getElementById("google-btn-text");
-      const dBtn = document.getElementById("discord-btn-text");
-
-      if (mode === 'register') {
-        tabRegister.className = "flex-1 py-2 rounded-md bg-amber-600 text-white font-bold transition";
-        tabSignIn.className = "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition";
-        desc.innerText = "Applying for new account access. Select your sign-in provider to submit your request to leadership.";
-        gBtn.innerText = "Register with Google";
-        dBtn.innerText = "Register with Discord";
-      } else {
-        tabSignIn.className = "flex-1 py-2 rounded-md bg-amber-600 text-white font-bold transition";
-        tabRegister.className = "flex-1 py-2 rounded-md text-gray-400 hover:text-white transition";
-        desc.innerText = "Welcome back commander. Choose your authentication method to access portal tools.";
-        gBtn.innerText = "Continue with Google";
-        dBtn.innerText = "Continue with Discord";
-      }
-      hideAuthError();
-    }
-
-    // AUTHENTICATION METHODS
     function loginWithGoogle() {
-      hideAuthError();
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).catch(err => {
-        showAuthError("Google Sign-In Error: " + err.message);
+        showAuthError(err.message);
       });
     }
 
     function loginWithDiscord() {
-      hideAuthError();
-      // Uses the OIDC provider initialized in Firebase Console
       const provider = new firebase.auth.OAuthProvider('oidc.kingdom-1269');
       auth.signInWithPopup(provider).catch(err => {
-        console.error("Discord Login Error:", err);
-        if (err.code === "auth/operation-not-allowed") {
-          showAuthError("Discord Sign-In Disabled in Firebase Console. Ensure 'oidc.kingdom-1269' is Enabled under Authentication -> Sign-in method in Firebase Console.");
-        } else {
-          showAuthError("Discord Error (" + err.code + "): " + err.message);
-        }
+        showAuthError("Discord Provider Notice: Make sure Discord OIDC provider is enabled in Firebase Console. Error: " + err.message);
       });
     }
 
@@ -468,78 +351,51 @@
     }
 
     function showAuthError(msg) {
-      const box = document.getElementById("auth-error-box");
       const el = document.getElementById("auth-error");
       el.innerText = msg;
-      box.classList.remove("hidden");
+      el.classList.remove("hidden");
     }
 
-    function hideAuthError() {
-      document.getElementById("auth-error-box").classList.add("hidden");
-    }
-
-    // AUTH STATE & USER PROVISIONING
+    // AUTH & AUTOMATIC R3 DEFAULT RANKING
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         currentUser = user;
         const emailLower = (user.email || "").toLowerCase();
 
-        let userData = null;
+        let role = "R3"; // Default role for any new member
         try {
           const userDoc = await db.collection("users").doc(emailLower).get();
           if (userDoc.exists) {
-            userData = userDoc.data();
+            role = userDoc.data().role;
+          } else {
+            // New user registration -> Store default R3 in database
+            if (emailLower === "kdn1269@gmail.com" || emailLower.includes("kdn1269")) {
+              role = "R5";
+            }
+            await db.collection("users").doc(emailLower).set({ role: role, email: emailLower });
           }
-        } catch (e) {
-          console.warn("User Document Lookup Exception:", e);
+        } catch (fsErr) {
+          console.warn("Firestore Role Check Warning:", fsErr);
         }
 
-        // Auto-provision Super Admin / R5 Leader
-        if (emailLower === "kdn1269@gmail.com" || emailLower.includes("kdn1269")) {
-          userData = { role: "R5", status: "approved", email: emailLower };
-          await db.collection("users").doc(emailLower).set(userData, { merge: true });
-        }
+        currentUserRole = role;
 
-        // New User Auto-Registration
-        if (!userData) {
-          userData = {
-            email: emailLower,
-            role: "Pending",
-            status: "pending",
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          };
-          await db.collection("users").doc(emailLower).set(userData);
-        }
-
-        // Handle Pending Screen
-        if (userData.status === "pending" || userData.role === "Pending") {
-          document.getElementById("auth-overlay").classList.add("hidden");
-          document.getElementById("pending-user-email").innerText = emailLower;
-          document.getElementById("pending-approval-screen").classList.remove("hidden");
-          return;
-        }
-
-        // Account Approved Logic
-        currentUserRole = userData.role || "R3";
         document.getElementById("auth-overlay").classList.add("hidden");
-        document.getElementById("pending-approval-screen").classList.add("hidden");
         document.getElementById("app-content").classList.remove("hidden");
 
-        document.getElementById("user-email").innerText = user.email;
+        document.getElementById("user-email").innerText = user.email || "Leader";
         document.getElementById("user-role").innerText = currentUserRole;
 
         applyRolePermissions();
-        initCalendar();
-        loadViolations();
-
+        
+        try { initCalendar(); } catch(e) { console.error("Calendar load error:", e); }
+        try { loadViolations(); } catch(e) { console.error("Violations load error:", e); }
         if (currentUserRole === "R5") {
-          loadPendingUsers();
-          loadUsersList();
+          try { loadUsersList(); } catch(e) { console.error("Users list load error:", e); }
         }
 
       } else {
         document.getElementById("auth-overlay").classList.remove("hidden");
-        document.getElementById("pending-approval-screen").classList.add("hidden");
         document.getElementById("app-content").classList.add("hidden");
       }
     });
@@ -548,13 +404,15 @@
       if (currentUserRole === "R5") {
         document.getElementById("tab-btn-violations").classList.remove("hidden");
         document.getElementById("tab-btn-roles").classList.remove("hidden");
+        document.getElementById("add-event-btn").classList.remove("hidden");
         document.getElementById("settings-btn").classList.remove("hidden");
       } else if (currentUserRole === "R4") {
         document.getElementById("tab-btn-violations").classList.remove("hidden");
+        document.getElementById("add-event-btn").classList.remove("hidden");
       }
     }
 
-    // FULLCALENDAR V6 INTEGRATION
+    // CALENDAR WITH IN-PAGE DIRECTIVE DISPLAY (PREVENTS REDIRECT)
     function initCalendar() {
       const calendarEl = document.getElementById('calendar');
       fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
@@ -569,148 +427,29 @@
           googleCalendarId: CALENDAR_ID
         },
         dateClick: function(info) {
-          renderDailyStrategyFeed(info.dateStr);
+          showDateStrategy(info.dateStr, "No special Google Calendar event for this day. Follow standard APX alliance rotation.");
         },
         eventClick: function(info) {
-          info.jsEvent.preventDefault(); // Prevents navigating to Google Calendar externally
-          const dateStr = info.event.startStr.split('T')[0];
-          renderDailyStrategyFeed(dateStr, info.event);
+          info.jsEvent.preventDefault(); // Prevent opening Google Calendar webpage!
+          const dateStr = info.event.startStr.split("T")[0];
+          const title = info.event.title;
+          const desc = info.event.extendedProps.description || "Follow standard APX strategic directives.";
+          showDateStrategy(dateStr, `<strong>${title}</strong><br><span class="text-gray-400">${desc}</span>`);
         }
       });
       fullCalendarInstance.render();
     }
 
-    function renderDailyStrategyFeed(dateStr, specificEvent = null) {
-      document.getElementById("selected-date-display").innerText = "Selected Date: " + dateStr;
-      const detailsBox = document.getElementById("strategy-details");
-
-      const dayEvents = fullCalendarInstance.getEvents().filter(e => e.startStr.startsWith(dateStr));
-
-      if (dayEvents.length === 0) {
-        detailsBox.innerHTML = `
-          <div class="text-left w-full space-y-2">
-            <div class="flex items-center gap-2 text-amber-400 font-bold">
-              <i class="fa-solid fa-circle-info"></i> No Specific Calendar Events for ${dateStr}
-            </div>
-            <p class="text-xs text-gray-400 leading-relaxed">Standard APX alliance daily activities apply. Continue routine Bear Trap and KvK preparations.</p>
-          </div>
-        `;
-        return;
-      }
-
-      let html = `<div class="text-left w-full space-y-3">`;
-      html += `<div class="text-amber-400 font-bold border-b border-gray-800 pb-2 flex items-center justify-between">
-                <span>Scheduled Alliance Events (${dayEvents.length})</span>
-                <span class="text-xs text-gray-400 font-mono">${dateStr}</span>
-               </div>`;
-
-      dayEvents.forEach(evt => {
-        const title = evt.title || "Alliance Event";
-        const desc = evt.extendedProps.description || "No specific instructions provided for this event.";
-        const timeStr = evt.allDay ? "All Day Event" : new Date(evt.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-        html += `
-          <div class="p-3.5 bg-gray-950 border border-amber-500/30 rounded-xl space-y-1.5 shadow-md">
-            <div class="flex items-center justify-between">
-              <h4 class="font-bold text-white text-sm flex items-center gap-2"><i class="fa-solid fa-shield-halved text-amber-500"></i> ${title}</h4>
-              <span class="text-[10px] font-bold bg-amber-500/20 text-amber-300 px-2.5 py-0.5 rounded border border-amber-500/30">${timeStr}</span>
-            </div>
-            <p class="text-xs text-gray-300 leading-relaxed">${desc}</p>
-          </div>
-        `;
-      });
-
-      html += `</div>`;
-      detailsBox.innerHTML = html;
+    function showDateStrategy(dateStr, content) {
+      document.getElementById("selected-date-display").innerText = dateStr;
+      document.getElementById("strategy-details").innerHTML = `
+        <div class="space-y-2">
+          <p class="text-amber-400 font-bold text-sm">Strategic Operations Directive (${dateStr}):</p>
+          <div class="p-3 bg-gray-900 border border-gray-800 rounded-xl leading-relaxed">${content}</div>
+        </div>
+      `;
     }
 
-    // MEMBER APPROVALS LOGIC (R5)
-    function loadPendingUsers() {
-      const container = document.getElementById("pending-users-list");
-      const countBadge = document.getElementById("pending-count");
-
-      db.collection("users").where("status", "==", "pending").onSnapshot(snapshot => {
-        container.innerHTML = "";
-        countBadge.innerText = `${snapshot.size} Pending`;
-
-        if (snapshot.empty) {
-          container.innerHTML = '<p class="text-xs text-gray-500">No pending approval requests.</p>';
-          return;
-        }
-
-        snapshot.forEach(doc => {
-          const u = doc.data();
-          const item = document.createElement("div");
-          item.className = "flex flex-wrap items-center justify-between p-3 bg-gray-900 border border-amber-500/30 rounded-xl gap-2 text-xs";
-          item.innerHTML = `
-            <div>
-              <span class="font-bold text-white font-mono">${u.email}</span>
-              <span class="block text-[10px] text-gray-400">Awaiting leadership authorization</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="approveUser('${u.email}', 'R3')" class="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-bold">Approve R3</button>
-              <button onclick="approveUser('${u.email}', 'R4')" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold">Approve R4</button>
-              <button onclick="approveUser('${u.email}', 'R5')" class="px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg font-bold">Approve R5</button>
-              <button onclick="deleteRole('${u.email}')" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-          `;
-          container.appendChild(item);
-        });
-      });
-    }
-
-    async function approveUser(email, role) {
-      await db.collection("users").doc(email.toLowerCase()).set({
-        email: email.toLowerCase(),
-        role: role,
-        status: "approved"
-      }, { merge: true });
-    }
-
-    async function handleManualAddMember(e) {
-      e.preventDefault();
-      const email = document.getElementById("manual-member-email").value.trim().toLowerCase();
-      const role = document.getElementById("manual-member-role").value;
-
-      if (!email) return;
-
-      await approveUser(email, role);
-      document.getElementById("manual-member-email").value = "";
-      alert(`Member ${email} has been authorized directly as ${role}!`);
-    }
-
-    function loadUsersList() {
-      const tbody = document.getElementById("users-list-body");
-      db.collection("users").where("status", "==", "approved").onSnapshot(snapshot => {
-        tbody.innerHTML = "";
-        snapshot.forEach(doc => {
-          const u = doc.data();
-          const tr = document.createElement("tr");
-          tr.className = "border-b border-gray-800/80 hover:bg-gray-900/50 transition";
-          tr.innerHTML = `
-            <td class="p-3 text-white font-medium font-mono">${u.email}</td>
-            <td class="p-3"><span class="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">${u.role}</span></td>
-            <td class="p-3 text-right space-x-2">
-              <select onchange="approveUser('${u.email}', this.value)" class="bg-gray-900 border border-gray-700 rounded-lg p-1.5 text-gray-300 text-xs outline-none">
-                <option value="R3" ${u.role==='R3'?'selected':''}>Set R3</option>
-                <option value="R4" ${u.role==='R4'?'selected':''}>Set R4</option>
-                <option value="R5" ${u.role==='R5'?'selected':''}>Set R5</option>
-              </select>
-              <button onclick="deleteRole('${u.email}')" class="text-red-400 hover:text-red-300 p-1.5 rounded bg-gray-900 border border-gray-800"><i class="fa-solid fa-trash-can"></i></button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      });
-    }
-
-    async function deleteRole(email) {
-      if (confirm(`Revoke portal access for ${email}?`)) {
-        await db.collection("users").doc(email.toLowerCase()).delete();
-      }
-    }
-
-    // DISCORD ALERTS & VIOLATIONS LOGIC
     function toggleDiscordReminders() {
       discordRemindersEnabled = !discordRemindersEnabled;
       const circle = document.getElementById("reminder-toggle-circle");
@@ -738,7 +477,30 @@
       localStorage.setItem("wh_reminders", document.getElementById("webhook-reminders").value);
       localStorage.setItem("wh_violations", document.getElementById("webhook-violations").value);
       closeSettingsModal();
-      alert("Discord Webhook settings saved successfully!");
+      alert("Discord Webhook channels saved successfully!");
+    }
+
+    function openAddEventModal() {
+      document.getElementById("add-event-modal").classList.remove("hidden");
+    }
+
+    function closeAddEventModal() {
+      document.getElementById("add-event-modal").classList.add("hidden");
+    }
+
+    async function handleCreateEvent(e) {
+      e.preventDefault();
+      const title = document.getElementById("e-title").value;
+      const date = document.getElementById("e-date").value;
+      const details = document.getElementById("e-details").value;
+
+      await db.collection("custom_events").add({
+        title, date, details, createdBy: currentUser.email
+      });
+
+      closeAddEventModal();
+      alert("Event directive posted successfully!");
+      showDateStrategy(date, `<strong>${title}</strong><br><span class="text-gray-400">${details}</span>`);
     }
 
     async function sendDiscordWebhook(urlKey, payload) {
@@ -751,7 +513,7 @@
           body: JSON.stringify(payload)
         });
       } catch (e) {
-        console.error("Discord Webhook Send Error:", e);
+        console.error("Discord Webhook Error:", e);
       }
     }
 
@@ -762,9 +524,7 @@
       const details = document.getElementById("v-details").value;
 
       const record = {
-        player,
-        category,
-        details,
+        player, category, details,
         loggedBy: currentUser.email,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       };
@@ -793,42 +553,73 @@
       db.collection("violations").orderBy("timestamp", "desc").limit(20).onSnapshot(snapshot => {
         listEl.innerHTML = "";
         if (snapshot.empty) {
-          listEl.innerHTML = '<p class="text-xs text-gray-500">No gameplay observation records logged yet.</p>';
+          listEl.innerHTML = '<p class="text-xs text-gray-500">No observation records logged yet.</p>';
           return;
         }
         snapshot.forEach(doc => {
           const d = doc.data();
           const item = document.createElement("div");
-          item.className = "bg-gray-900 border border-gray-800 p-3.5 rounded-xl text-xs space-y-1.5 shadow";
+          item.className = "bg-gray-900 border border-gray-800 p-3 rounded-xl text-xs space-y-1";
           item.innerHTML = `
             <div class="flex justify-between font-bold text-gray-200">
-              <span class="text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-user-ninja"></i> ${d.player}</span>
-              <span class="text-gray-400 font-normal bg-gray-800 px-2 py-0.5 rounded text-[10px]">${d.category}</span>
+              <span class="text-amber-400">${d.player}</span>
+              <span class="text-gray-500 font-normal">${d.category}</span>
             </div>
-            <p class="text-gray-300 leading-relaxed">${d.details}</p>
-            <div class="text-[10px] text-gray-500 pt-1 border-t border-gray-800/60 flex justify-between">
-              <span>Logged by: ${d.loggedBy}</span>
-            </div>
+            <p class="text-gray-300">${d.details}</p>
+            <div class="text-[10px] text-gray-500 pt-1">Logged by: ${d.loggedBy}</div>
           `;
           listEl.appendChild(item);
         });
-      }, err => {
-        listEl.innerHTML = `<p class="text-xs text-gray-500">Observation log view updated.</p>`;
       });
     }
 
-    // TAB NAVIGATION
+    async function handleAssignRole(e) {
+      e.preventDefault();
+      const email = document.getElementById("role-email").value.toLowerCase();
+      const role = document.getElementById("role-select").value;
+
+      await db.collection("users").doc(email).set({ email, role });
+      document.getElementById("role-email").value = "";
+      alert(`Rank updated to ${role} for ${email}`);
+    }
+
+    function loadUsersList() {
+      const tbody = document.getElementById("users-list-body");
+      db.collection("users").onSnapshot(snapshot => {
+        tbody.innerHTML = "";
+        snapshot.forEach(doc => {
+          const u = doc.data();
+          const tr = document.createElement("tr");
+          tr.className = "border-b border-gray-800 hover:bg-gray-900/50";
+          tr.innerHTML = `
+            <td class="p-3 text-white">${u.email}</td>
+            <td class="p-3"><span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">${u.role}</span></td>
+            <td class="p-3 text-right">
+              <button onclick="deleteRole('${u.email}')" class="text-red-400 hover:text-red-300 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    async function deleteRole(email) {
+      if (confirm(`Remove access for ${email}?`)) {
+        await db.collection("users").doc(email).delete();
+      }
+    }
+
     function switchTab(tab) {
       document.getElementById("tab-calendar").classList.add("hidden");
       document.getElementById("tab-violations").classList.add("hidden");
       document.getElementById("tab-roles").classList.add("hidden");
 
-      document.getElementById("tab-btn-calendar").className = "py-3.5 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs sm:text-sm flex items-center gap-2 transition";
-      document.getElementById("tab-btn-violations").className = "py-3.5 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs sm:text-sm flex items-center gap-2 transition";
-      document.getElementById("tab-btn-roles").className = "py-3.5 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-bold text-xs sm:text-sm flex items-center gap-2 transition";
+      document.getElementById("tab-btn-calendar").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2";
+      document.getElementById("tab-btn-violations").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2";
+      document.getElementById("tab-btn-roles").className = "py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2";
 
       document.getElementById(`tab-${tab}`).classList.remove("hidden");
-      document.getElementById(`tab-btn-${tab}`).className = "py-3.5 px-1 border-b-2 border-amber-500 text-amber-500 font-bold text-xs sm:text-sm flex items-center gap-2 transition";
+      document.getElementById(`tab-btn-${tab}`).className = "py-3 px-1 border-b-2 border-amber-500 text-amber-500 font-semibold text-sm flex items-center gap-2";
 
       if (tab === 'calendar' && fullCalendarInstance) {
         fullCalendarInstance.updateSize();
