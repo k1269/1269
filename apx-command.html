@@ -326,7 +326,7 @@
     const db = firebase.firestore();
 
     let currentUser = null;
-    let currentUserRole = "R3"; // Default rank
+    let currentUserRole = "R3";
     let discordRemindersEnabled = true;
     let fullCalendarInstance = null;
 
@@ -362,13 +362,12 @@
         currentUser = user;
         const emailLower = (user.email || "").toLowerCase();
 
-        let role = "R3"; // Default role for any new member
+        let role = "R3";
         try {
           const userDoc = await db.collection("users").doc(emailLower).get();
           if (userDoc.exists) {
             role = userDoc.data().role;
           } else {
-            // New user registration -> Store default R3 in database
             if (emailLower === "kdn1269@gmail.com" || emailLower.includes("kdn1269")) {
               role = "R5";
             }
@@ -412,7 +411,7 @@
       }
     }
 
-    // CALENDAR WITH IN-PAGE DIRECTIVE DISPLAY (PREVENTS REDIRECT)
+    // CALENDAR INTEGRATION (GOOGLE CALENDAR + FIRESTORE DYNAMIC EVENTS)
     function initCalendar() {
       const calendarEl = document.getElementById('calendar');
       fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
@@ -430,14 +429,38 @@
           showDateStrategy(info.dateStr, "No special Google Calendar event for this day. Follow standard APX alliance rotation.");
         },
         eventClick: function(info) {
-          info.jsEvent.preventDefault(); // Prevent opening Google Calendar webpage!
+          info.jsEvent.preventDefault();
           const dateStr = info.event.startStr.split("T")[0];
           const title = info.event.title;
           const desc = info.event.extendedProps.description || "Follow standard APX strategic directives.";
           showDateStrategy(dateStr, `<strong>${title}</strong><br><span class="text-gray-400">${desc}</span>`);
         }
       });
+
       fullCalendarInstance.render();
+
+      // Listen to Custom Firestore Events and push them live to FullCalendar
+      loadCustomCalendarEvents();
+    }
+
+    function loadCustomCalendarEvents() {
+      db.collection("custom_events").onSnapshot(snapshot => {
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const existing = fullCalendarInstance.getEventById(doc.id);
+          if (!existing) {
+            fullCalendarInstance.addEvent({
+              id: doc.id,
+              title: "⭐ " + d.title,
+              start: d.date,
+              description: d.details || "Custom APX Operation",
+              backgroundColor: '#d97706',
+              borderColor: '#b45309',
+              allDay: true
+            });
+          }
+        });
+      });
     }
 
     function showDateStrategy(dateStr, content) {
@@ -495,10 +518,31 @@
       const details = document.getElementById("e-details").value;
 
       await db.collection("custom_events").add({
-        title, date, details, createdBy: currentUser.email
+        title,
+        date,
+        details,
+        createdBy: currentUser.email,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
 
+      if (discordRemindersEnabled) {
+        sendDiscordWebhook("wh_reminders", {
+          embeds: [{
+            title: "📅 New APX Operation Scheduled: " + title,
+            color: 16105739,
+            fields: [
+              { name: "Date", value: date, inline: true },
+              { name: "Posted By", value: currentUser.email, inline: true },
+              { name: "Directives", value: details || "No extra notes" }
+            ]
+          }]
+        });
+      }
+
       closeAddEventModal();
+      document.getElementById("e-title").value = "";
+      document.getElementById("e-details").value = "";
+
       alert("Event directive posted successfully!");
       showDateStrategy(date, `<strong>${title}</strong><br><span class="text-gray-400">${details}</span>`);
     }
