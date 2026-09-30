@@ -18,7 +18,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <!-- Custom Aesthetic Styles -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
     
@@ -44,7 +43,7 @@
       border-color: rgba(217, 119, 6, 0.4);
     }
 
-    /* Custom Scrollbar */
+    /* Custom Scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -60,7 +59,7 @@
       background: #d97706;
     }
 
-    /* FullCalendar Dark Theme Customization */
+    /* FullCalendar Dark Tactical Styling */
     .fc-theme-standard td, .fc-theme-standard th {
       border-color: #232d3f !important;
     }
@@ -99,9 +98,10 @@
     }
     .fc-daygrid-day {
       transition: background-color 0.2s ease;
+      cursor: pointer;
     }
     .fc-daygrid-day:hover {
-      background-color: rgba(217, 119, 6, 0.08) !important;
+      background-color: rgba(217, 119, 6, 0.12) !important;
     }
     .fc-event {
       cursor: pointer;
@@ -154,7 +154,7 @@
       </div>
       <h3 class="text-lg font-bold text-white">Set In-Game Nickname</h3>
       <p class="text-gray-400 text-xs leading-relaxed">
-        Enter your exact in-game name (e.g., <span class="text-amber-400 font-semibold">APX-King1269</span>). This replaces your bare email address across all alliance activity logs.
+        Enter your exact in-game name (e.g., <span class="text-amber-400 font-semibold">APX-King1269</span>). This replaces your raw email address across all alliance activity logs.
       </p>
       
       <form onsubmit="saveNickname(event)" class="space-y-4 pt-2">
@@ -251,15 +251,17 @@
         </div>
 
         <!-- SELECTED DATE STRATEGY FEED -->
-        <div class="bg-card border border-amber-500/30 rounded-2xl p-6 space-y-4 shadow-xl">
+        <div class="bg-card border border-amber-500/30 rounded-2xl p-6 space-y-4 shadow-xl gold-glow">
           <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
             <h3 class="font-bold text-amber-400 text-sm flex items-center gap-2">
               <i class="fa-solid fa-bullseye text-base"></i> Selected Date Strategy Feed
             </h3>
-            <span id="selected-date-display" class="text-xs bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-amber-300 font-semibold">Select a date on calendar</span>
+            <span id="selected-date-display" class="text-xs bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-amber-300 font-semibold">
+              Select a date on calendar
+            </span>
           </div>
           <div id="strategy-details" class="text-xs text-gray-300 leading-relaxed min-h-[60px]">
-            Click any date on the calendar grid above to inspect scheduled events, tactical directives, and daily alliance objectives without navigating away.
+            <p class="text-gray-400 italic">Click any date on the calendar grid above to automatically gather and view all scheduled events, tactical directives, and daily alliance objectives for that specific date in detailed cards.</p>
           </div>
         </div>
       </section>
@@ -407,7 +409,7 @@
             <input type="date" id="e-date" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-500">
           </div>
           <div>
-            <label class="block text-gray-400 font-semibold mb-1">Strategy Directives & Directives</label>
+            <label class="block text-gray-400 font-semibold mb-1">Strategy Directives & Details</label>
             <textarea id="e-details" rows="3" placeholder="Army setup, rally leads, or rules..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-500"></textarea>
           </div>
           <div class="flex justify-end gap-2 pt-2">
@@ -634,14 +636,12 @@
         googleCalendarApiKey: GOOGLE_CALENDAR_API_KEY,
         events: { googleCalendarId: CALENDAR_ID },
         dateClick: function(info) {
-          showDateStrategy(info.dateStr, "No Google Calendar entry for this date. Follow general APX alliance routines.");
+          displayEventsForDate(info.dateStr);
         },
         eventClick: function(info) {
           info.jsEvent.preventDefault();
           const dateStr = info.event.startStr.split("T")[0];
-          const title = info.event.title;
-          const desc = info.event.extendedProps.description || "Follow APX strategic guidelines.";
-          showDateStrategy(dateStr, `<strong>${title}</strong><br><span class="text-gray-400">${desc}</span>`);
+          displayEventsForDate(dateStr);
         }
       });
 
@@ -670,15 +670,98 @@
       });
     }
 
-    // DYNAMIC STRATEGY FEED UPDATE
-    function showDateStrategy(dateStr, content) {
+    /**
+     * DYNAMIC MULTI-EVENT STRATEGY FEED DISPLAY FIX
+     * Queries ALL calendar events occurring on `dateStr` and renders them into structured cards
+     */
+    function displayEventsForDate(dateStr) {
       document.getElementById("selected-date-display").innerText = dateStr;
-      document.getElementById("strategy-details").innerHTML = `
-        <div class="space-y-2">
-          <p class="text-amber-400 font-bold text-xs uppercase tracking-wider">Strategic Directive (${dateStr}):</p>
-          <div class="p-3 bg-gray-900 border border-gray-800 rounded-xl leading-relaxed">${content}</div>
+      const container = document.getElementById("strategy-details");
+
+      if (!fullCalendarInstance) return;
+
+      // Retrieve all events currently loaded into the FullCalendar instance
+      const allEvents = fullCalendarInstance.getEvents();
+
+      // Filter events occurring on or spanning across dateStr (YYYY-MM-DD)
+      const dayEvents = allEvents.filter(evt => {
+        if (!evt.start) return false;
+        
+        const evtStartDate = evt.startStr.split("T")[0];
+        
+        // Handle multi-day events
+        if (evt.end) {
+          const evtEndDate = evt.endStr.split("T")[0];
+          return dateStr >= evtStartDate && dateStr < evtEndDate;
+        }
+        
+        return evtStartDate === dateStr;
+      });
+
+      // Render fallback if no events scheduled for date
+      if (dayEvents.length === 0) {
+        container.innerHTML = `
+          <div class="p-4 bg-gray-900/80 border border-gray-800 rounded-xl space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-amber-400 font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-shield-cat"></i> No Scheduled Operations
+              </span>
+              <span class="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded font-mono">APX Routine</span>
+            </div>
+            <p class="text-gray-300 text-xs leading-relaxed">
+              No formal Google Calendar or custom kingdom operations scheduled for <strong>${dateStr}</strong>. Follow standard alliance routines, gathering directives, and standby in alliance chat.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      // Build structured cards for ALL events on that date
+      let html = `<div class="space-y-3">`;
+      html += `
+        <div class="flex items-center justify-between text-xs border-b border-gray-800/80 pb-2">
+          <span class="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check"></i> Operations & Directives (${dayEvents.length})
+          </span>
+          <span class="text-[10px] text-gray-400 font-mono">Date: ${dateStr}</span>
         </div>
       `;
+
+      dayEvents.forEach((evt, idx) => {
+        const title = evt.title || "Untitled Operation";
+        const desc = evt.extendedProps.description || "No specific tactical notes provided for this directive.";
+        const isCustom = evt.backgroundColor === '#d97706' || title.startsWith("⭐");
+        
+        let timeDisplay = "All Day";
+        if (!evt.allDay && evt.start) {
+          const startTime = new Date(evt.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          timeDisplay = startTime;
+          if (evt.end) {
+            const endTime = new Date(evt.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            timeDisplay += ` - ${endTime}`;
+          }
+        }
+
+        html += `
+          <div class="bg-gray-900 border ${isCustom ? 'border-amber-500/50 gold-glow' : 'border-gray-800'} rounded-xl p-4 space-y-2 text-xs">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-sm ${isCustom ? 'text-amber-400' : 'text-white'}">${title}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded ${isCustom ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'} font-semibold uppercase">
+                  ${isCustom ? 'Custom Operation' : 'Google Calendar'}
+                </span>
+              </div>
+              <span class="text-[10px] font-mono bg-gray-800 text-amber-400 border border-gray-700 px-2.5 py-0.5 rounded font-semibold">
+                <i class="fa-regular fa-clock mr-1"></i>${timeDisplay}
+              </span>
+            </div>
+            <div class="text-gray-300 leading-relaxed bg-black/40 p-3 rounded-lg border border-gray-800/80 whitespace-pre-wrap">${desc}</div>
+          </div>
+        `;
+      });
+
+      html += `</div>`;
+      container.innerHTML = html;
     }
 
     // DISCORD REMINDERS TOGGLE
@@ -753,7 +836,7 @@
       document.getElementById("e-details").value = "";
 
       showNoticeModal("Directive Posted", "Custom operations event saved and broadcasted to Discord.");
-      showDateStrategy(date, `<strong>${title}</strong><br><span class="text-gray-400">${details}</span>`);
+      displayEventsForDate(date);
     }
 
     // DISCORD WEBHOOK DISPATCHER
