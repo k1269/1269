@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APX Leaders Portal - Kingdom 1269</title>
+  <title>APX Command Center - Kingdom 1269</title>
 
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -31,21 +31,21 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-  <!-- LOGIN / AUTH OVERLAY -->
+  <!-- 1. LOGIN / AUTH OVERLAY -->
   <div id="auth-overlay" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-card border border-amber-600/40 rounded-xl p-8 max-w-md w-full text-center shadow-2xl">
       <div class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/30">
         <i class="fa-solid fa-shield-halved text-amber-500 text-3xl"></i>
       </div>
-      <h2 class="text-2xl font-bold text-white mb-2">APX LEADERS PORTAL</h2>
-      <p class="text-gray-400 text-sm mb-6">Kingdom 1269 Operations & Calendar</p>
+      <h2 class="text-2xl font-bold text-white mb-1">APX COMMAND CENTER</h2>
+      <p class="text-gray-400 text-xs mb-6">Kingdom 1269 Operations & Strategy Portal</p>
       
       <div class="space-y-3">
-        <button onclick="loginWithGoogle()" class="w-full py-3 px-4 bg-white text-gray-900 hover:bg-gray-100 font-semibold rounded-lg flex items-center justify-center gap-3 transition">
-          <i class="fa-brands fa-google text-red-500 text-lg"></i> Sign in with Gmail
+        <button onclick="loginWithGoogle()" class="w-full py-3 px-4 bg-white hover:bg-gray-100 text-gray-900 font-semibold rounded-lg flex items-center justify-center gap-3 transition text-sm">
+          <i class="fa-brands fa-google text-red-500 text-lg"></i> Continue with Google
         </button>
-        <button onclick="loginWithDiscord()" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg flex items-center justify-center gap-3 transition">
-          <i class="fa-brands fa-discord text-lg"></i> Sign in with Discord
+        <button onclick="loginWithDiscord()" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg flex items-center justify-center gap-3 transition text-sm">
+          <i class="fa-brands fa-discord text-lg"></i> Continue with Discord
         </button>
       </div>
 
@@ -53,30 +53,35 @@
     </div>
   </div>
 
-  <!-- ACCESS DENIED OVERLAY -->
-  <div id="access-denied-screen" class="hidden fixed inset-0 z-40 bg-black/95 flex items-center justify-center p-4">
-    <div class="bg-card border border-red-600/50 rounded-xl p-8 max-w-md w-full text-center">
-      <i class="fa-solid fa-lock text-red-500 text-5xl mb-4"></i>
-      <h3 class="text-2xl font-bold text-white mb-2">Access Restricted</h3>
-      <p class="text-gray-400 text-sm mb-6">Your account is not registered or lacks permissions (R3/R4/R5 required). Contact leadership to grant access.</p>
-      <button onclick="logout()" class="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-semibold">Sign Out</button>
+  <!-- 2. PENDING APPROVAL OVERLAY -->
+  <div id="pending-approval-screen" class="hidden fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
+    <div class="bg-card border border-amber-500/40 rounded-xl p-8 max-w-md w-full text-center shadow-2xl">
+      <i class="fa-solid fa-clock-rotate-left text-amber-500 text-5xl mb-4 animate-pulse"></i>
+      <h3 class="text-xl font-bold text-white mb-2">Account Pending Approval</h3>
+      <p class="text-gray-300 text-xs mb-4">Your registration request has been submitted successfully.</p>
+      <div class="bg-gray-900 border border-gray-800 p-3 rounded text-left text-xs text-gray-400 mb-6 space-y-1">
+        <p><strong class="text-amber-400">Account:</strong> <span id="pending-user-email"></span></p>
+        <p><strong class="text-amber-400">Status:</strong> Waiting for R5 Leader Review</p>
+      </div>
+      <p class="text-gray-400 text-xs mb-6">Please notify an APX Leader to assign your role rank (R3 / R4 / R5).</p>
+      <button onclick="logout()" class="w-full py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs font-semibold">Sign Out</button>
     </div>
   </div>
 
-  <!-- MAIN APP WRAPPER -->
+  <!-- 3. MAIN APP WRAPPER -->
   <div id="app-content" class="hidden flex-1 flex flex-col">
     <!-- NAVBAR -->
     <header class="bg-card border-b border-gray-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <span class="text-2xl font-black tracking-wider text-amber-500">APX</span>
-        <span class="text-xs font-semibold px-2 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded">K1269 Portal</span>
+        <span class="text-xs font-semibold px-2 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded">Command Center</span>
       </div>
 
       <div class="flex items-center gap-4">
         <!-- DISCORD REMINDER TOGGLE -->
         <div class="flex items-center gap-2 bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-lg">
           <i class="fa-brands fa-discord text-indigo-400"></i>
-          <span class="text-xs text-gray-300 font-medium">Discord Reminders</span>
+          <span class="text-xs text-gray-300 font-medium">Discord Alerts</span>
           <button id="reminder-toggle-btn" onclick="toggleDiscordReminders()" class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-amber-600 transition-colors duration-200 ease-in-out focus:outline-none">
             <span id="reminder-toggle-circle" class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-4"></span>
           </button>
@@ -90,12 +95,12 @@
         </div>
 
         <!-- SETTINGS (R5 ONLY) -->
-        <button id="settings-btn" onclick="openSettingsModal()" class="hidden text-gray-400 hover:text-white p-2 rounded-lg bg-gray-800 border border-gray-700">
+        <button id="settings-btn" onclick="openSettingsModal()" class="hidden text-gray-400 hover:text-white p-2 rounded-lg bg-gray-800 border border-gray-700" title="Discord Webhooks Settings">
           <i class="fa-solid fa-gear"></i>
         </button>
 
         <!-- LOGOUT -->
-        <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-gray-800 border border-gray-700">
+        <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2 rounded-lg bg-gray-800 border border-gray-700" title="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </div>
@@ -108,23 +113,23 @@
           <i class="fa-solid fa-calendar-days"></i> Calendar & Strategy
         </button>
         <button id="tab-btn-violations" onclick="switchTab('violations')" class="hidden py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2">
-          <i class="fa-solid fa-clipboard-check"></i> Gameplay Notes & Violations
+          <i class="fa-solid fa-clipboard-check"></i> Gameplay Notes & Observations
         </button>
         <button id="tab-btn-roles" onclick="switchTab('roles')" class="hidden py-3 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold text-sm flex items-center gap-2">
-          <i class="fa-solid fa-users-gear"></i> Role Management
+          <i class="fa-solid fa-users-gear"></i> Member Approvals & Ranks
         </button>
       </div>
     </nav>
 
-    <!-- CONTAINER FOR TAB CONTENTS -->
+    <!-- MAIN CONTENT AREA -->
     <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
 
       <!-- TAB 1: CALENDAR & STRATEGY -->
       <section id="tab-calendar" class="space-y-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center justify-between">
           <div>
             <h1 class="text-xl font-bold text-white">Kingdom Operations Calendar</h1>
-            <p class="text-xs text-gray-400">Live events synced from Google Calendar</p>
+            <p class="text-xs text-gray-400">Select any date on the calendar below to view schedule & strategy details.</p>
           </div>
         </div>
 
@@ -133,30 +138,40 @@
           <div id="calendar"></div>
         </div>
 
-        <!-- SELECTED DATE STRATEGY FEED -->
-        <div class="bg-card border border-amber-500/20 rounded-xl p-5 space-y-3">
-          <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-            <h3 class="font-bold text-amber-400 text-sm flex items-center gap-2">
-              <i class="fa-solid fa-bullseye"></i> Selected Date Strategy Feed
-            </h3>
-            <span id="selected-date-display" class="text-xs bg-gray-800 px-2.5 py-1 rounded text-gray-300">Select a date on calendar</span>
+        <!-- PROMINENT DAILY STRATEGY & EVENTS FEED -->
+        <div class="bg-card border border-amber-500/40 rounded-xl p-6 shadow-xl space-y-4">
+          <div class="flex flex-wrap items-center justify-between border-b border-gray-800 pb-3 gap-2">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-amber-500/10 border border-amber-500/30 rounded-lg flex items-center justify-center text-amber-500">
+                <i class="fa-solid fa-calendar-check text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-amber-400 text-base">Daily Schedule & Strategy Details</h3>
+                <p id="selected-date-display" class="text-xs text-gray-400">Select a date from calendar above</p>
+              </div>
+            </div>
+            <span class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-3 py-1 rounded-full font-semibold">In-App Live Inspector</span>
           </div>
-          <div id="strategy-details" class="text-xs text-gray-400 leading-relaxed min-h-[50px]">
-            Click any date on the calendar above to inspect strategy details and daily objectives.
+
+          <!-- DETAILED CONTENT AREA -->
+          <div id="strategy-details" class="p-4 bg-gray-900 border border-gray-800 rounded-lg min-h-[100px] flex items-center justify-center text-center text-sm text-gray-400">
+            <div>
+              <i class="fa-solid fa-arrow-up text-amber-500 text-lg mb-2 block"></i>
+              Click any date or event on the calendar above to display its complete details and alliance objectives here.
+            </div>
           </div>
         </div>
       </section>
 
       <!-- TAB 2: VIOLATIONS & GAMEPLAY NOTES -->
       <section id="tab-violations" class="hidden space-y-6">
-        <!-- DISCLAIMER BANNER -->
         <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-center gap-3">
           <i class="fa-solid fa-triangle-exclamation text-lg"></i>
           <span><strong>Leadership Note:</strong> Logged items are not necessarily strict violations, but gameplay and conduct notes for leadership observation and tracking.</span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- FORM TO LOG NOTE/VIOLATION -->
+          <!-- FORM -->
           <div class="bg-card border border-gray-800 rounded-xl p-5 space-y-4">
             <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Log Gameplay Observation</h3>
             <form id="violation-form" onsubmit="handleSaveViolation(event)" class="space-y-3 text-xs">
@@ -187,7 +202,7 @@
             </form>
           </div>
 
-          <!-- LIST OF LOGGED ITEMS -->
+          <!-- LIST -->
           <div class="lg:col-span-2 bg-card border border-gray-800 rounded-xl p-5 space-y-4">
             <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Observation Records</h3>
             <div id="violations-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
@@ -197,44 +212,45 @@
         </div>
       </section>
 
-      <!-- TAB 3: ROLE MANAGEMENT (R5 ONLY) -->
+      <!-- TAB 3: MEMBER APPROVALS & ROLES (R5 ONLY) -->
       <section id="tab-roles" class="hidden space-y-6">
-        <div class="bg-card border border-gray-800 rounded-xl p-5 space-y-4">
-          <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Assign Member Permissions</h3>
-          <form onsubmit="handleAssignRole(event)" class="flex flex-wrap gap-3 text-xs">
-            <input type="email" id="role-email" placeholder="User Gmail Address" required class="flex-1 bg-gray-900 border border-gray-700 rounded p-2 text-white outline-none">
-            <select id="role-select" class="bg-gray-900 border border-gray-700 rounded p-2 text-white outline-none">
-              <option value="R3">R3 (Calendar Viewer)</option>
-              <option value="R4">R4 (Officer / Notes Editor)</option>
-              <option value="R5">R5 (Full Leader Access)</option>
-            </select>
-            <button type="submit" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded">
-              Save Role
-            </button>
-          </form>
+        <!-- PENDING APPROVALS LIST -->
+        <div class="bg-card border border-amber-500/30 rounded-xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+            <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+              <i class="fa-solid fa-user-clock"></i> Pending Sign-Up Requests
+            </h3>
+            <span id="pending-count" class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded font-bold">0 Pending</span>
+          </div>
+          <p class="text-xs text-gray-400">Review new registrations and grant them access by assigning their role rank.</p>
+          
+          <div id="pending-users-list" class="space-y-2">
+            <p class="text-xs text-gray-500">No pending approval requests.</p>
+          </div>
+        </div>
 
-          <div class="mt-6">
-            <h4 class="text-xs font-bold text-gray-400 mb-2">Registered Users & Ranks</h4>
-            <div id="users-table-container" class="border border-gray-800 rounded overflow-hidden">
-              <table class="w-full text-xs text-left">
-                <thead class="bg-gray-900 text-gray-400 border-b border-gray-800">
-                  <tr>
-                    <th class="p-3">Email</th>
-                    <th class="p-3">Role</th>
-                    <th class="p-3 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="users-list-body" class="divide-y divide-gray-800">
-                </tbody>
-              </table>
-            </div>
+        <!-- APPROVED USERS TABLE -->
+        <div class="bg-card border border-gray-800 rounded-xl p-5 space-y-4">
+          <h3 class="text-base font-bold text-white border-b border-gray-800 pb-2">Approved Alliance Members</h3>
+          <div class="border border-gray-800 rounded overflow-hidden">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-gray-900 text-gray-400 border-b border-gray-800">
+                <tr>
+                  <th class="p-3">User Account / Email</th>
+                  <th class="p-3">Current Role</th>
+                  <th class="p-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="users-list-body" class="divide-y divide-gray-800">
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
     </main>
 
-    <!-- DISCORD WEBHOOKS SETTINGS MODAL (R5) -->
+    <!-- SETTINGS MODAL -->
     <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div class="bg-card border border-gray-700 rounded-xl p-6 max-w-lg w-full space-y-4">
         <div class="flex items-center justify-between border-b border-gray-800 pb-2">
@@ -253,7 +269,7 @@
         </div>
         <div class="flex justify-end gap-2 pt-2">
           <button onclick="closeSettingsModal()" class="px-4 py-2 bg-gray-800 text-gray-300 rounded text-xs font-semibold">Cancel</button>
-          <button onclick="saveWebhooks()" class="px-4 py-2 bg-amber-600 text-white rounded text-xs font-semibold">Save Channels</button>
+          <button onclick="saveWebhooks()" class="px-4 py-2 bg-amber-600 text-white rounded text-xs font-semibold">Save Settings</button>
         </div>
       </div>
     </div>
@@ -264,7 +280,7 @@
     </footer>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- JAVASCRIPT CODE -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -286,7 +302,9 @@
     let currentUserRole = null;
     let discordRemindersEnabled = true;
     let fullCalendarInstance = null;
+    let calendarEventsCache = [];
 
+    // AUTHENTICATION
     function loginWithGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider).catch(err => {
@@ -297,7 +315,7 @@
     function loginWithDiscord() {
       const provider = new firebase.auth.OAuthProvider('discord.com');
       auth.signInWithPopup(provider).catch(err => {
-        showAuthError("Discord Sign-In: " + err.message);
+        showAuthError("Discord Sign-In: " + err.message + " (Ensure Discord provider is enabled in Firebase Auth Console)");
       });
     }
 
@@ -313,57 +331,69 @@
       el.classList.remove("hidden");
     }
 
-    // AUTH & ROLE HANDLING (WITH FALLBACK FOR SAFETY)
+    // AUTH STATE & MEMBER APPROVAL FLOW
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         currentUser = user;
         const emailLower = (user.email || "").toLowerCase();
 
-        let role = null;
+        let userData = null;
         try {
           const userDoc = await db.collection("users").doc(emailLower).get();
           if (userDoc.exists) {
-            role = userDoc.data().role;
+            userData = userDoc.data();
           }
-        } catch (fsErr) {
-          console.warn("Firestore Check Warning:", fsErr);
+        } catch (e) {
+          console.warn("User lookup note:", e);
         }
 
-        // Automatic Owner Bypass for KDN1269
-        if (!role && (emailLower === "kdn1269@gmail.com" || emailLower.includes("kdn1269"))) {
-          role = "R5";
-          try {
-            await db.collection("users").doc(emailLower).set({ role: "R5", email: emailLower });
-          } catch(e) {}
+        // Leader Owner auto-bypass
+        if (emailLower === "kdn1269@gmail.com" || emailLower.includes("kdn1269")) {
+          userData = { role: "R5", status: "approved", email: emailLower };
+          await db.collection("users").doc(emailLower).set(userData, { merge: true });
         }
 
-        currentUserRole = role;
+        // If new user (no record in DB)
+        if (!userData) {
+          userData = {
+            email: emailLower,
+            role: "Pending",
+            status: "pending",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          };
+          await db.collection("users").doc(emailLower).set(userData);
+        }
 
-        if (!currentUserRole) {
+        // Check if Approved or Pending
+        if (userData.status === "pending" || userData.role === "Pending") {
           document.getElementById("auth-overlay").classList.add("hidden");
-          document.getElementById("access-denied-screen").classList.remove("hidden");
+          document.getElementById("pending-user-email").innerText = emailLower;
+          document.getElementById("pending-approval-screen").classList.remove("hidden");
           return;
         }
 
+        // Account Approved!
+        currentUserRole = userData.role || "R3";
         document.getElementById("auth-overlay").classList.add("hidden");
-        document.getElementById("access-denied-screen").classList.add("hidden");
+        document.getElementById("pending-approval-screen").classList.add("hidden");
         document.getElementById("app-content").classList.remove("hidden");
 
         document.getElementById("user-email").innerText = user.email;
         document.getElementById("user-role").innerText = currentUserRole;
 
         applyRolePermissions();
-        
-        try { initCalendar(); } catch(e) { console.error("Calendar load error:", e); }
-        try { loadViolations(); } catch(e) { console.error("Violations load error:", e); }
+        initCalendar();
+        loadViolations();
+
         if (currentUserRole === "R5") {
-          try { loadUsersList(); } catch(e) { console.error("Users list load error:", e); }
+          loadPendingUsers();
+          loadUsersList();
         }
 
       } else {
         document.getElementById("auth-overlay").classList.remove("hidden");
+        document.getElementById("pending-approval-screen").classList.add("hidden");
         document.getElementById("app-content").classList.add("hidden");
-        document.getElementById("access-denied-screen").classList.add("hidden");
       }
     });
 
@@ -377,6 +407,7 @@
       }
     }
 
+    // FULLCALENDAR WITH IN-APP DISPLAY (NO REDIRECT)
     function initCalendar() {
       const calendarEl = document.getElementById('calendar');
       fullCalendarInstance = new FullCalendar.Calendar(calendarEl, {
@@ -390,17 +421,143 @@
         events: {
           googleCalendarId: CALENDAR_ID
         },
+        eventDataTransform: function(eventData) {
+          calendarEventsCache.push(eventData);
+          return eventData;
+        },
         dateClick: function(info) {
-          document.getElementById("selected-date-display").innerText = info.dateStr;
-          document.getElementById("strategy-details").innerHTML = `<p class="text-amber-400 font-semibold mb-1">Strategy Log for ${info.dateStr}:</p><p>No special custom alerts logged for this date. Follow standard APX event rotation.</p>`;
+          renderDailyStrategyFeed(info.dateStr);
         },
         eventClick: function(info) {
-          alert('Event: ' + info.event.title + '\nDescription: ' + (info.event.extendedProps.description || 'No additional details'));
+          info.jsEvent.preventDefault(); // CRITICAL: Stop opening Google Calendar externally
+          const dateStr = info.event.startStr.split('T')[0];
+          renderDailyStrategyFeed(dateStr, info.event);
         }
       });
       fullCalendarInstance.render();
     }
 
+    function renderDailyStrategyFeed(dateStr, specificEvent = null) {
+      document.getElementById("selected-date-display").innerText = "Date: " + dateStr;
+      const detailsBox = document.getElementById("strategy-details");
+
+      const dayEvents = fullCalendarInstance.getEvents().filter(e => {
+        return e.startStr.startsWith(dateStr);
+      });
+
+      if (dayEvents.length === 0) {
+        detailsBox.innerHTML = `
+          <div class="text-left w-full space-y-2">
+            <div class="flex items-center gap-2 text-amber-400 font-bold">
+              <i class="fa-solid fa-circle-info"></i> No Scheduled Events for ${dateStr}
+            </div>
+            <p class="text-xs text-gray-400">Standard APX alliance daily activities apply. No special KvK or Bear Trap operations logged for this day.</p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `<div class="text-left w-full space-y-3">`;
+      html += `<div class="text-amber-400 font-bold border-b border-gray-800 pb-2 flex items-center justify-between">
+                <span>Scheduled Events (${dayEvents.length})</span>
+                <span class="text-xs text-gray-400">${dateStr}</span>
+               </div>`;
+
+      dayEvents.forEach(evt => {
+        const title = evt.title || "Untitled Event";
+        const desc = evt.extendedProps.description || "No specific instructions provided for this event.";
+        const timeStr = evt.allDay ? "All Day Event" : new Date(evt.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        html += `
+          <div class="p-3 bg-gray-900/80 border border-amber-500/30 rounded-lg space-y-1">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-white text-sm"><i class="fa-solid fa-star text-amber-500 mr-1.5"></i>${title}</h4>
+              <span class="text-[11px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">${timeStr}</span>
+            </div>
+            <p class="text-xs text-gray-300 leading-relaxed pt-1">${desc}</p>
+          </div>
+        `;
+      });
+
+      html += `</div>`;
+      detailsBox.innerHTML = html;
+    }
+
+    // MEMBER APPROVALS LOGIC (R5)
+    function loadPendingUsers() {
+      const container = document.getElementById("pending-users-list");
+      const countBadge = document.getElementById("pending-count");
+
+      db.collection("users").where("status", "==", "pending").onSnapshot(snapshot => {
+        container.innerHTML = "";
+        countBadge.innerText = `${snapshot.size} Pending`;
+
+        if (snapshot.empty) {
+          container.innerHTML = '<p class="text-xs text-gray-500">No pending approval requests.</p>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const u = doc.data();
+          const item = document.createElement("div");
+          item.className = "flex flex-wrap items-center justify-between p-3 bg-gray-900 border border-amber-500/30 rounded-lg gap-2 text-xs";
+          item.innerHTML = `
+            <div>
+              <span class="font-bold text-white">${u.email}</span>
+              <span class="block text-[10px] text-gray-400">Awaiting leader review</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="approveUser('${u.email}', 'R3')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded font-semibold">Approve R3</button>
+              <button onclick="approveUser('${u.email}', 'R4')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-semibold">Approve R4</button>
+              <button onclick="approveUser('${u.email}', 'R5')" class="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white rounded font-semibold">Approve R5</button>
+              <button onclick="deleteRole('${u.email}')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-400 rounded"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+      });
+    }
+
+    async function approveUser(email, role) {
+      await db.collection("users").doc(email).set({
+        email: email,
+        role: role,
+        status: "approved"
+      }, { merge: true });
+    }
+
+    function loadUsersList() {
+      const tbody = document.getElementById("users-list-body");
+      db.collection("users").where("status", "==", "approved").onSnapshot(snapshot => {
+        tbody.innerHTML = "";
+        snapshot.forEach(doc => {
+          const u = doc.data();
+          const tr = document.createElement("tr");
+          tr.className = "border-b border-gray-800 hover:bg-gray-900/50";
+          tr.innerHTML = `
+            <td class="p-3 text-white font-medium">${u.email}</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">${u.role}</span></td>
+            <td class="p-3 text-right space-x-2">
+              <select onchange="approveUser('${u.email}', this.value)" class="bg-gray-900 border border-gray-700 rounded p-1 text-gray-300 text-xs outline-none">
+                <option value="R3" ${u.role==='R3'?'selected':''}>Set R3</option>
+                <option value="R4" ${u.role==='R4'?'selected':''}>Set R4</option>
+                <option value="R5" ${u.role==='R5'?'selected':''}>Set R5</option>
+              </select>
+              <button onclick="deleteRole('${u.email}')" class="text-red-400 hover:text-red-300 p-1"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    async function deleteRole(email) {
+      if (confirm(`Revoke access for ${email}?`)) {
+        await db.collection("users").doc(email).delete();
+      }
+    }
+
+    // DISCORD ALERTS & VIOLATIONS
     function toggleDiscordReminders() {
       discordRemindersEnabled = !discordRemindersEnabled;
       const circle = document.getElementById("reminder-toggle-circle");
@@ -428,7 +585,7 @@
       localStorage.setItem("wh_reminders", document.getElementById("webhook-reminders").value);
       localStorage.setItem("wh_violations", document.getElementById("webhook-violations").value);
       closeSettingsModal();
-      alert("Discord Webhook channels saved successfully!");
+      alert("Discord Webhook settings saved!");
     }
 
     async function sendDiscordWebhook(urlKey, payload) {
@@ -505,41 +662,7 @@
       });
     }
 
-    async function handleAssignRole(e) {
-      e.preventDefault();
-      const email = document.getElementById("role-email").value.toLowerCase();
-      const role = document.getElementById("role-select").value;
-
-      await db.collection("users").doc(email).set({ email, role });
-      document.getElementById("role-email").value = "";
-    }
-
-    function loadUsersList() {
-      const tbody = document.getElementById("users-list-body");
-      db.collection("users").onSnapshot(snapshot => {
-        tbody.innerHTML = "";
-        snapshot.forEach(doc => {
-          const u = doc.data();
-          const tr = document.createElement("tr");
-          tr.className = "border-b border-gray-800 hover:bg-gray-900/50";
-          tr.innerHTML = `
-            <td class="p-3 text-white">${u.email}</td>
-            <td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">${u.role}</span></td>
-            <td class="p-3 text-right">
-              <button onclick="deleteRole('${u.email}')" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      });
-    }
-
-    async function deleteRole(email) {
-      if (confirm(`Remove access for ${email}?`)) {
-        await db.collection("users").doc(email).delete();
-      }
-    }
-
+    // TAB SWITCHING
     function switchTab(tab) {
       document.getElementById("tab-calendar").classList.add("hidden");
       document.getElementById("tab-violations").classList.add("hidden");
