@@ -3,66 +3,496 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 | Operations</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Kingdom 1269 - Portal</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        .gold-gradient {
-            background: linear-gradient(135deg, #d4af37 0%, #aa771c 50%, #f3e5ab 100%);
+        :root {
+            --gold-primary: #f3c258;
+            --gold-glow: #ffdf85;
+            --blue-royal: #1382ee;
+            --blue-glow: #00d2ff;
+            --bg-dark: #0a0c10;
+            --card-bg: rgba(18, 24, 38, 0.75);
+            --border-gold: rgba(243, 194, 88, 0.4);
+            --border-blue: rgba(19, 130, 238, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(19, 130, 238, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(243, 194, 88, 0.08) 0%, transparent 40%);
+        }
+
+        /* Header / Navbar */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-logo {
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            border: 2px solid var(--gold-primary);
+            box-shadow: 0 0 15px rgba(243, 194, 88, 0.5);
+            object-fit: cover;
+        }
+
+        .brand-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--gold-primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(243, 194, 88, 0.3);
         }
-        .card-hover:hover {
-            border-color: #d4af37;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+
+        .auth-btn {
+            background: linear-gradient(135deg, var(--gold-primary), #b8860b);
+            color: #000;
+            border: none;
+            padding: 10px 22px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(243, 194, 88, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(243, 194, 88, 0.8);
+            background: linear-gradient(135deg, var(--gold-glow), var(--gold-primary));
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin: 40px 20px 20px;
+            position: relative;
+        }
+
+        .main-banner-logo {
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
+            border: 3px solid var(--gold-primary);
+            box-shadow: 0 0 35px var(--blue-royal), 0 0 15px var(--gold-primary);
+            margin-bottom: 20px;
+            transition: transform 0.5s ease;
+        }
+
+        .main-banner-logo:hover {
+            transform: scale(1.03) rotate(1deg);
+        }
+
+        .hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+            background: linear-gradient(180deg, #ffffff 0%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(243, 194, 88, 0.5);
+        }
+
+        .hero p {
+            color: #a0aec0;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        /* Cards Grid */
+        .cards-container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-gold);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+        }
+
+        /* Card Glow Line */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--blue-glow);
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.25), 0 0 20px rgba(243, 194, 88, 0.2);
+        }
+
+        .card-icon-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 8px rgba(243, 194, 88, 0.6));
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon-img {
+            transform: scale(1.1);
+        }
+
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            margin-bottom: 10px;
+        }
+
+        .card-btn {
+            margin-top: auto;
+            padding: 8px 18px;
+            font-size: 0.85rem;
+            border-radius: 20px;
+            background: rgba(19, 130, 238, 0.2);
+            border: 1px solid var(--blue-royal);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-btn {
+            background: var(--blue-royal);
+            box-shadow: 0 0 15px var(--blue-glow);
+        }
+
+        /* Modal / Login Popup */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-card {
+            background: #0f1522;
+            border: 2px solid var(--gold-primary);
+            box-shadow: 0 0 40px rgba(243, 194, 88, 0.3);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 420px;
+            padding: 30px;
+            position: relative;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        .modal-card h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: #a0aec0;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-blue);
+            color: #fff;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 10px rgba(243, 194, 88, 0.3);
+        }
+
+        .provider-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .provider-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .provider-btn.google {
+            background: #ffffff;
+            color: #333;
+        }
+
+        .provider-btn.discord {
+            background: #5865F2;
+            color: #fff;
+        }
+
+        .provider-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding: 25px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #718096;
+            width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer span {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="bg-[#0b0f19] text-gray-100 min-h-screen">
+<body>
 
-    <!-- Banner Section -->
-    <header class="w-full py-10 text-center bg-[#070a12] border-b border-amber-900/30 shadow-2xl relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
-        <div class="relative z-10">
-            <img src="IMG_3934.png" alt="Kingdom 1269 Logo" class="mx-auto w-36 h-36 md:w-44 md:h-44 object-contain mb-4 drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-            <h1 class="text-4xl md:text-5xl font-extrabold gold-gradient tracking-wider">Kingdom 1269 Operations</h1>
-            <p class="text-amber-500/80 text-sm mt-2 tracking-widest uppercase font-semibold">Command Center & Alliance Management</p>
+    <!-- Navigation Header -->
+    <header>
+        <div class="logo-container">
+            <img src="IMG_3934.png" alt="Kingdom 1269" class="header-logo">
+            <div class="brand-title">K1269</div>
         </div>
+        <button class="auth-btn" id="openLogin">
+            <i class="fa-solid fa-user-shield"></i> Sign In
+        </button>
     </header>
 
-    <!-- Cards Container -->
-    <main class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <section class="hero">
+        <img src="IMG_3934.png" alt="Kingdom 1269 Emblem" class="main-banner-logo">
+        <h1>KINGDOM 1269</h1>
+        <p>Official Command & Operations Portal</p>
+    </section>
 
-        <!-- Operations Command Center -->
-        <a href="command-center.html" class="bg-[#111827] p-6 rounded-xl border border-gray-800 card-hover transition-all duration-300 block text-center group">
-            <h2 class="text-2xl font-bold text-amber-400 mb-2 group-hover:text-amber-300">Operations Command Center</h2>
-            <p class="text-gray-400 text-sm">Manage alliance movements and strategic deployments.</p>
+    <!-- Cards Grid -->
+    <main class="cards-container">
+        
+        <!-- Card 1: Appointment Desk -->
+        <a href="https://k1269.github.io/1269/appointment.html" class="card">
+            <img src="IMG_3934.png" alt="Appointment Desk" class="card-icon-img">
+            <h3 class="card-title">KvK Appointment Desk</h3>
+            <span class="card-btn">Access Desk <i class="fa-solid fa-arrow-right"></i></span>
         </a>
 
-        <!-- Execution Court -->
-        <a href="https://musab85n.github.io/1269/" target="_blank" class="bg-[#111827] p-6 rounded-xl border border-gray-800 card-hover transition-all duration-300 block text-center group">
-            <h2 class="text-2xl font-bold text-amber-400 mb-2 group-hover:text-amber-300">Execution Court</h2>
-            <p class="text-gray-400 text-sm">Oversee critical decisions and alliance justice.</p>
+        <!-- Card 2: 1269 Command Center -->
+        <a href="https://k1269.github.io/1269/command-center.html" class="card">
+            <img src="IMG_3934.png" alt="1269 Command Center" class="card-icon-img">
+            <h3 class="card-title">1269 Command Center</h3>
+            <span class="card-btn">Enter Center <i class="fa-solid fa-arrow-right"></i></span>
         </a>
 
-        <!-- Bear Trap Calculator -->
-        <a href="bear-trap.html" class="bg-[#111827] p-6 rounded-xl border border-gray-800 card-hover transition-all duration-300 block text-center group">
-            <h2 class="text-2xl font-bold text-amber-400 mb-2 group-hover:text-amber-300">Bear Trap Calculator</h2>
-            <p class="text-gray-400 text-sm">Calculate deployments and optimization math.</p>
+        <!-- Card 3: APX Command Center -->
+        <a href="https://k1269.github.io/1269/apx-command.html" class="card">
+            <img src="APXlogo2.png" alt="APX Command Center" class="card-icon-img">
+            <h3 class="card-title">APX Command Center</h3>
+            <span class="card-btn">Enter Center <i class="fa-solid fa-arrow-right"></i></span>
         </a>
 
-        <!-- KVK Appointment Desk -->
-        <a href="appointment.html" class="bg-[#111827] p-6 rounded-xl border border-gray-800 card-hover transition-all duration-300 block text-center group">
-            <h2 class="text-2xl font-bold text-amber-400 mb-2 group-hover:text-amber-300">KVK Appointment Desk</h2>
-            <p class="text-gray-400 text-sm">Book your slots and update your preparation data.</p>
+        <!-- Card 4: Bear Trap Calculator -->
+        <a href="https://k1269.github.io/1269/bear-trap.html" class="card">
+            <img src="Beartrap%20logo.png" alt="Bear Trap Calculator" class="card-icon-img">
+            <h3 class="card-title">Bear Trap Calculator</h3>
+            <span class="card-btn">Open Calculator <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+
+        <!-- Card 5: The Royal Court Executive -->
+        <a href="https://musab85n.github.io/1269/" class="card">
+            <img src="IMG_3934.png" alt="The Royal Court Executive" class="card-icon-img">
+            <h3 class="card-title">1269 The Royal Court Executive</h3>
+            <span class="card-btn">View Court <i class="fa-solid fa-arrow-right"></i></span>
         </a>
 
     </main>
 
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-card">
+            <span class="close-btn" id="closeLogin">&times;</span>
+            <h2>Player Registration</h2>
+            
+            <form id="loginForm" onsubmit="event.preventDefault();">
+                <div class="input-group">
+                    <label for="nickname">In-Game Nickname</label>
+                    <input type="text" id="nickname" placeholder="Enter your Nickname" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="gameId">Game ID</label>
+                    <input type="text" id="gameId" placeholder="Enter your Game ID" required>
+                </div>
+
+                <div class="provider-buttons">
+                    <button class="provider-btn google" type="button" onclick="handleAuth('Google')">
+                        <i class="fa-brands fa-google"></i> Google
+                    </button>
+                    <button class="provider-btn discord" type="button" onclick="handleAuth('Discord')">
+                        <i class="fa-brands fa-discord"></i> Discord
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="py-6 text-center border-t border-gray-900 bg-[#070a12] text-xs text-gray-500">
-        <p>© 2026 Kingdom 1269 Alliance. All rights reserved.</p>
-        <p class="text-amber-500 font-bold mt-1 tracking-widest">Designed by Hell🔥</p>
+    <footer>
+        <p>Designed by Hell🔥</p>
     </footer>
+
+    <!-- Script for Modal logic -->
+    <script>
+        const modal = document.getElementById('loginModal');
+        const openBtn = document.getElementById('openLogin');
+        const closeBtn = document.getElementById('closeLogin');
+
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        function handleAuth(provider) {
+            const nickname = document.getElementById('nickname').value;
+            const gameId = document.getElementById('gameId').value;
+
+            if (!nickname || !gameId) {
+                alert('Please fill in both your In-Game Nickname and Game ID first.');
+                return;
+            }
+
+            alert(`Signing in with ${provider}\nNickname: ${nickname}\nID: ${gameId}`);
+            modal.classList.remove('active');
+        }
+    </script>
 
 </body>
 </html>
