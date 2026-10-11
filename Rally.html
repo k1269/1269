@@ -1,864 +1,588 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hells Rally Launch Control</title>
-    <!-- Tailwind CSS -->
+    <title>Hell Rally Launch Control</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Orbitron & Rajdhani for Tactical UI -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            400: '#fbbf24',
-                            500: '#f59e0b',
-                            600: '#d97706',
-                            glow: '#ffe259'
-                        },
-                        dark: {
-                            950: '#06090e',
-                            900: '#0b0f19',
-                            800: '#111827',
-                            700: '#1f2937',
-                            600: '#374151'
-                        },
                         tactical: {
-                            cyan: '#00f0ff',
-                            red: '#ff2a5f',
-                            green: '#00ff88',
-                            purple: '#8a2be2'
+                            bg: '#0a0d14',
+                            card: '#121824',
+                            border: '#1e293b',
+                            accent: '#f59e0b',
+                            danger: '#ef4444',
+                            success: '#10b981',
+                            cyan: '#06b6d4',
+                            purple: '#8b5cf6'
                         }
                     },
                     fontFamily: {
                         orbitron: ['Orbitron', 'sans-serif'],
-                        rajdhani: ['Rajdhani', 'sans-serif'],
-                        inter: ['Inter', 'sans-serif']
+                        rajdhani: ['Rajdhani', 'sans-serif']
                     }
                 }
             }
         }
     </script>
-    
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #06090e;
-            color: #e5e7eb;
+            background-color: #07090e;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
-                radial-gradient(circle at 100% 100%, rgba(0, 240, 255, 0.05) 0%, transparent 50%),
-                linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-            background-attachment: fixed;
+                radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(6, 182, 212, 0.05) 0%, transparent 40%);
+            color: #f1f5f9;
+            font-family: 'Rajdhani', sans-serif;
         }
 
-        ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0b0f19;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #f59e0b;
-        }
-
-        .glow-launch {
-            animation: pulse-launch 0.8s infinite alternate;
-        }
-
-        @keyframes pulse-launch {
-            0% {
-                box-shadow: 0 0 8px rgba(0, 255, 136, 0.4), inset 0 0 8px rgba(0, 255, 136, 0.2);
-                border-color: #00ff88;
-                background-color: rgba(0, 255, 136, 0.15);
-            }
-            100% {
-                box-shadow: 0 0 25px rgba(0, 255, 136, 0.8), inset 0 0 15px rgba(0, 255, 136, 0.4);
-                border-color: #00ff88;
-                background-color: rgba(0, 255, 136, 0.3);
-            }
-        }
-
-        .tactical-border {
+        .hud-border {
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(245, 158, 11, 0.03);
             position: relative;
         }
-        .tactical-border::before {
+
+        .hud-border::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 8px;
-            height: 8px;
+            top: -1px; left: -1px; width: 8px; height: 8px;
             border-top: 2px solid #f59e0b;
             border-left: 2px solid #f59e0b;
         }
-        .tactical-border::after {
+        .hud-border::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 8px;
-            height: 8px;
+            bottom: -1px; right: -1px; width: 8px; height: 8px;
             border-bottom: 2px solid #f59e0b;
             border-right: 2px solid #f59e0b;
         }
 
-        .font-tech {
-            font-family: 'Rajdhani', sans-serif;
-            letter-spacing: 0.5px;
+        .launch-flash {
+            animation: flashGreen 0.6s infinite alternate;
         }
 
-        .font-digit {
-            font-family: 'Orbitron', monospace;
+        @keyframes flashGreen {
+            0% { background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); }
+            100% { background-color: rgba(16, 185, 129, 0.4); border-color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.6); }
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0d14; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between text-slate-200 selection:bg-gold-500 selection:text-black">
+<body class="min-h-screen pb-12">
 
-    <header class="border-b border-gray-800/80 bg-dark-900/90 backdrop-blur-md sticky top-0 z-50 shadow-2xl">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <!-- TOP HEADER / CONTROL BAR -->
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             
+            <!-- Logo & Title -->
             <div class="flex items-center gap-3">
-                <img src="https://k1269.github.io/1269/IMG_3934.png" 
-                     alt="Kingdom Logo" 
-                     class="w-12 h-12 md:w-14 md:h-14 object-contain drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-                     onerror="this.src='https://placehold.co/100x100/111827/f59e0b?text=K1269'">
+                <img src="https://k1269.github.io/1269/IMG_3934.png" alt="Kingdom Crest" class="w-12 h-12 object-contain filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
                 <div>
-                    <h1 class="text-xl sm:text-2xl md:text-3xl font-black font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-gold-400 via-yellow-300 to-amber-500 tracking-wider">
-                        K-1269 Rally Launch Control
+                    <h1 class="font-orbitron text-xl md:text-2xl font-black text-amber-500 tracking-wider uppercase flex items-center gap-2">
+                        Hell Rally Launch Control
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-gray-400 font-tech font-semibold tracking-wide flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        SYNCHRONIZED RALLY & WAVE ATTACK SYSTEM (UTC)
-                    </p>
+                    <p class="text-xs text-slate-400 font-mono tracking-widest uppercase">Kingdom 1269 Tactical Synchronization System</p>
                 </div>
             </div>
 
-            <div class="flex items-center flex-wrap gap-2 w-full sm:w-auto justify-end">
-                <!-- System Voice Selector -->
-                <div class="flex items-center gap-1.5 bg-dark-800 border border-gray-700 rounded px-2 py-1">
-                    <i class="fa-solid fa-microphone-lines text-gold-400 text-xs"></i>
-                    <select id="voice-select" onchange="selectedVoiceIndex = this.value" class="bg-transparent text-xs text-gray-200 focus:outline-none max-w-[140px] sm:max-w-[180px] font-tech">
-                        <option value="">Default Voice</option>
-                    </select>
+            <!-- Global Clock & Voice Settings -->
+            <div class="flex flex-wrap items-center gap-4">
+                <!-- UTC Live Clock -->
+                <div class="bg-slate-900 border border-slate-800 rounded-lg px-4 py-1.5 flex items-center gap-3">
+                    <i class="fa-solid fa-earth-americas text-cyan-400 animate-pulse"></i>
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-mono uppercase tracking-wider">Universal Time</div>
+                        <div id="utcClock" class="font-orbitron font-bold text-cyan-400 text-sm">00:00:00 UTC</div>
+                    </div>
                 </div>
 
-                <button onclick="testSpeech('Commander')" class="px-2.5 py-1.5 text-xs font-semibold rounded bg-dark-800 hover:bg-dark-700 border border-gray-700 hover:border-gold-500 text-gray-300 hover:text-white transition flex items-center gap-1.5 active:scale-95">
-                    <i class="fa-solid fa-volume-high text-gold-400"></i>
-                    <span>Test Voice</span>
-                </button>
-                <div class="h-5 w-px bg-gray-800 hidden sm:block"></div>
-                <button onclick="startAllTimers()" class="px-3 py-1.5 text-xs font-bold rounded bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-950/50 transition flex items-center gap-1.5 active:scale-95">
-                    <i class="fa-solid fa-play"></i>
-                    <span>Start All</span>
-                </button>
-                <button onclick="resetAllTimers()" class="px-3 py-1.5 text-xs font-bold rounded bg-gradient-to-r from-rose-700 to-red-800 hover:from-rose-600 hover:to-red-700 text-white shadow-lg shadow-red-950/50 transition flex items-center gap-1.5 active:scale-95">
-                    <i class="fa-solid fa-rotate-right"></i>
-                    <span>Reset All</span>
-                </button>
+                <!-- TTS Voice Selector -->
+                <div class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1 flex items-center gap-2">
+                    <i class="fa-solid fa-microphone text-amber-500 text-xs"></i>
+                    <select id="voiceSelect" class="bg-transparent text-xs text-slate-200 outline-none font-sans max-w-[150px] md:max-w-[180px] cursor-pointer">
+                        <option value="">Default Voice Engine</option>
+                    </select>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-3 sm:px-6 py-6 flex-1 w-full space-y-6">
-        
-        <!-- Live Synchronized UTC System Clock & Wave Controls Banner -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-3 md:px-6 mt-6 space-y-6">
+
+        <!-- GLOBAL QUICK CONTROLS BAR -->
+        <div class="hud-border bg-slate-900/80 backdrop-blur rounded-lg p-4 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
+                <span class="font-orbitron text-sm text-slate-300 uppercase tracking-wider font-semibold">Active Targets: <span id="activeTimerCount" class="text-amber-500">7</span></span>
+            </div>
             
-            <!-- Clock Info (4 cols) -->
-            <div class="lg:col-span-4 p-4 rounded-xl bg-dark-900/80 border border-gray-800 backdrop-blur-sm flex items-center justify-between gap-4 shadow-xl">
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 rounded-lg bg-gold-500/10 text-gold-400 border border-gold-500/20">
-                        <i class="fa-solid fa-earth-americas text-xl"></i>
-                    </div>
-                    <div>
-                        <span class="text-[11px] text-gray-400 font-tech uppercase tracking-widest block">Coordinated Universal Time</span>
-                        <span id="current-utc-time" class="text-xl sm:text-2xl font-bold font-digit text-gold-400">00:00:00 UTC</span>
-                    </div>
-                </div>
+            <div class="flex items-center gap-3">
+                <button onclick="startAllTimers()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-orbitron font-bold text-xs uppercase rounded tracking-wider transition flex items-center gap-2 shadow-lg shadow-emerald-900/30">
+                    <i class="fa-solid fa-play"></i> Start All
+                </button>
+                <button onclick="resetAllTimers()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-orbitron font-bold text-xs uppercase rounded tracking-wider border border-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> Reset All
+                </button>
             </div>
-
-            <!-- Wave Attack Configuration Panel (8 cols) -->
-            <div class="lg:col-span-8 p-4 rounded-xl bg-dark-900/80 border border-amber-500/30 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl relative overflow-hidden">
-                <div class="absolute -right-10 -bottom-10 text-amber-500/5 text-8xl pointer-events-none">
-                    <i class="fa-solid fa-water"></i>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                        <i class="fa-solid fa-water-ladder text-xl"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold font-orbitron text-sm text-amber-400 uppercase tracking-wider flex items-center gap-2">
-                            Wave Attack Config
-                            <span class="text-[10px] font-tech text-gray-400 normal-case bg-dark-950 px-2 py-0.5 rounded border border-gray-800">Multi-Wave Stagger</span>
-                        </h4>
-                        <p class="text-[11px] text-gray-400 font-tech">Set wave counts & staggered delay between attack arrivals.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <div class="flex-1 sm:flex-none">
-                        <label class="text-[10px] text-gray-400 font-tech uppercase block mb-1">Number of Waves</label>
-                        <div class="flex items-center bg-dark-950 border border-gray-700 rounded px-2 py-1">
-                            <input type="number" id="wave-count-input" min="1" max="10" value="1" onchange="updateWaveSettings()" class="w-12 bg-transparent text-xs font-digit text-center font-bold text-amber-400 focus:outline-none">
-                            <span class="text-[10px] text-gray-500">Waves</span>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 sm:flex-none">
-                        <label class="text-[10px] text-gray-400 font-tech uppercase block mb-1">Interval Between Waves</label>
-                        <div class="flex items-center bg-dark-950 border border-gray-700 rounded px-2 py-1">
-                            <input type="number" id="wave-interval-input" min="1" max="120" value="5" onchange="updateWaveSettings()" class="w-12 bg-transparent text-xs font-digit text-center font-bold text-amber-400 focus:outline-none">
-                            <span class="text-[10px] text-gray-500">Sec</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
-        <div class="space-y-8">
-            
-            <!-- Castle Group Header -->
-            <div class="flex items-center justify-between border-l-4 border-gold-500 pl-3">
-                <div class="flex items-center gap-3">
-                    <h2 class="text-lg sm:text-xl font-bold font-orbitron text-gold-400 uppercase tracking-wide">
-                        Castle Objectives
-                    </h2>
-                    <span class="text-xs font-tech bg-gold-500/10 text-gold-400 border border-gold-500/30 px-2 py-0.5 rounded-full">3 Targets</span>
-                </div>
-            </div>
-
-            <!-- Castle Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="castle-timers-container">
-                <!-- Dynamically Rendered -->
-            </div>
-
-            <!-- Turrets Group Header -->
-            <div class="flex items-center justify-between border-l-4 border-tactical-cyan pl-3 pt-4">
-                <div class="flex items-center gap-3">
-                    <h2 class="text-lg sm:text-xl font-bold font-orbitron text-tactical-cyan uppercase tracking-wide">
-                        Turret Objectives
-                    </h2>
-                    <span class="text-xs font-tech bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full">4 Targets</span>
-                </div>
-            </div>
-
-            <!-- Turrets Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="turret-timers-container">
-                <!-- Dynamically Rendered -->
-            </div>
-
+        <!-- TIMERS GRID -->
+        <div id="timersGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Dynamic Timer Cards Container -->
         </div>
-
     </main>
 
-    <footer class="mt-12 border-t border-gray-800/80 bg-dark-950/90 py-4 text-center">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
-            <div>
-                <span>K-1269 Rally Launch Control &copy; Tactical Command Center</span>
-            </div>
-            <div class="font-bold text-sm text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-400 to-yellow-500 tracking-wider">
-                Designed By Hell🔥
-            </div>
-        </div>
+    <!-- FOOTER -->
+    <footer class="mt-12 text-center py-6 border-t border-slate-900 text-slate-500 text-sm font-orbitron tracking-widest uppercase">
+        Designed By Hell 🔥
     </footer>
 
-    <!-- Toast Notifications Container -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
-
+    <!-- AUDIO ELEMENTS & SPEECH SYNTHESIS ENGINE -->
     <script>
-        // System Voices Setup
-        let systemVoices = [];
-        let selectedVoiceIndex = "";
+        // TARGET CONFIGURATIONS
+        const TARGET_CONFIGS = [
+            { id: 'castle', name: 'Castle', icon: 'fa-fort-awesome', color: 'text-amber-500', borderColor: 'border-amber-500/30' },
+            { id: 'ca1', name: 'Castle Counter Attack 1', icon: 'fa-shield-halved', color: 'text-orange-500', borderColor: 'border-orange-500/30' },
+            { id: 'ca2', name: 'Castle Counter Attack 2', icon: 'fa-shield-cat', color: 'text-red-500', borderColor: 'border-red-500/30' },
+            { id: 'north', name: 'North Turret', icon: 'fa-compass', color: 'text-cyan-400', borderColor: 'border-cyan-500/30' },
+            { id: 'east', name: 'East Turret', icon: 'fa-compass', color: 'text-purple-400', borderColor: 'border-purple-500/30' },
+            { id: 'south', name: 'South Turret', icon: 'fa-compass', color: 'text-emerald-400', borderColor: 'border-emerald-500/30' },
+            { id: 'west', name: 'West Turret', icon: 'fa-compass', color: 'text-blue-400', borderColor: 'border-blue-500/30' }
+        ];
 
-        function populateVoiceList() {
-            if ('speechSynthesis' in window) {
-                systemVoices = window.speechSynthesis.getVoices();
-                const select = document.getElementById('voice-select');
-                if (!select) return;
-                
-                select.innerHTML = '<option value="">Default System Voice</option>';
-                systemVoices.forEach((voice, i) => {
-                    if (voice.lang.startsWith('en')) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = `${voice.name} (${voice.lang})`;
-                        select.appendChild(option);
-                    }
+        // STATE STORE
+        let timerData = JSON.parse(localStorage.getItem('hell_rally_data')) || {
+            castle: { players: [], totalWaves: 1, waveInterval: 0 },
+            ca1: { players: [], totalWaves: 1, waveInterval: 0 },
+            ca2: { players: [], totalWaves: 1, waveInterval: 0 },
+            north: { players: [], totalWaves: 1, waveInterval: 0 },
+            east: { players: [], totalWaves: 1, waveInterval: 0 },
+            south: { players: [], totalWaves: 1, waveInterval: 0 },
+            west: { players: [], totalWaves: 1, waveInterval: 0 }
+        };
+
+        // Active State per Timer
+        let activeStates = {};
+        TARGET_CONFIGS.forEach(t => {
+            activeStates[t.id] = {
+                isRunning: false,
+                startTime: null,
+                targetArrival: null,
+                maxMarchTime: 0,
+                announcedPlayers: new Set()
+            };
+        });
+
+        // SPEECH SYNTHESIS setup
+        const synth = window.speechSynthesis;
+        let availableVoices = [];
+
+        function loadVoices() {
+            if (!synth) return;
+            availableVoices = synth.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            if (voiceSelect) {
+                voiceSelect.innerHTML = '<option value="">Default Voice Engine</option>';
+                availableVoices.forEach((voice, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    voiceSelect.appendChild(option);
                 });
             }
         }
 
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = populateVoiceList;
-        }
-
-        // Voice Engine Function
-        function speakNameFast(name) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                
-                const utterance = new SpeechSynthesisUtterance(name);
-                if (selectedVoiceIndex !== "" && systemVoices[selectedVoiceIndex]) {
-                    utterance.voice = systemVoices[selectedVoiceIndex];
-                }
-                utterance.lang = 'en-US';
-                utterance.pitch = 1.1;
-                utterance.rate = 1.4;
-                utterance.volume = 1.0;
-
-                window.speechSynthesis.speak(utterance);
+        if (synth) {
+            loadVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = loadVoices;
             }
         }
 
-        // Play Player Sound (Custom MP3 audio or TTS Speech)
-        function playPlayerLaunchAudio(player) {
-            if (player.customAudioData) {
-                try {
-                    const audio = new Audio(player.customAudioData);
-                    audio.play().catch(e => {
-                        console.log('Audio playback fallback to TTS:', e);
-                        speakNameFast(player.name);
-                    });
-                } catch(e) {
-                    speakNameFast(player.name);
-                }
-            } else {
-                speakNameFast(player.name);
+        function speakPlayerName(playerName) {
+            if (!synth) return;
+            synth.cancel(); // Clear queued speech
+            const utterance = new SpeechSynthesisUtterance(playerName);
+            utterance.rate = 1.2; // Slightly reduced for smooth clarity
+            utterance.pitch = 1.1;
+
+            const voiceSelect = document.getElementById('voiceSelect');
+            if (voiceSelect && voiceSelect.value !== '') {
+                utterance.voice = availableVoices[voiceSelect.value];
             }
+            synth.speak(utterance);
         }
 
-        // Audio Context for countdown tick sound
-        let audioCtx = null;
-        function initAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+        // BEEP AUDIOS via Web Audio API
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playBeep(freq = 440, duration = 0.15) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
         }
 
-        function playTickSound() {
-            try {
-                initAudioContext();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-                
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-                
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.1);
-            } catch (e) {}
-        }
-
-        function testSpeech(name) {
-            initAudioContext();
-            playTickSound();
-            speakNameFast(name);
-            showToast(`Voice Test: "${name}"`, 'success');
-        }
-
-        // Configuration for the 7 requested timers
-        const TIMERS_CONFIG = [
-            { id: 'castle', name: 'Castle', type: 'castle', icon: 'fa-fort-awesome' },
-            { id: 'castle_ca1', name: 'Castle Counter Attack 1', type: 'castle', icon: 'fa-shield-halved' },
-            { id: 'castle_ca2', name: 'Castle Counter Attack 2', type: 'castle', icon: 'fa-shield-virus' },
-            { id: 'north_turret', name: 'North Turret', type: 'turret', icon: 'fa-compass' },
-            { id: 'east_turret', name: 'East Turret', type: 'turret', icon: 'fa-compass' },
-            { id: 'south_turret', name: 'South Turret', type: 'turret', icon: 'fa-compass' },
-            { id: 'west_turret', name: 'West Turret', type: 'turret', icon: 'fa-compass' }
-        ];
-
-        let globalWaveConfig = {
-            count: 1,
-            intervalSec: 5
-        };
-
-        let timersData = {};
-
-        function loadState() {
-            const saved = localStorage.getItem('K1269_RALLY_CONTROL_STATE_V2');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    timersData = parsed.timers || {};
-                    if (parsed.waveConfig) globalWaveConfig = parsed.waveConfig;
-                } catch(e) {
-                    timersData = {};
-                }
-            }
-            
-            document.getElementById('wave-count-input').value = globalWaveConfig.count;
-            document.getElementById('wave-interval-input').value = globalWaveConfig.intervalSec;
-
-            TIMERS_CONFIG.forEach(cfg => {
-                if (!timersData[cfg.id]) {
-                    timersData[cfg.id] = {
-                        isRunning: false,
-                        startTime: null,
-                        targetArrivalTime: null,
-                        players: []
-                    };
-                } else {
-                    timersData[cfg.id].isRunning = false;
-                }
-            });
-        }
-
-        function saveState() {
-            localStorage.setItem('K1269_RALLY_CONTROL_STATE_V2', JSON.stringify({
-                timers: timersData,
-                waveConfig: globalWaveConfig
-            }));
-        }
-
-        function updateWaveSettings() {
-            const count = parseInt(document.getElementById('wave-count-input').value) || 1;
-            const intervalSec = parseInt(document.getElementById('wave-interval-input').value) || 5;
-            globalWaveConfig.count = Math.max(1, count);
-            globalWaveConfig.intervalSec = Math.max(1, intervalSec);
-            saveState();
-            renderAllCards();
-        }
-
-        function formatSeconds(totalSec) {
-            if (totalSec < 0) totalSec = 0;
-            const mins = Math.floor(totalSec / 60);
-            const secs = Math.floor(totalSec % 60);
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function formatUTCTimeString(date) {
-            if (!date) return '--:--:-- UTC';
-            const h = date.getUTCHours().toString().padStart(2, '0');
-            const m = date.getUTCMinutes().toString().padStart(2, '0');
-            const s = date.getUTCSeconds().toString().padStart(2, '0');
+        // TIME FORMATTERS
+        function formatUTC(date) {
+            const h = String(date.getUTCHours()).padStart(2, '0');
+            const m = String(date.getUTCMinutes()).padStart(2, '0');
+            const s = String(date.getUTCSeconds()).padStart(2, '0');
             return `${h}:${m}:${s} UTC`;
         }
 
-        function showToast(msg, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const bg = type === 'success' ? 'bg-emerald-900/90 border-emerald-500 text-emerald-200' : 'bg-dark-800/90 border-gold-500 text-gold-200';
-            toast.className = `px-3.5 py-2.5 rounded-lg border text-xs font-semibold shadow-2xl flex items-center gap-2 transform transition-all duration-300 translate-y-2 backdrop-blur pointer-events-auto ${bg}`;
-            toast.innerHTML = `<i class="fa-solid fa-bullhorn"></i> <span>${msg}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.classList.add('opacity-0', '-translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+        function secondsToMMSS(seconds) {
+            if (seconds < 0) seconds = 0;
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
-        // Convert audio file to Base64 for storing
-        function handleAudioUpload(inputEl, timerId, playerIndex) {
-            const file = inputEl.files[0];
-            if (!file) return;
-
-            if (file.size > 2 * 1024 * 1024) { // 2MB max
-                alert('Audio file size must be less than 2MB.');
-                return;
+        function parseTimeString(timeStr) {
+            const parts = timeStr.trim().split(':');
+            if (parts.length === 2) {
+                const m = parseInt(parts[0], 10) || 0;
+                const s = parseInt(parts[1], 10) || 0;
+                return m * 60 + s;
+            } else if (parts.length === 1) {
+                return parseInt(parts[0], 10) || 0;
             }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Audio = e.target.result;
-                if (timersData[timerId] && timersData[timerId].players[playerIndex]) {
-                    timersData[timerId].players[playerIndex].customAudioData = base64Audio;
-                    saveState();
-                    renderTimerCard(timerId);
-                    showToast(`Custom audio attached for ${timersData[timerId].players[playerIndex].name}`, 'success');
-                }
-            };
-            reader.readAsDataURL(file);
+            return 0;
         }
 
-        function removeCustomAudio(timerId, playerIndex) {
-            if (timersData[timerId] && timersData[timerId].players[playerIndex]) {
-                delete timersData[timerId].players[playerIndex].customAudioData;
-                saveState();
-                renderTimerCard(timerId);
-            }
+        // LIVE UTC CLOCK
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('utcClock').innerText = formatUTC(now);
+        }, 1000);
+
+        // SAVE STATE
+        function saveData() {
+            localStorage.setItem('hell_rally_data', JSON.stringify(timerData));
         }
 
-        function addPlayer(timerId) {
-            const nameInput = document.getElementById(`p-name-${timerId}`);
-            const minInput = document.getElementById(`p-min-${timerId}`);
-            const secInput = document.getElementById(`p-sec-${timerId}`);
-            const waveInput = document.getElementById(`p-wave-${timerId}`);
-
-            const name = nameInput.value.trim();
-            const mins = parseInt(minInput.value) || 0;
-            const secs = parseInt(secInput.value) || 0;
-            const waveNum = parseInt(waveInput.value) || 1;
-
-            const totalMarchSeconds = (mins * 60) + secs;
-
-            if (!name) {
-                alert('Please enter a player name.');
-                return;
-            }
-            if (totalMarchSeconds <= 0) {
-                alert('Please enter a valid march duration.');
-                return;
-            }
-
-            const newPlayer = {
-                id: Date.now().toString(),
-                name: name,
-                marchSeconds: totalMarchSeconds,
-                wave: waveNum,
-                hasPlayedLaunch: false,
-                lastTickSecond: null,
-                customAudioData: null
-            };
-
-            timersData[timerId].players.push(newPlayer);
-            saveState();
-            
-            nameInput.value = '';
-            minInput.value = '';
-            secInput.value = '';
-
-            renderTimerCard(timerId);
-        }
-
-        function deletePlayer(timerId, playerId) {
-            timersData[timerId].players = timersData[timerId].players.filter(p => p.id !== playerId);
-            saveState();
-            renderTimerCard(timerId);
-        }
-
-        function startTimer(timerId) {
-            initAudioContext();
-            const timer = timersData[timerId];
-            if (timer.players.length === 0) {
-                showToast('Add players before starting timer', 'info');
-                return;
-            }
-
-            // Calculate Base Arrival Time according to Wave offsets
-            // Target Arrival = start + maxMarch + (Wave-1)*WaveInterval
-            const maxBaseMarchNeeded = Math.max(...timer.players.map(p => {
-                const waveOffsetSec = (p.wave - 1) * globalWaveConfig.intervalSec;
-                return p.marchSeconds - waveOffsetSec;
-            }));
-            
-            timer.isRunning = true;
-            timer.startTime = Date.now();
-            timer.targetArrivalTime = timer.startTime + (maxBaseMarchNeeded * 1000);
-
-            // Reset launch status
-            timer.players.forEach(p => {
-                p.hasPlayedLaunch = false;
-                p.lastTickSecond = null;
-            });
-
-            saveState();
-            renderTimerCard(timerId);
-        }
-
-        function resetTimer(timerId) {
-            const timer = timersData[timerId];
-            timer.isRunning = false;
-            timer.startTime = null;
-            timer.targetArrivalTime = null;
-            timer.players.forEach(p => {
-                p.hasPlayedLaunch = false;
-                p.lastTickSecond = null;
-            });
-            saveState();
-            renderTimerCard(timerId);
-        }
-
-        function startAllTimers() {
-            TIMERS_CONFIG.forEach(cfg => {
-                if (timersData[cfg.id].players.length > 0) {
-                    startTimer(cfg.id);
-                }
-            });
-        }
-
-        function resetAllTimers() {
-            TIMERS_CONFIG.forEach(cfg => {
-                resetTimer(cfg.id);
-            });
-            showToast('Reset all timers', 'info');
-        }
-
+        // RENDER TIMER CARDS INITIALLY
         function renderAllCards() {
-            const castleContainer = document.getElementById('castle-timers-container');
-            const turretContainer = document.getElementById('turret-timers-container');
+            const container = document.getElementById('timersGrid');
+            container.innerHTML = '';
 
-            castleContainer.innerHTML = '';
-            turretContainer.innerHTML = '';
+            TARGET_CONFIGS.forEach(config => {
+                const card = document.createElement('div');
+                card.id = `card-${config.id}`;
+                card.className = `hud-border bg-slate-900/90 rounded-xl p-5 border ${config.borderColor} flex flex-col justify-between space-y-4`;
 
-            TIMERS_CONFIG.forEach(cfg => {
-                const cardHtml = `
-                <div id="card-${cfg.id}" class="bg-dark-900/90 border border-gray-800 rounded-xl p-4 tactical-border flex flex-col justify-between shadow-lg transition-all duration-300 hover:border-gray-700">
-                </div>`;
-
-                if (cfg.type === 'castle') {
-                    castleContainer.insertAdjacentHTML('beforeend', cardHtml);
-                } else {
-                    turretContainer.insertAdjacentHTML('beforeend', cardHtml);
-                }
-                renderTimerCard(cfg.id);
-            });
-        }
-
-        function renderTimerCard(timerId) {
-            const cfg = TIMERS_CONFIG.find(c => c.id === timerId);
-            const timer = timersData[timerId];
-            const cardEl = document.getElementById(`card-${timerId}`);
-            if (!cardEl) return;
-
-            let arrivalDisplay = '--:--:-- UTC';
-            if (timer.isRunning && timer.targetArrivalTime) {
-                arrivalDisplay = formatUTCTimeString(new Date(timer.targetArrivalTime));
-            }
-
-            const headerColor = cfg.type === 'castle' ? 'text-gold-400' : 'text-tactical-cyan';
-
-            let waveOptions = '';
-            for (let w = 1; w <= globalWaveConfig.count; w++) {
-                waveOptions += `<option value="${w}">Wave ${w}</option>`;
-            }
-
-            let html = `
-                <div>
-                    <!-- Header -->
-                    <div class="flex items-start justify-between gap-2 border-b border-gray-800 pb-2.5 mb-3">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid ${cfg.icon} ${headerColor} text-sm"></i>
-                                <h3 class="font-bold font-orbitron text-sm text-gray-100 uppercase tracking-wider">${cfg.name}</h3>
+                card.innerHTML = `
+                    <!-- Card Header -->
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid ${config.icon}${config.color} text-xl"></i>
+                            <div>
+                                <h3 class="font-orbitron font-bold text-lg text-slate-100 tracking-wide">${config.name}</h3>
+                                <div id="target-time-${config.id}" class="text-xs font-mono text-slate-400">Target Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span></div>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <span class="text-[10px] font-tech text-gray-400 block uppercase tracking-wider">Base Arrival (UTC)</span>
-                            <span class="font-digit text-xs text-gold-400 font-bold">${arrivalDisplay}</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="startTimer('${config.id}')" id="btn-start-${config.id}" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-orbitron font-bold text-xs uppercase rounded transition flex items-center gap-1.5 shadow-md">
+                                <i class="fa-solid fa-play text-[10px]"></i> Start
+                            </button>
+                            <button onclick="resetTimer('${config.id}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-orbitron font-bold text-xs uppercase rounded transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Action Controls -->
-                    <div class="flex items-center gap-2 mb-3">
-                        ${!timer.isRunning ? `
-                            <button onclick="startTimer('${cfg.id}')" class="flex-1 py-1.5 px-3 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow active:scale-95">
-                                <i class="fa-solid fa-play text-[10px]"></i> START
-                            </button>
-                        ` : `
-                            <button onclick="resetTimer('${cfg.id}')" class="flex-1 py-1.5 px-3 rounded bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow active:scale-95">
-                                <i class="fa-solid fa-pause text-[10px]"></i> PAUSE
-                            </button>
-                        `}
-                        <button onclick="resetTimer('${cfg.id}')" class="py-1.5 px-3 rounded bg-dark-800 hover:bg-dark-700 border border-gray-700 text-gray-300 text-xs font-bold transition flex items-center justify-center gap-1 active:scale-95">
-                            <i class="fa-solid fa-rotate-right text-[10px]"></i> RESTART
+                    <!-- Waves Configuration -->
+                    <div class="bg-slate-950/60 rounded-lg p-2.5 border border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-amber-500"></i>
+                            <span class="text-slate-300 font-semibold">Wave Attacks:</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="flex items-center gap-1 text-slate-400">
+                                Waves: 
+                                <input type="number" min="1" max="10" value="${timerData[config.id].totalWaves || 1}" 
+                                       onchange="updateWaveSettings('${config.id}', 'totalWaves', this.value)"
+                                       class="w-12 bg-slate-900 border border-slate-700 rounded text-center text-amber-400 font-mono focus:outline-none py-0.5">
+                            </label>
+                            <label class="flex items-center gap-1 text-slate-400">
+                                Delay (s): 
+                                <input type="number" min="0" max="300" value="${timerData[config.id].waveInterval || 0}" 
+                                       onchange="updateWaveSettings('${config.id}', 'waveInterval', this.value)"
+                                       class="w-14 bg-slate-900 border border-slate-700 rounded text-center text-cyan-400 font-mono focus:outline-none py-0.5">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Player Addition Form -->
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="input-name-${config.id}" placeholder="Player Name" class="flex-1 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50">
+                        <input type="text" id="input-time-${config.id}" placeholder="MM:SS (e.g. 02:15)" class="w-28 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 text-center font-mono focus:outline-none focus:border-amber-500/50">
+                        <button onclick="addPlayer('${config.id}')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-orbitron font-bold text-xs uppercase rounded transition">
+                            <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
 
-                    <!-- Add Player Box -->
-                    <div class="bg-dark-950/80 p-2.5 rounded-lg border border-gray-800/80 mb-3">
-                        <span class="text-[10px] font-bold font-tech uppercase text-gray-400 tracking-wider block mb-1.5">
-                            <i class="fa-solid fa-user-plus text-gold-500 mr-1"></i> Add Player
-                        </span>
-                        <div class="space-y-2">
-                            <div class="flex gap-2">
-                                <input type="text" id="p-name-${cfg.id}" placeholder="Player Name" class="flex-1 bg-dark-900 border border-gray-700/80 rounded px-2.5 py-1 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gold-500">
-                                <select id="p-wave-${cfg.id}" class="bg-dark-900 border border-gray-700/80 rounded px-2 py-1 text-xs font-tech text-amber-400 focus:outline-none">
-                                    ${waveOptions}
-                                </select>
+                    <!-- Players List -->
+                    <div class="space-y-2 max-h-56 overflow-y-auto pr-1" id="players-list-${config.id}">
+                        <!-- Rendered Player Rows -->
+                    </div>
+                `;
+
+                container.appendChild(card);
+                renderPlayersList(config.id);
+            });
+        }
+
+        // RENDER PLAYER LIST ONLY (Prevents resetting scroll position)
+        function renderPlayersList(targetId) {
+            const listContainer = document.getElementById(`players-list-${targetId}`);
+            if (!listContainer) return;
+
+            const players = timerData[targetId].players || [];
+            if (players.length === 0) {
+                listContainer.innerHTML = `<div class="text-center text-xs text-slate-600 italic py-3">No players added yet.</div>`;
+                return;
+            }
+
+            // Keep track of DOM elements for smooth tick updates
+            listContainer.innerHTML = players.map((player, index) => {
+                const marchSecs = parseTimeString(player.marchTime);
+                const isChecked = player.active !== false; // Default true
+
+                return `
+                    <div id="player-row-${targetId}-${index}" class="bg-slate-950/70 border ${isChecked ? 'border-slate-800/80' : 'border-slate-900 opacity-50'} rounded-lg px-3 py-2 flex items-center justify-between gap-3 transition">
+                        
+                        <!-- Toggle Checkbox & Player Info -->
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePlayerActive('${targetId}',${index})" class="w-4 h-4 accent-amber-500 cursor-pointer rounded">
+                            <div class="truncate">
+                                <div class="font-semibold text-xs text-slate-200 truncate flex items-center gap-1.5">
+                                    <span>${player.name}</span>${player.audioData ? '<i class="fa-solid fa-file-audio text-amber-500 text-[10px]"></i>' : ''}
+                                </div>
+                                <div class="text-[10px] font-mono text-slate-500">March: ${secondsToMMSS(marchSecs)}</div>
                             </div>
-                            
-                            <div class="flex items-center gap-1.5">
-                                <div class="flex-1 flex items-center gap-1 bg-dark-900 border border-gray-700/80 rounded px-2 py-1">
-                                    <input type="number" min="0" max="99" id="p-min-${cfg.id}" placeholder="0" class="w-full bg-transparent text-xs text-center font-digit focus:outline-none">
-                                    <span class="text-[10px] text-gray-500">m</span>
+                        </div>
+
+                        <!-- Status Countdown & Actions -->
+                        <div class="flex items-center gap-3">
+                            <div class="text-right">
+                                <div id="launch-countdown-${targetId}-${index}" class="font-orbitron font-bold text-xs text-slate-400">
+                                    Ready
                                 </div>
-                                <span class="text-gray-600 font-bold">:</span>
-                                <div class="flex-1 flex items-center gap-1 bg-dark-900 border border-gray-700/80 rounded px-2 py-1">
-                                    <input type="number" min="0" max="59" id="p-sec-${cfg.id}" placeholder="0" class="w-full bg-transparent text-xs text-center font-digit focus:outline-none">
-                                    <span class="text-[10px] text-gray-500">s</span>
+                                <div id="launch-time-${targetId}-${index}" class="text-[10px] font-mono text-slate-500">
+                                    Launch: --:--:--
                                 </div>
-                                <button onclick="addPlayer('${cfg.id}')" class="px-3 py-1 bg-gold-500 hover:bg-gold-400 text-dark-950 font-bold text-xs rounded transition active:scale-95">
-                                    ADD
+                            </div>
+
+                            <!-- Actions dropdown / controls -->
+                            <div class="flex items-center gap-1 border-l border-slate-800 pl-2">
+                                <button onclick="editPlayer('${targetId}',${index})" title="Edit Player" class="text-slate-500 hover:text-cyan-400 p-1 text-xs transition">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button onclick="triggerAudioUpload('${targetId}',${index})" title="Attach Audio File" class="text-slate-500 hover:text-amber-400 p-1 text-xs transition">
+                                    <i class="fa-solid fa-paperclip"></i>
+                                </button>
+                                <button onclick="removePlayer('${targetId}',${index})" title="Delete Player" class="text-slate-500 hover:text-red-400 p-1 text-xs transition">
+                                    <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Players Queue List -->
-                    <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="players-list-${cfg.id}">
-            `;
-
-            if (timer.players.length === 0) {
-                html += `
-                    <div class="text-center py-5 text-gray-600 text-xs border border-dashed border-gray-800 rounded-lg font-tech">
-                        NO PLAYERS ADDED
-                    </div>
                 `;
-            } else {
-                const now = Date.now();
+            }).join('');
+        }
 
-                // Sort players by wave first, then march time
-                const sortedPlayers = [...timer.players].sort((a, b) => {
-                    if (a.wave !== b.wave) return a.wave - b.wave;
-                    return b.marchSeconds - a.marchSeconds;
-                });
+        // ADD PLAYER
+        function addPlayer(targetId) {
+            const nameInput = document.getElementById(`input-name-${targetId}`);
+            const timeInput = document.getElementById(`input-time-${targetId}`);
 
-                sortedPlayers.forEach((p) => {
-                    const originalIndex = timer.players.findIndex(player => player.id === p.id);
-                    
-                    // Wave offset calculation
-                    const waveOffsetSec = (p.wave - 1) * globalWaveConfig.intervalSec;
-                    
-                    let delayToLaunch = 0;
-                    let calculatedLaunchTime = '--:--:-- UTC';
+            const name = nameInput.value.trim();
+            const timeStr = timeInput.value.trim();
 
-                    if (timer.isRunning && timer.targetArrivalTime) {
-                        const waveTargetArrival = timer.targetArrivalTime + (waveOffsetSec * 1000);
-                        const playerLaunchTimeMs = waveTargetArrival - (p.marchSeconds * 1000);
-                        delayToLaunch = (playerLaunchTimeMs - now) / 1000;
-                        calculatedLaunchTime = formatUTCTimeString(new Date(playerLaunchTimeMs));
-                    }
+            if (!name || !timeStr) return;
 
-                    const isReadyToLaunch = timer.isRunning && delayToLaunch <= 0;
-                    const remainingDelaySec = Math.max(0, Math.ceil(delayToLaunch));
+            timerData[targetId].players.push({
+                name: name,
+                marchTime: timeStr,
+                audioData: null,
+                active: true
+            });
 
-                    let rowClass = "bg-dark-950/80 border-gray-800/80";
-                    let statusBadge = `<span class="text-gray-400 font-digit text-xs">${timer.isRunning ? formatSeconds(remainingDelaySec) : '--:--'}</span>`;
+            saveData();
+            renderPlayersList(targetId);
 
-                    if (timer.isRunning) {
-                        if (isReadyToLaunch) {
-                            rowClass = "border-emerald-500 bg-emerald-950/40 glow-launch";
-                            statusBadge = `<span class="text-emerald-400 font-bold text-xs flex items-center gap-1"><i class="fa-solid fa-paper-plane animate-bounce"></i> LAUNCH!</span>`;
-                        } else if (remainingDelaySec <= 5) {
-                            rowClass = "border-amber-500 bg-amber-950/40";
-                            statusBadge = `<span class="text-amber-400 font-bold font-digit text-xs animate-pulse">${remainingDelaySec}s</span>`;
-                        }
-                    }
+            nameInput.value = '';
+            timeInput.value = '';
+        }
 
-                    html += `
-                        <div class="p-2 rounded-lg border transition-all ${rowClass} flex items-center justify-between gap-2">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between gap-1">
-                                    <div class="flex items-center gap-1.5 truncate">
-                                        <span class="font-bold text-xs text-gray-100 truncate">${p.name}</span>
-                                        <span class="text-[9px] font-orbitron font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1 rounded">
-                                            W${p.wave}
-                                        </span>
-                                    </div>
-                                    <span class="text-[10px] text-gray-400 font-tech bg-dark-900 px-1.5 py-0.5 rounded border border-gray-800">
-                                        March: ${formatSeconds(p.marchSeconds)}
-                                    </span>
-                                </div>
-                                
-                                <div class="flex items-center justify-between mt-1 text-[11px]">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-gray-500">Launch: <strong class="text-gray-300 font-digit text-[10px]">${calculatedLaunchTime}</strong></span>
-                                        
-                                        <!-- Custom Audio Button -->
-                                        <label class="cursor-pointer text-[10px] flex items-center gap-1 ${p.customAudioData ? 'text-emerald-400 font-bold' : 'text-gray-500 hover:text-gray-300'}" title="${p.customAudioData ? 'Custom MP3 Audio Attached' : 'Attach Custom MP3 Audio'}">
-                                            <i class="fa-solid ${p.customAudioData ? 'fa-file-audio' : 'fa-paperclip'}"></i>
-                                            <input type="file" accept="audio/*" class="hidden" onchange="handleAudioUpload(this, '${cfg.id}', ${originalIndex})">
-                                            ${p.customAudioData ? 'Audio On' : 'MP3'}
-                                        </label>
-                                        ${p.customAudioData ? `
-                                            <button onclick="removeCustomAudio('${cfg.id}', ${originalIndex})" class="text-gray-500 hover:text-red-400 text-[10px]" title="Remove Custom Audio">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        ` : ''}
-                                    </div>
-                                    <div>${statusBadge}</div>
-                                </div>
-                            </div>
-                            <button onclick="deletePlayer('${cfg.id}', '${p.id}')" class="text-gray-600 hover:text-red-400 p-1 transition" title="Remove Player">
-                                <i class="fa-solid fa-xmark text-xs"></i>
-                            </button>
-                        </div>
-                    `;
-                });
+        // EDIT PLAYER
+        function editPlayer(targetId, index) {
+            const player = timerData[targetId].players[index];
+            if (!player) return;
+
+            const newName = prompt('Edit Player Name:', player.name);
+            if (newName === null) return;
+
+            const newTime = prompt('Edit March Time (MM:SS):', player.marchTime);
+            if (newTime === null) return;
+
+            player.name = newName.trim() || player.name;
+            player.marchTime = newTime.trim() || player.marchTime;
+
+            saveData();
+            renderPlayersList(targetId);
+            recalculateTargetTimes(targetId);
+        }
+
+        // TOGGLE ACTIVE CHECKBOX
+        function togglePlayerActive(targetId, index) {
+            const player = timerData[targetId].players[index];
+            if (!player) return;
+
+            player.active = !player.active;
+            saveData();
+            renderPlayersList(targetId);
+            recalculateTargetTimes(targetId);
+        }
+
+        // REMOVE PLAYER
+        function removePlayer(targetId, index) {
+            timerData[targetId].players.splice(index, 1);
+            saveData();
+            renderPlayersList(targetId);
+            recalculateTargetTimes(targetId);
+        }
+
+        // UPDATE WAVE SETTINGS
+        function updateWaveSettings(targetId, key, val) {
+            timerData[targetId][key] = parseInt(val, 10) || 0;
+            saveData();
+            recalculateTargetTimes(targetId);
+        }
+
+        // TRIGGER AUDIO FILE UPLOAD FOR PLAYER
+        function triggerAudioUpload(targetId, index) {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'audio/*';
+            fileInput.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        timerData[targetId].players[index].audioData = event.target.result;
+                        saveData();
+                        renderPlayersList(targetId);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            fileInput.click();
+        }
+
+        // RECALCULATE TARGET TIMES & DELAYS
+        function recalculateTargetTimes(targetId) {
+            const state = activeStates[targetId];
+            const players = (timerData[targetId].players || []).filter(p => p.active !== false);
+
+            if (players.length === 0) {
+                state.maxMarchTime = 0;
+                document.getElementById(`target-time-${targetId}`).innerHTML = `Target Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span>`;
+                return;
             }
 
-            html += `
-                    </div>
-                </div>
-            `;
-
-            cardEl.innerHTML = html;
-        }
-
-        function gameLoop() {
-            const now = Date.now();
-
-            // Live UTC Clock Update
-            document.getElementById('current-utc-time').innerText = formatUTCTimeString(new Date());
-
-            TIMERS_CONFIG.forEach(cfg => {
-                const timer = timersData[cfg.id];
-                if (timer && timer.isRunning && timer.targetArrivalTime) {
-                    
-                    timer.players.forEach(p => {
-                        const waveOffsetSec = (p.wave - 1) * globalWaveConfig.intervalSec;
-                        const waveTargetArrival = timer.targetArrivalTime + (waveOffsetSec * 1000);
-                        const playerLaunchTimeMs = waveTargetArrival - (p.marchSeconds * 1000);
-                        const delayToLaunch = (playerLaunchTimeMs - now) / 1000;
-                        
-                        // Countdown Ticks
-                        if (delayToLaunch > 0 && delayToLaunch <= 3.1) {
-                            const secondKey = Math.ceil(delayToLaunch);
-                            if (p.lastTickSecond !== secondKey) {
-                                p.lastTickSecond = secondKey;
-                                playTickSound();
-                            }
-                        }
-
-                        // Launch Trigger
-                        if (delayToLaunch <= 0 && !p.hasPlayedLaunch) {
-                            p.hasPlayedLaunch = true;
-                            playPlayerLaunchAudio(p);
-                            showToast(`WAVE ${p.wave} LAUNCH: ${p.name} on ${cfg.name}!`, 'success');
-                        }
-                    });
-
-                    renderTimerCard(cfg.id);
-                }
+            let maxSecs = 0;
+            players.forEach(p => {
+                const secs = parseTimeString(p.marchTime);
+                if (secs > maxSecs) maxSecs = secs;
             });
+
+            state.maxMarchTime = maxSecs;
+
+            if (state.isRunning && state.startTime) {
+                state.targetArrival = new Date(state.startTime.getTime() + maxSecs * 1000);
+                document.getElementById(`target-time-${targetId}`).innerHTML = `Target Landing: <span class="text-cyan-400 font-semibold">${formatUTC(state.targetArrival)}</span>`;
+            }
         }
 
-        window.onload = function() {
-            populateVoiceList();
-            loadState();
-            renderAllCards();
+        // START TIMER FOR SINGLE TARGET
+        function startTimer(targetId) {
+            const state = activeStates[targetId];
+            const players = timerData[targetId].players || [];
+            const activePlayers = players.filter(p => p.active !== false);
 
-            // Loop at 250ms for smooth real-time execution
-            setInterval(gameLoop, 250);
-        };
-    </script>
-</body>
-</html>
+            if (activePlayers.length === 0) {
+                alert('Please add or check at least one active player!');
+                return;
+            }
+
+            state.isRunning = true;
+            state.startTime = new Date();
+            state.announcedPlayers.clear();
+
+            recalculateTargetTimes(targetId);
+
+            // Update Start Button UI
+            const btn = document.getElementById(`btn-start-${targetId}`);
+            if (btn) {
+                btn.className = "px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-orbitron font-bold text-xs uppercase rounded transition flex items-center gap-1.5 shadow-md";
+                btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-[10px]"></i> Active`;
+            }
+        }
+
+        // RESET TIMER FOR SINGLE TARGET
+        function resetTimer(targetId) {
+            const state = activeStates[targetId];
+            state.isRunning = false;
+            state.startTime = null;
+            state.targetArrival = null;
+            state.announcedPlayers.clear();
+
+            // Reset Card UI
+            const card = document.getElementById(`card-${targetId}`);
+            if (card) card.classList.remove('launch-flash');
+
+            const btn = document.getElementById(`btn-start-${targetId}`);
+            if (btn) {
+                btn.className = "px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-orbitron font-bold text-xs uppercase rounded transition flex items-center gap-1.5 shadow-md";
+                btn.innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Start`;
+            }
+
+            document.getElementById(`target-time-${targetId}`).innerHTML = `Target Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span>`;
+
+            // Reset player rows UI without full rebuild to keep scroll state
+            const players = timerData[targetId].players || [];
+            players.forEach((p, idx) => {
+                const row = document.getElementById(`player-row-${targetId}-${idx}`);
+                if (row) row.classList.remove('launch-flash');
+
+                const cdElem = document.getElementById(`launch-countdown-${targetId}-${idx}`);
+                if (cdElem) {
+                    cdElem.innerText = 'Ready';
+                    cdElem.className = 'font-orbitron font-bold text-xs text-slate-400';
+                }
+
+                const timeElem = document.getElementById(`launch-time-${targetId
