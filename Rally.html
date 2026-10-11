@@ -167,13 +167,13 @@
 
         // STATE STORE
         let timerData = JSON.parse(localStorage.getItem('hell_rally_data')) || {
-            castle: { players: [], totalWaves: 1, waveInterval: 0 },
-            ca1: { players: [], totalWaves: 1, waveInterval: 0 },
-            ca2: { players: [], totalWaves: 1, waveInterval: 0 },
-            north: { players: [], totalWaves: 1, waveInterval: 0 },
-            east: { players: [], totalWaves: 1, waveInterval: 0 },
-            south: { players: [], totalWaves: 1, waveInterval: 0 },
-            west: { players: [], totalWaves: 1, waveInterval: 0 }
+            castle: { players: [], waveInterval: 10 },
+            ca1: { players: [], waveInterval: 10 },
+            ca2: { players: [], waveInterval: 10 },
+            north: { players: [], waveInterval: 10 },
+            east: { players: [], waveInterval: 10 },
+            south: { players: [], waveInterval: 10 },
+            west: { players: [], waveInterval: 10 }
         };
 
         // Active State per Timer
@@ -216,9 +216,9 @@
 
         function speakPlayerName(playerName) {
             if (!synth) return;
-            synth.cancel(); // Clear queued speech
+            synth.cancel();
             const utterance = new SpeechSynthesisUtterance(playerName);
-            utterance.rate = 1.2; // Slightly reduced for smooth clarity
+            utterance.rate = 1.2;
             utterance.pitch = 1.1;
 
             const voiceSelect = document.getElementById('voiceSelect');
@@ -230,20 +230,6 @@
 
         // BEEP AUDIOS via Web Audio API
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playBeep(freq = 440, duration = 0.15) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
-        }
 
         // TIME FORMATTERS
         function formatUTC(date) {
@@ -293,6 +279,8 @@
                 card.id = `card-${config.id}`;
                 card.className = `hud-border bg-slate-900/90 rounded-xl p-5 border ${config.borderColor} flex flex-col justify-between space-y-4`;
 
+                const waveIntervalVal = timerData[config.id].waveInterval !== undefined ? timerData[config.id].waveInterval : 10;
+
                 card.innerHTML = `
                     <!-- Card Header -->
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -300,7 +288,7 @@
                             <i class="fa-solid ${config.icon} ${config.color} text-xl"></i>
                             <div>
                                 <h3 class="font-orbitron font-bold text-lg text-slate-100 tracking-wide">${config.name}</h3>
-                                <div id="target-time-${config.id}" class="text-xs font-mono text-slate-400">Target Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span></div>
+                                <div id="target-time-${config.id}" class="text-xs font-mono text-slate-400">Base Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span></div>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
@@ -313,33 +301,29 @@
                         </div>
                     </div>
 
-                    <!-- Waves Configuration -->
-                    <div class="bg-slate-950/60 rounded-lg p-2.5 border border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <!-- Wave Interval Setting -->
+                    <div class="bg-slate-950/60 rounded-lg p-2.5 border border-slate-800/80 flex items-center justify-between gap-2 text-xs">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-layer-group text-amber-500"></i>
-                            <span class="text-slate-300 font-semibold">Wave Attacks:</span>
+                            <span class="text-slate-300 font-semibold">Wave Interval (Seconds between waves):</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <label class="flex items-center gap-1 text-slate-400">
-                                Waves: 
-                                <input type="number" min="1" max="10" value="${timerData[config.id].totalWaves || 1}" 
-                                       onchange="updateWaveSettings('${config.id}', 'totalWaves', this.value)"
-                                       class="w-12 bg-slate-900 border border-slate-700 rounded text-center text-amber-400 font-mono focus:outline-none py-0.5">
-                            </label>
-                            <label class="flex items-center gap-1 text-slate-400">
-                                Delay (s): 
-                                <input type="number" min="0" max="300" value="${timerData[config.id].waveInterval || 0}" 
-                                       onchange="updateWaveSettings('${config.id}', 'waveInterval', this.value)"
-                                       class="w-14 bg-slate-900 border border-slate-700 rounded text-center text-cyan-400 font-mono focus:outline-none py-0.5">
-                            </label>
-                        </div>
+                        <input type="number" min="0" max="300" value="${waveIntervalVal}" 
+                               onchange="updateWaveInterval('${config.id}', this.value)"
+                               class="w-16 bg-slate-900 border border-slate-700 rounded text-center text-cyan-400 font-mono focus:outline-none py-1">
                     </div>
 
                     <!-- Player Addition Form -->
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="input-name-${config.id}" placeholder="Player Name" class="flex-1 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50">
-                        <input type="text" id="input-time-${config.id}" placeholder="MM:SS (e.g. 02:15)" class="w-28 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 text-center font-mono focus:outline-none focus:border-amber-500/50">
-                        <button onclick="addPlayer('${config.id}')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-orbitron font-bold text-xs uppercase rounded transition">
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                        <input type="text" id="input-name-${config.id}" placeholder="Player Name" class="sm:col-span-5 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50">
+                        <input type="text" id="input-time-${config.id}" placeholder="MM:SS" class="sm:col-span-3 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 text-center font-mono focus:outline-none focus:border-amber-500/50">
+                        <select id="input-wave-${config.id}" class="sm:col-span-3 bg-slate-950 border border-slate-800 rounded px-2 py-1.5 text-xs text-amber-400 font-mono focus:outline-none cursor-pointer">
+                            <option value="1">Wave 1</option>
+                            <option value="2">Wave 2</option>
+                            <option value="3">Wave 3</option>
+                            <option value="4">Wave 4</option>
+                            <option value="5">Wave 5</option>
+                        </select>
+                        <button onclick="addPlayer('${config.id}')" class="sm:col-span-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-orbitron font-bold text-xs uppercase rounded transition flex items-center justify-center">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
@@ -355,7 +339,7 @@
             });
         }
 
-        // RENDER PLAYER LIST ONLY (Prevents resetting scroll position)
+        // RENDER PLAYER LIST ONLY
         function renderPlayersList(targetId) {
             const listContainer = document.getElementById(`players-list-${targetId}`);
             if (!listContainer) return;
@@ -366,10 +350,10 @@
                 return;
             }
 
-            // Keep track of DOM elements for smooth tick updates
             listContainer.innerHTML = players.map((player, index) => {
                 const marchSecs = parseTimeString(player.marchTime);
-                const isChecked = player.active !== false; // Default true
+                const isChecked = player.active !== false;
+                const waveNum = player.wave || 1;
 
                 return `
                     <div id="player-row-${targetId}-${index}" class="bg-slate-950/70 border ${isChecked ? 'border-slate-800/80' : 'border-slate-900 opacity-50'} rounded-lg px-3 py-2 flex items-center justify-between gap-3 transition">
@@ -380,6 +364,7 @@
                             <div class="truncate">
                                 <div class="font-semibold text-xs text-slate-200 truncate flex items-center gap-1.5">
                                     <span>${player.name}</span>
+                                    <span class="text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 rounded">Wave ${waveNum}</span>
                                     ${player.audioData ? '<i class="fa-solid fa-file-audio text-amber-500 text-[10px]"></i>' : ''}
                                 </div>
                                 <div class="text-[10px] font-mono text-slate-500">March: ${secondsToMMSS(marchSecs)}</div>
@@ -397,7 +382,7 @@
                                 </div>
                             </div>
 
-                            <!-- Actions dropdown / controls -->
+                            <!-- Actions controls -->
                             <div class="flex items-center gap-1 border-l border-slate-800 pl-2">
                                 <button onclick="editPlayer('${targetId}', ${index})" title="Edit Player" class="text-slate-500 hover:text-cyan-400 p-1 text-xs transition">
                                     <i class="fa-solid fa-pen-to-square"></i>
@@ -419,15 +404,18 @@
         function addPlayer(targetId) {
             const nameInput = document.getElementById(`input-name-${targetId}`);
             const timeInput = document.getElementById(`input-time-${targetId}`);
+            const waveSelect = document.getElementById(`input-wave-${targetId}`);
 
             const name = nameInput.value.trim();
             const timeStr = timeInput.value.trim();
+            const wave = parseInt(waveSelect.value, 10) || 1;
 
             if (!name || !timeStr) return;
 
             timerData[targetId].players.push({
                 name: name,
                 marchTime: timeStr,
+                wave: wave,
                 audioData: null,
                 active: true
             });
@@ -450,8 +438,12 @@
             const newTime = prompt('Edit March Time (MM:SS):', player.marchTime);
             if (newTime === null) return;
 
+            const newWaveStr = prompt('Edit Wave Number (1 to 5):', player.wave || 1);
+            if (newWaveStr === null) return;
+
             player.name = newName.trim() || player.name;
             player.marchTime = newTime.trim() || player.marchTime;
+            player.wave = parseInt(newWaveStr, 10) || player.wave;
 
             saveData();
             renderPlayersList(targetId);
@@ -477,9 +469,9 @@
             recalculateTargetTimes(targetId);
         }
 
-        // UPDATE WAVE SETTINGS
-        function updateWaveSettings(targetId, key, val) {
-            timerData[targetId][key] = parseInt(val, 10) || 0;
+        // UPDATE WAVE INTERVAL
+        function updateWaveInterval(targetId, val) {
+            timerData[targetId].waveInterval = parseInt(val, 10) || 0;
             saveData();
             recalculateTargetTimes(targetId);
         }
@@ -511,7 +503,7 @@
 
             if (players.length === 0) {
                 state.maxMarchTime = 0;
-                document.getElementById(`target-time-${targetId}`).innerHTML = `Target Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span>`;
+                document.getElementById(`target-time-${targetId}`).innerHTML = `Base Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span>`;
                 return;
             }
 
@@ -525,7 +517,7 @@
 
             if (state.isRunning && state.startTime) {
                 state.targetArrival = new Date(state.startTime.getTime() + maxSecs * 1000);
-                document.getElementById(`target-time-${targetId}`).innerHTML = `Target Landing: <span class="text-cyan-400 font-semibold">${formatUTC(state.targetArrival)}</span>`;
+                document.getElementById(`target-time-${targetId}`).innerHTML = `Base Landing: <span class="text-cyan-400 font-semibold">${formatUTC(state.targetArrival)}</span>`;
             }
         }
 
@@ -546,7 +538,6 @@
 
             recalculateTargetTimes(targetId);
 
-            // Update Start Button UI
             const btn = document.getElementById(`btn-start-${targetId}`);
             if (btn) {
                 btn.className = "px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-orbitron font-bold text-xs uppercase rounded transition flex items-center gap-1.5 shadow-md";
@@ -562,7 +553,6 @@
             state.targetArrival = null;
             state.announcedPlayers.clear();
 
-            // Reset Card UI
             const card = document.getElementById(`card-${targetId}`);
             if (card) card.classList.remove('launch-flash');
 
@@ -572,9 +562,8 @@
                 btn.innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Start`;
             }
 
-            document.getElementById(`target-time-${targetId}`).innerHTML = `Target Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span>`;
+            document.getElementById(`target-time-${targetId}`).innerHTML = `Base Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span>`;
 
-            // Reset player rows UI without full rebuild to keep scroll state
             const players = timerData[targetId].players || [];
             players.forEach((p, idx) => {
                 const row = document.getElementById(`player-row-${targetId}-${idx}`);
@@ -599,7 +588,7 @@
             TARGET_CONFIGS.forEach(c => resetTimer(c.id));
         }
 
-        // MAIN TICK LOOP (Updates 10 times per second for extreme precision)
+        // MAIN TICK LOOP (Wave calculations applied)
         setInterval(() => {
             const now = new Date();
 
@@ -610,15 +599,22 @@
 
                 const players = timerData[targetId].players || [];
                 const maxMarchSecs = state.maxMarchTime;
+                const waveInterval = timerData[targetId].waveInterval !== undefined ? timerData[targetId].waveInterval : 10;
 
                 players.forEach((player, index) => {
-                    // Skip unchecked/inactive players completely
                     if (player.active === false) return;
 
                     const marchSecs = parseTimeString(player.marchTime);
-                    const delaySecs = maxMarchSecs - marchSecs; // Delay before launch
+                    const waveNum = player.wave || 1;
+                    
+                    // Wave offset calculation: Each wave is delayed by (Wave - 1) * waveInterval
+                    const waveDelayOffset = (waveNum - 1) * waveInterval;
+                    
+                    // Launch time for this player = Start + (MaxMarch - PlayerMarch) + WaveOffset
+                    const baseDelay = maxMarchSecs - marchSecs;
+                    const totalDelaySecs = baseDelay + waveDelayOffset;
 
-                    const launchTime = new Date(state.startTime.getTime() + delaySecs * 1000);
+                    const launchTime = new Date(state.startTime.getTime() + totalDelaySecs * 1000);
                     const remainingToLaunch = Math.ceil((launchTime.getTime() - now.getTime()) / 1000);
 
                     const cdElem = document.getElementById(`launch-countdown-${targetId}-${index}`);
@@ -635,7 +631,6 @@
                             cdElem.className = 'font-orbitron font-bold text-xs text-amber-400 animate-pulse';
                         }
                     } else {
-                        // LAUNCH WINDOW REACHED!
                         if (cdElem) {
                             cdElem.innerText = 'LAUNCH NOW!';
                             cdElem.className = 'font-orbitron font-black text-xs text-emerald-400 tracking-wider';
@@ -645,11 +640,9 @@
                             rowElem.classList.add('launch-flash');
                         }
 
-                        // ANNOUNCE PLAYER NAME ONCE
                         if (!state.announcedPlayers.has(index)) {
                             state.announcedPlayers.add(index);
 
-                            // Trigger Audio or Speech
                             if (player.audioData) {
                                 const audio = new Audio(player.audioData);
                                 audio.play();
