@@ -152,7 +152,7 @@
         Designed By Hell 🔥
     </footer>
 
-    <!-- AUDIO ELEMENTS & SPEECH SYNTHESIS ENGINE -->
+    <!-- AUDIO & SPEECH SYNTHESIS ENGINE -->
     <script>
         // TARGET CONFIGURATIONS
         const TARGET_CONFIGS = [
@@ -176,7 +176,6 @@
             west: { players: [], waveInterval: 10 }
         };
 
-        // Active State per Timer
         let activeStates = {};
         TARGET_CONFIGS.forEach(t => {
             activeStates[t.id] = {
@@ -188,7 +187,7 @@
             };
         });
 
-        // SPEECH SYNTHESIS setup
+        // SPEECH SYNTHESIS SETUP & MOBILE UNLOCKER
         const synth = window.speechSynthesis;
         let availableVoices = [];
 
@@ -214,8 +213,19 @@
             }
         }
 
+        // Unlock audio context & speech synthesis for mobile browsers on user click
+        function unlockAudioEngine() {
+            if (!synth) return;
+            if (synth.speaking) synth.cancel();
+            const dummy = new SpeechSynthesisUtterance('');
+            dummy.volume = 0;
+            synth.speak(dummy);
+        }
+
         function speakPlayerName(playerName) {
             if (!synth) return;
+            if (synth.paused) synth.resume();
+
             const utterance = new SpeechSynthesisUtterance(playerName);
             utterance.rate = 1.2;
             utterance.pitch = 1.1;
@@ -224,6 +234,9 @@
             if (voiceSelect && voiceSelect.value !== '') {
                 utterance.voice = availableVoices[voiceSelect.value];
             }
+
+            // Keep a global reference to prevent mobile garbage collection
+            window.lastUtterance = utterance;
             synth.speak(utterance);
         }
 
@@ -260,12 +273,11 @@
             document.getElementById('utcClock').innerText = formatUTC(now);
         }, 1000);
 
-        // SAVE STATE
         function saveData() {
             localStorage.setItem('hell_rally_data', JSON.stringify(timerData));
         }
 
-        // RENDER TIMER CARDS INITIALLY
+        // RENDER CARDS
         function renderAllCards() {
             const container = document.getElementById('timersGrid');
             container.innerHTML = '';
@@ -278,7 +290,6 @@
                 const waveIntervalVal = timerData[config.id].waveInterval !== undefined ? timerData[config.id].waveInterval : 10;
 
                 card.innerHTML = `
-                    <!-- Card Header -->
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                         <div class="flex items-center gap-3">
                             <i class="fa-solid ${config.icon} ${config.color} text-xl"></i>
@@ -297,18 +308,16 @@
                         </div>
                     </div>
 
-                    <!-- Wave Interval Setting -->
                     <div class="bg-slate-950/60 rounded-lg p-2.5 border border-slate-800/80 flex items-center justify-between gap-2 text-xs">
                         <div class="flex items-center gap-2">
                             <i class="fa-solid fa-layer-group text-amber-500"></i>
-                            <span class="text-slate-300 font-semibold">Wave Interval (Seconds between waves):</span>
+                            <span class="text-slate-300 font-semibold">Wave Interval (Seconds):</span>
                         </div>
                         <input type="number" min="0" max="300" value="${waveIntervalVal}" 
                                onchange="updateWaveInterval('${config.id}', this.value)"
                                class="w-16 bg-slate-900 border border-slate-700 rounded text-center text-cyan-400 font-mono focus:outline-none py-1">
                     </div>
 
-                    <!-- Player Addition Form -->
                     <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
                         <input type="text" id="input-name-${config.id}" placeholder="Player Name" class="sm:col-span-5 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50">
                         <input type="text" id="input-time-${config.id}" placeholder="MM:SS" class="sm:col-span-3 bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 text-center font-mono focus:outline-none focus:border-amber-500/50">
@@ -324,10 +333,7 @@
                         </button>
                     </div>
 
-                    <!-- Players List -->
-                    <div class="space-y-2 max-h-56 overflow-y-auto pr-1" id="players-list-${config.id}">
-                        <!-- Rendered Player Rows -->
-                    </div>
+                    <div class="space-y-2 max-h-56 overflow-y-auto pr-1" id="players-list-${config.id}"></div>
                 `;
 
                 container.appendChild(card);
@@ -335,7 +341,6 @@
             });
         }
 
-        // RENDER PLAYER LIST ONLY
         function renderPlayersList(targetId) {
             const listContainer = document.getElementById(`players-list-${targetId}`);
             if (!listContainer) return;
@@ -353,8 +358,6 @@
 
                 return `
                     <div id="player-row-${targetId}-${index}" class="bg-slate-950/70 border ${isChecked ? 'border-slate-800/80' : 'border-slate-900 opacity-50'} rounded-lg px-3 py-2 flex items-center justify-between gap-3 transition">
-                        
-                        <!-- Toggle Checkbox & Player Info -->
                         <div class="flex items-center gap-2.5 min-w-0">
                             <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePlayerActive('${targetId}', ${index})" class="w-4 h-4 accent-amber-500 cursor-pointer rounded">
                             <div class="truncate">
@@ -367,28 +370,16 @@
                             </div>
                         </div>
 
-                        <!-- Status Countdown & Actions -->
                         <div class="flex items-center gap-3">
                             <div class="text-right">
-                                <div id="launch-countdown-${targetId}-${index}" class="font-orbitron font-bold text-xs text-slate-400">
-                                    Ready
-                                </div>
-                                <div id="launch-time-${targetId}-${index}" class="text-[10px] font-mono text-slate-500">
-                                    Launch: --:--:--
-                                </div>
+                                <div id="launch-countdown-${targetId}-${index}" class="font-orbitron font-bold text-xs text-slate-400">Ready</div>
+                                <div id="launch-time-${targetId}-${index}" class="text-[10px] font-mono text-slate-500">Launch: --:--:--</div>
                             </div>
 
-                            <!-- Actions controls -->
                             <div class="flex items-center gap-1 border-l border-slate-800 pl-2">
-                                <button onclick="editPlayer('${targetId}', ${index})" title="Edit Player" class="text-slate-500 hover:text-cyan-400 p-1 text-xs transition">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button onclick="triggerAudioUpload('${targetId}', ${index})" title="Attach Audio File" class="text-slate-500 hover:text-amber-400 p-1 text-xs transition">
-                                    <i class="fa-solid fa-paperclip"></i>
-                                </button>
-                                <button onclick="removePlayer('${targetId}', ${index})" title="Delete Player" class="text-slate-500 hover:text-red-400 p-1 text-xs transition">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
+                                <button onclick="editPlayer('${targetId}', ${index})" title="Edit" class="text-slate-500 hover:text-cyan-400 p-1 text-xs transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="triggerAudioUpload('${targetId}', ${index})" title="Audio" class="text-slate-500 hover:text-amber-400 p-1 text-xs transition"><i class="fa-solid fa-paperclip"></i></button>
+                                <button onclick="removePlayer('${targetId}', ${index})" title="Delete" class="text-slate-500 hover:text-red-400 p-1 text-xs transition"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </div>
                     </div>
@@ -396,7 +387,6 @@
             }).join('');
         }
 
-        // ADD PLAYER
         function addPlayer(targetId) {
             const nameInput = document.getElementById(`input-name-${targetId}`);
             const timeInput = document.getElementById(`input-time-${targetId}`);
@@ -408,32 +398,21 @@
 
             if (!name || !timeStr) return;
 
-            timerData[targetId].players.push({
-                name: name,
-                marchTime: timeStr,
-                wave: wave,
-                audioData: null,
-                active: true
-            });
-
+            timerData[targetId].players.push({ name, marchTime: timeStr, wave, audioData: null, active: true });
             saveData();
             renderPlayersList(targetId);
-
             nameInput.value = '';
             timeInput.value = '';
         }
 
-        // EDIT PLAYER
         function editPlayer(targetId, index) {
             const player = timerData[targetId].players[index];
             if (!player) return;
 
             const newName = prompt('Edit Player Name:', player.name);
             if (newName === null) return;
-
             const newTime = prompt('Edit March Time (MM:SS):', player.marchTime);
             if (newTime === null) return;
-
             const newWaveStr = prompt('Edit Wave Number (1 to 5):', player.wave || 1);
             if (newWaveStr === null) return;
 
@@ -446,18 +425,15 @@
             recalculateTargetTimes(targetId);
         }
 
-        // TOGGLE ACTIVE CHECKBOX
         function togglePlayerActive(targetId, index) {
             const player = timerData[targetId].players[index];
             if (!player) return;
-
             player.active = !player.active;
             saveData();
             renderPlayersList(targetId);
             recalculateTargetTimes(targetId);
         }
 
-        // REMOVE PLAYER
         function removePlayer(targetId, index) {
             timerData[targetId].players.splice(index, 1);
             saveData();
@@ -465,14 +441,12 @@
             recalculateTargetTimes(targetId);
         }
 
-        // UPDATE WAVE INTERVAL
         function updateWaveInterval(targetId, val) {
             timerData[targetId].waveInterval = parseInt(val, 10) || 0;
             saveData();
             recalculateTargetTimes(targetId);
         }
 
-        // TRIGGER AUDIO FILE UPLOAD FOR PLAYER
         function triggerAudioUpload(targetId, index) {
             const fileInput = document.createElement('input');
             fileInput.type = 'file';
@@ -492,7 +466,6 @@
             fileInput.click();
         }
 
-        // RECALCULATE TARGET TIMES & DELAYS
         function recalculateTargetTimes(targetId) {
             const state = activeStates[targetId];
             const players = (timerData[targetId].players || []).filter(p => p.active !== false);
@@ -517,15 +490,14 @@
             }
         }
 
-        // START TIMER FOR SINGLE TARGET (Quietly skips if no active players)
         function startTimer(targetId) {
+            unlockAudioEngine(); // Unlocks mobile speech engine on user click
+
             const state = activeStates[targetId];
             const players = timerData[targetId].players || [];
             const activePlayers = players.filter(p => p.active !== false);
 
-            if (activePlayers.length === 0) {
-                return; // Skip empty timers silently when Start All is pressed
-            }
+            if (activePlayers.length === 0) return;
 
             state.isRunning = true;
             state.startTime = new Date();
@@ -540,7 +512,6 @@
             }
         }
 
-        // RESET TIMER FOR SINGLE TARGET
         function resetTimer(targetId) {
             const state = activeStates[targetId];
             state.isRunning = false;
@@ -576,6 +547,7 @@
         }
 
         function startAllTimers() {
+            unlockAudioEngine(); // Unlocks mobile speech engine on user click
             TARGET_CONFIGS.forEach(c => startTimer(c.id));
         }
 
@@ -647,7 +619,6 @@
             });
         }, 100);
 
-        // INITIAL LOAD
         renderAllCards();
     </script>
 </body>
