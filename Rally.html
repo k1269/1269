@@ -297,7 +297,7 @@
                     <!-- Card Header -->
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                         <div class="flex items-center gap-3">
-                            <i class="fa-solid ${config.icon}${config.color} text-xl"></i>
+                            <i class="fa-solid ${config.icon} ${config.color} text-xl"></i>
                             <div>
                                 <h3 class="font-orbitron font-bold text-lg text-slate-100 tracking-wide">${config.name}</h3>
                                 <div id="target-time-${config.id}" class="text-xs font-mono text-slate-400">Target Landing: <span class="text-cyan-400 font-semibold">--:--:-- UTC</span></div>
@@ -376,10 +376,11 @@
                         
                         <!-- Toggle Checkbox & Player Info -->
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePlayerActive('${targetId}',${index})" class="w-4 h-4 accent-amber-500 cursor-pointer rounded">
+                            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="togglePlayerActive('${targetId}', ${index})" class="w-4 h-4 accent-amber-500 cursor-pointer rounded">
                             <div class="truncate">
                                 <div class="font-semibold text-xs text-slate-200 truncate flex items-center gap-1.5">
-                                    <span>${player.name}</span>${player.audioData ? '<i class="fa-solid fa-file-audio text-amber-500 text-[10px]"></i>' : ''}
+                                    <span>${player.name}</span>
+                                    ${player.audioData ? '<i class="fa-solid fa-file-audio text-amber-500 text-[10px]"></i>' : ''}
                                 </div>
                                 <div class="text-[10px] font-mono text-slate-500">March: ${secondsToMMSS(marchSecs)}</div>
                             </div>
@@ -398,13 +399,13 @@
 
                             <!-- Actions dropdown / controls -->
                             <div class="flex items-center gap-1 border-l border-slate-800 pl-2">
-                                <button onclick="editPlayer('${targetId}',${index})" title="Edit Player" class="text-slate-500 hover:text-cyan-400 p-1 text-xs transition">
+                                <button onclick="editPlayer('${targetId}', ${index})" title="Edit Player" class="text-slate-500 hover:text-cyan-400 p-1 text-xs transition">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button onclick="triggerAudioUpload('${targetId}',${index})" title="Attach Audio File" class="text-slate-500 hover:text-amber-400 p-1 text-xs transition">
+                                <button onclick="triggerAudioUpload('${targetId}', ${index})" title="Attach Audio File" class="text-slate-500 hover:text-amber-400 p-1 text-xs transition">
                                     <i class="fa-solid fa-paperclip"></i>
                                 </button>
-                                <button onclick="removePlayer('${targetId}',${index})" title="Delete Player" class="text-slate-500 hover:text-red-400 p-1 text-xs transition">
+                                <button onclick="removePlayer('${targetId}', ${index})" title="Delete Player" class="text-slate-500 hover:text-red-400 p-1 text-xs transition">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
@@ -585,4 +586,84 @@
                     cdElem.className = 'font-orbitron font-bold text-xs text-slate-400';
                 }
 
-                const timeElem = document.getElementById(`launch-time-${targetId
+                const timeElem = document.getElementById(`launch-time-${targetId}-${idx}`);
+                if (timeElem) timeElem.innerText = 'Launch: --:--:--';
+            });
+        }
+
+        function startAllTimers() {
+            TARGET_CONFIGS.forEach(c => startTimer(c.id));
+        }
+
+        function resetAllTimers() {
+            TARGET_CONFIGS.forEach(c => resetTimer(c.id));
+        }
+
+        // MAIN TICK LOOP (Updates 10 times per second for extreme precision)
+        setInterval(() => {
+            const now = new Date();
+
+            TARGET_CONFIGS.forEach(config => {
+                const targetId = config.id;
+                const state = activeStates[targetId];
+                if (!state.isRunning || !state.startTime) return;
+
+                const players = timerData[targetId].players || [];
+                const maxMarchSecs = state.maxMarchTime;
+
+                players.forEach((player, index) => {
+                    // Skip unchecked/inactive players completely
+                    if (player.active === false) return;
+
+                    const marchSecs = parseTimeString(player.marchTime);
+                    const delaySecs = maxMarchSecs - marchSecs; // Delay before launch
+
+                    const launchTime = new Date(state.startTime.getTime() + delaySecs * 1000);
+                    const remainingToLaunch = Math.ceil((launchTime.getTime() - now.getTime()) / 1000);
+
+                    const cdElem = document.getElementById(`launch-countdown-${targetId}-${index}`);
+                    const timeElem = document.getElementById(`launch-time-${targetId}-${index}`);
+                    const rowElem = document.getElementById(`player-row-${targetId}-${index}`);
+
+                    if (timeElem) {
+                        timeElem.innerText = `Launch: ${formatUTC(launchTime).replace(' UTC', '')}`;
+                    }
+
+                    if (remainingToLaunch > 0) {
+                        if (cdElem) {
+                            cdElem.innerText = `T-minus ${secondsToMMSS(remainingToLaunch)}`;
+                            cdElem.className = 'font-orbitron font-bold text-xs text-amber-400 animate-pulse';
+                        }
+                    } else {
+                        // LAUNCH WINDOW REACHED!
+                        if (cdElem) {
+                            cdElem.innerText = 'LAUNCH NOW!';
+                            cdElem.className = 'font-orbitron font-black text-xs text-emerald-400 tracking-wider';
+                        }
+
+                        if (rowElem && !rowElem.classList.contains('launch-flash')) {
+                            rowElem.classList.add('launch-flash');
+                        }
+
+                        // ANNOUNCE PLAYER NAME ONCE
+                        if (!state.announcedPlayers.has(index)) {
+                            state.announcedPlayers.add(index);
+
+                            // Trigger Audio or Speech
+                            if (player.audioData) {
+                                const audio = new Audio(player.audioData);
+                                audio.play();
+                            } else {
+                                speakPlayerName(player.name);
+                            }
+                        }
+                    }
+                });
+            });
+        }, 100);
+
+        // INITIAL LOAD
+        renderAllCards();
+    </script>
+</body>
+</html>
