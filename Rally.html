@@ -216,7 +216,6 @@
 
         function speakPlayerName(playerName) {
             if (!synth) return;
-            synth.cancel();
             const utterance = new SpeechSynthesisUtterance(playerName);
             utterance.rate = 1.2;
             utterance.pitch = 1.1;
@@ -227,9 +226,6 @@
             }
             synth.speak(utterance);
         }
-
-        // BEEP AUDIOS via Web Audio API
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         // TIME FORMATTERS
         function formatUTC(date) {
@@ -521,15 +517,14 @@
             }
         }
 
-        // START TIMER FOR SINGLE TARGET
+        // START TIMER FOR SINGLE TARGET (Quietly skips if no active players)
         function startTimer(targetId) {
             const state = activeStates[targetId];
             const players = timerData[targetId].players || [];
             const activePlayers = players.filter(p => p.active !== false);
 
             if (activePlayers.length === 0) {
-                alert('Please add or check at least one active player!');
-                return;
+                return; // Skip empty timers silently when Start All is pressed
             }
 
             state.isRunning = true;
@@ -588,7 +583,7 @@
             TARGET_CONFIGS.forEach(c => resetTimer(c.id));
         }
 
-        // MAIN TICK LOOP (Wave calculations applied)
+        // MAIN TICK LOOP
         setInterval(() => {
             const now = new Date();
 
@@ -607,10 +602,7 @@
                     const marchSecs = parseTimeString(player.marchTime);
                     const waveNum = player.wave || 1;
                     
-                    // Wave offset calculation: Each wave is delayed by (Wave - 1) * waveInterval
                     const waveDelayOffset = (waveNum - 1) * waveInterval;
-                    
-                    // Launch time for this player = Start + (MaxMarch - PlayerMarch) + WaveOffset
                     const baseDelay = maxMarchSecs - marchSecs;
                     const totalDelaySecs = baseDelay + waveDelayOffset;
 
