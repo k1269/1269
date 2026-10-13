@@ -311,9 +311,6 @@
                             <button onclick="resetTimer('${config.id}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-orbitron font-bold text-xs uppercase rounded transition flex items-center gap-1.5">
                                 <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
                             </button>
-                            <button onclick="generateReport('${config.id}')" title="Copy Schedule Report" class="px-2.5 py-1.5 bg-cyan-700 hover:bg-cyan-600 text-white font-orbitron font-bold text-xs rounded transition flex items-center gap-1">
-                                <i class="fa-solid fa-clipboard text-[10px]"></i> Report
-                            </button>
                         </div>
                     </div>
 
@@ -504,15 +501,12 @@
             }
         }
 
-        // GENERATE & COPY TACTICAL REPORT
-        function generateReport(targetId) {
+        // GENERATE & AUTO-COPY REPORT ON START
+        function copyTacticalReport(targetId) {
             const targetConfig = TARGET_CONFIGS.find(c => c.id === targetId);
             const players = (timerData[targetId].players || []).filter(p => p.active !== false);
 
-            if (players.length === 0) {
-                alert('No active players to generate report!');
-                return;
-            }
+            if (players.length === 0) return;
 
             let maxSecs = 0;
             players.forEach(p => {
@@ -542,11 +536,8 @@
             reportText += `──────────────────\n`;
             reportText += `Hell Rally Launch Control`;
 
-            navigator.clipboard.writeText(reportText).then(() => {
-                alert(`✅ Tactical Report for ${targetConfig.name} copied to clipboard!`);
-            }).catch(err => {
-                console.error('Failed to copy report: ', err);
-                prompt('Copy your tactical report below:', reportText);
+            navigator.clipboard.writeText(reportText).catch(err => {
+                console.error('Auto copy error: ', err);
             });
         }
 
@@ -565,6 +556,7 @@
             state.announcedPlayers.clear();
 
             recalculateTargetTimes(targetId);
+            copyTacticalReport(targetId); // Auto-copy report instantly upon clicking Start
 
             const btn = document.getElementById(`btn-start-${targetId}`);
             if (btn) {
