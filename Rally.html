@@ -167,13 +167,13 @@
 
         // STATE STORE
         let timerData = JSON.parse(localStorage.getItem('hell_rally_data')) || {
-            castle: { players: [], waveInterval: 10 },
-            ca1: { players: [], waveInterval: 10 },
-            ca2: { players: [], waveInterval: 10 },
-            north: { players: [], waveInterval: 10 },
-            east: { players: [], waveInterval: 10 },
-            south: { players: [], waveInterval: 10 },
-            west: { players: [], waveInterval: 10 }
+            castle: { players: [], waveInterval: 10, startDelaySec: 0 },
+            ca1: { players: [], waveInterval: 10, startDelaySec: 0 },
+            ca2: { players: [], waveInterval: 10, startDelaySec: 0 },
+            north: { players: [], waveInterval: 10, startDelaySec: 0 },
+            east: { players: [], waveInterval: 10, startDelaySec: 0 },
+            south: { players: [], waveInterval: 10, startDelaySec: 0 },
+            west: { players: [], waveInterval: 10, startDelaySec: 0 }
         };
 
         let activeStates = {};
@@ -213,7 +213,6 @@
             }
         }
 
-        // Unlock audio context & speech synthesis for mobile browsers on user click
         function unlockAudioEngine() {
             if (!synth) return;
             if (synth.speaking) synth.cancel();
@@ -235,7 +234,6 @@
                 utterance.voice = availableVoices[voiceSelect.value];
             }
 
-            // Keep a global reference to prevent mobile garbage collection
             window.lastUtterance = utterance;
             synth.speak(utterance);
         }
@@ -246,6 +244,13 @@
             const m = String(date.getUTCMinutes()).padStart(2, '0');
             const s = String(date.getUTCSeconds()).padStart(2, '0');
             return `${h}:${m}:${s} UTC`;
+        }
+
+        function formatUTCHMS(date) {
+            const h = String(date.getUTCHours()).padStart(2, '0');
+            const m = String(date.getUTCMinutes()).padStart(2, '0');
+            const s = String(date.getUTCSeconds()).padStart(2, '0');
+            return `${h}:${m}:${s}`;
         }
 
         function secondsToMMSS(seconds) {
@@ -288,6 +293,7 @@
                 card.className = `hud-border bg-slate-900/90 rounded-xl p-5 border ${config.borderColor} flex flex-col justify-between space-y-4`;
 
                 const waveIntervalVal = timerData[config.id].waveInterval !== undefined ? timerData[config.id].waveInterval : 10;
+                const startDelayVal = timerData[config.id].startDelaySec !== undefined ? timerData[config.id].startDelaySec : 0;
 
                 card.innerHTML = `
                     <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -305,17 +311,25 @@
                             <button onclick="resetTimer('${config.id}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-orbitron font-bold text-xs uppercase rounded transition flex items-center gap-1.5">
                                 <i class="fa-solid fa-rotate-left text-[10px]"></i> Reset
                             </button>
+                            <button onclick="generateReport('${config.id}')" title="Copy Schedule Report" class="px-2.5 py-1.5 bg-cyan-700 hover:bg-cyan-600 text-white font-orbitron font-bold text-xs rounded transition flex items-center gap-1">
+                                <i class="fa-solid fa-clipboard text-[10px]"></i> Report
+                            </button>
                         </div>
                     </div>
 
-                    <div class="bg-slate-950/60 rounded-lg p-2.5 border border-slate-800/80 flex items-center justify-between gap-2 text-xs">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group text-amber-500"></i>
-                            <span class="text-slate-300 font-semibold">Wave Interval (Seconds):</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="bg-slate-950/60 rounded-lg p-2.5 border border-slate-800/80 flex items-center justify-between gap-2">
+                            <span class="text-slate-300 font-semibold">Wave Interval (s):</span>
+                            <input type="number" min="0" max="300" value="${waveIntervalVal}" 
+                                   onchange="updateConfigValue('${config.id}', 'waveInterval', this.value)"
+                                   class="w-16 bg-slate-900 border border-slate-700 rounded text-center text-cyan-400 font-mono focus:outline-none py-1">
                         </div>
-                        <input type="number" min="0" max="300" value="${waveIntervalVal}" 
-                               onchange="updateWaveInterval('${config.id}', this.value)"
-                               class="w-16 bg-slate-900 border border-slate-700 rounded text-center text-cyan-400 font-mono focus:outline-none py-1">
+                        <div class="bg-slate-950/60 rounded-lg p-2.5 border border-slate-800/80 flex items-center justify-between gap-2">
+                            <span class="text-slate-300 font-semibold">Start Delay (s):</span>
+                            <input type="number" min="0" max="3600" value="${startDelayVal}" 
+                                   onchange="updateConfigValue('${config.id}', 'startDelaySec', this.value)"
+                                   class="w-16 bg-slate-900 border border-slate-700 rounded text-center text-amber-400 font-mono focus:outline-none py-1">
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
@@ -441,8 +455,8 @@
             recalculateTargetTimes(targetId);
         }
 
-        function updateWaveInterval(targetId, val) {
-            timerData[targetId].waveInterval = parseInt(val, 10) || 0;
+        function updateConfigValue(targetId, key, val) {
+            timerData[targetId][key] = parseInt(val, 10) || 0;
             saveData();
             recalculateTargetTimes(targetId);
         }
@@ -490,8 +504,54 @@
             }
         }
 
+        // GENERATE & COPY TACTICAL REPORT
+        function generateReport(targetId) {
+            const targetConfig = TARGET_CONFIGS.find(c => c.id === targetId);
+            const players = (timerData[targetId].players || []).filter(p => p.active !== false);
+
+            if (players.length === 0) {
+                alert('No active players to generate report!');
+                return;
+            }
+
+            let maxSecs = 0;
+            players.forEach(p => {
+                const secs = parseTimeString(p.marchTime);
+                if (secs > maxSecs) maxSecs = secs;
+            });
+
+            const waveInterval = timerData[targetId].waveInterval !== undefined ? timerData[targetId].waveInterval : 10;
+            const startDelaySec = timerData[targetId].startDelaySec !== undefined ? timerData[targetId].startDelaySec : 0;
+            
+            const baseTime = new Date(Date.now() + startDelaySec * 1000);
+
+            let reportText = `🎯 Target: ${targetConfig.name}\n`;
+            reportText += `──────────────────\n`;
+
+            players.forEach(player => {
+                const marchSecs = parseTimeString(player.marchTime);
+                const waveNum = player.wave || 1;
+                const waveDelayOffset = (waveNum - 1) * waveInterval;
+                const baseDelay = maxSecs - marchSecs;
+                const totalDelaySecs = baseDelay + waveDelayOffset;
+
+                const launchTime = new Date(baseTime.getTime() + totalDelaySecs * 1000);
+                reportText += `• ${player.name} (Wave ${waveNum}) ➔ Launch: ${formatUTCHMS(launchTime)} UTC\n`;
+            });
+
+            reportText += `──────────────────\n`;
+            reportText += `Hell Rally Launch Control`;
+
+            navigator.clipboard.writeText(reportText).then(() => {
+                alert(`✅ Tactical Report for ${targetConfig.name} copied to clipboard!`);
+            }).catch(err => {
+                console.error('Failed to copy report: ', err);
+                prompt('Copy your tactical report below:', reportText);
+            });
+        }
+
         function startTimer(targetId) {
-            unlockAudioEngine(); // Unlocks mobile speech engine on user click
+            unlockAudioEngine();
 
             const state = activeStates[targetId];
             const players = timerData[targetId].players || [];
@@ -499,8 +559,9 @@
 
             if (activePlayers.length === 0) return;
 
+            const startDelaySec = timerData[targetId].startDelaySec || 0;
             state.isRunning = true;
-            state.startTime = new Date();
+            state.startTime = new Date(Date.now() + startDelaySec * 1000);
             state.announcedPlayers.clear();
 
             recalculateTargetTimes(targetId);
@@ -547,7 +608,7 @@
         }
 
         function startAllTimers() {
-            unlockAudioEngine(); // Unlocks mobile speech engine on user click
+            unlockAudioEngine();
             TARGET_CONFIGS.forEach(c => startTimer(c.id));
         }
 
