@@ -400,11 +400,11 @@
     }
   </style>
 
-  <!-- Firebase SDKs (Modular v9+) with Discord OAuth Provider -->
+  <!-- Firebase SDKs with signInWithRedirect -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    import { getAuth, OAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, OAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -426,7 +426,8 @@
     window.dbOnValue = onValue;
     window.auth = auth;
     window.discordProvider = discordProvider;
-    window.signInWithPopup = signInWithPopup;
+    window.signInWithRedirect = signInWithRedirect;
+    window.getRedirectResult = getRedirectResult;
     window.signOut = signOut;
     window.onAuthStateChanged = onAuthStateChanged;
     window.firebaseInitialized = true;
@@ -524,7 +525,7 @@
     const GRID_SIZE = 50;
     const CELL_SIZE = 24;
     const GAP = 1;
-    const STEP_SIZE = CELL_SIZE + GAP; // خطوة واحدة مفردة (مربع واحد لكل نقلة)
+    const STEP_SIZE = CELL_SIZE + GAP;
 
     let scale = 1;
     const minScale = 0.4;
@@ -546,13 +547,18 @@
       const checkFirebase = setInterval(() => {
         if (window.firebaseInitialized) {
           clearInterval(checkFirebase);
+          
+          // التعامل مع نتيجة إعادة التوجيه من ديسكورد
+          window.getRedirectResult(window.auth).catch((error) => {
+            console.error("Redirect error:", error);
+          });
+
           setupAuthListener();
           setupRealtimeSync();
         }
       }, 100);
     });
 
-    // Zoom & Pinch Logic (Mouse Wheel & Mobile Fingers)
     function setupZoomAndScroll() {
       const container = document.getElementById('mapContainer');
 
@@ -640,7 +646,8 @@
       if (currentUser) {
         window.signOut(window.auth).catch((error) => console.error(error));
       } else {
-        window.signInWithPopup(window.auth, window.discordProvider).catch((error) => {
+        // استخدام التوجيه المباشر لتلافي أخطاء النوافذ المنبثقة مع ديسكورد
+        window.signInWithRedirect(window.auth, window.discordProvider).catch((error) => {
           console.error("Discord Auth error:", error);
           alert('Discord login failed.');
         });
@@ -855,7 +862,6 @@
       });
     }
 
-    // حركة دقيقة بالمربع الواحد (مفردة لكل خطوة)
     function makeDraggable(element, onDragEnd, onClick) {
       let posX = 0, posY = 0, startX = 0, startY = 0;
       let isDragging = false;
@@ -910,7 +916,6 @@
         document.removeEventListener('touchend', dragEnd);
 
         if (isDragging) {
-          // Snap to single cell step size
           let snappedX = Math.round(element.offsetLeft / STEP_SIZE) * STEP_SIZE;
           let snappedY = Math.round(element.offsetTop / STEP_SIZE) * STEP_SIZE;
 
