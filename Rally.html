@@ -374,7 +374,7 @@
                             <div class="truncate">
                                 <div class="font-semibold text-xs text-slate-200 truncate flex items-center gap-1.5">
                                     <span>${player.name}</span>
-                                    <span class="text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 rounded">Wave ${waveNum}</span>
+                                    <span class="text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 rounded">W${waveNum}</span>
                                     ${player.audioData ? '<i class="fa-solid fa-file-audio text-amber-500 text-[10px]"></i>' : ''}
                                 </div>
                                 <div class="text-[10px] font-mono text-slate-500">March: ${secondsToMMSS(marchSecs)}</div>
@@ -501,44 +501,43 @@
             }
         }
 
-        // GENERATE & AUTO-COPY REPORT ON START
-        function copyTacticalReport(targetId) {
-            const targetConfig = TARGET_CONFIGS.find(c => c.id === targetId);
-            const players = (timerData[targetId].players || []).filter(p => p.active !== false);
+        // GENERATE & AUTO-COPY REPORT (COMBINING ALL ACTIVE TARGETS & SHORTS)
+        function generateAndCopyAllActiveReport() {
+            let combinedReport = "";
 
-            if (players.length === 0) return;
+            TARGET_CONFIGS.forEach(config => {
+                const targetId = config.id;
+                const state = activeStates[targetId];
+                if (!state.isRunning || !state.startTime) return;
 
-            let maxSecs = 0;
-            players.forEach(p => {
-                const secs = parseTimeString(p.marchTime);
-                if (secs > maxSecs) maxSecs = secs;
+                const players = (timerData[targetId].players || []).filter(p => p.active !== false);
+                if (players.length === 0) return;
+
+                let maxSecs = state.maxMarchTime;
+                const waveInterval = timerData[targetId].waveInterval !== undefined ? timerData[targetId].waveInterval : 10;
+                const baseTime = state.startTime;
+
+                combinedReport += `🎯 ${config.name}\n`;
+
+                players.forEach(player => {
+                    const marchSecs = parseTimeString(player.marchTime);
+                    const waveNum = player.wave || 1;
+                    const waveDelayOffset = (waveNum - 1) * waveInterval;
+                    const baseDelay = maxSecs - marchSecs;
+                    const totalDelaySecs = baseDelay + waveDelayOffset;
+
+                    const launchTime = new Date(baseTime.getTime() + totalDelaySecs * 1000);
+                    combinedReport += `• ${player.name} W${waveNum} > ${formatUTCHMS(launchTime)}\n`;
+                });
+                combinedReport += `---\n`;
             });
 
-            const waveInterval = timerData[targetId].waveInterval !== undefined ? timerData[targetId].waveInterval : 10;
-            const startDelaySec = timerData[targetId].startDelaySec !== undefined ? timerData[targetId].startDelaySec : 0;
-            
-            const baseTime = new Date(Date.now() + startDelaySec * 1000);
-
-            let reportText = `🎯 Target: ${targetConfig.name}\n`;
-            reportText += `──────────────────\n`;
-
-            players.forEach(player => {
-                const marchSecs = parseTimeString(player.marchTime);
-                const waveNum = player.wave || 1;
-                const waveDelayOffset = (waveNum - 1) * waveInterval;
-                const baseDelay = maxSecs - marchSecs;
-                const totalDelaySecs = baseDelay + waveDelayOffset;
-
-                const launchTime = new Date(baseTime.getTime() + totalDelaySecs * 1000);
-                reportText += `• ${player.name} (Wave ${waveNum}) ➔ Launch: ${formatUTCHMS(launchTime)} UTC\n`;
-            });
-
-            reportText += `──────────────────\n`;
-            reportText += `Hell Rally Launch Control`;
-
-            navigator.clipboard.writeText(reportText).catch(err => {
-                console.error('Auto copy error: ', err);
-            });
+            if (combinedReport !== "") {
+                combinedReport += `Hell Rally Launch Control`;
+                navigator.clipboard.writeText(combinedReport).catch(err => {
+                    console.error('Auto copy error: ', err);
+                });
+            }
         }
 
         function startTimer(targetId) {
@@ -556,13 +555,14 @@
             state.announcedPlayers.clear();
 
             recalculateTargetTimes(targetId);
-            copyTacticalReport(targetId); // Auto-copy report instantly upon clicking Start
 
             const btn = document.getElementById(`btn-start-${targetId}`);
             if (btn) {
                 btn.className = "px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-orbitron font-bold text-xs uppercase rounded transition flex items-center gap-1.5 shadow-md";
                 btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-[10px]"></i> Active`;
             }
+
+            generateAndCopyAllActiveReport();
         }
 
         function resetTimer(targetId) {
@@ -601,7 +601,13 @@
 
         function startAllTimers() {
             unlockAudioEngine();
-            TARGET_CONFIGS.forEach(c => startTimer(c.id));
+            TARGET_CONFIGS.forEach(c => {
+                const players = timerData[c.id].players || [];
+                const activePlayers = players.filter(p => p.active !== false);
+                if (activePlayers.length > 0) {
+                    startTimer(c.id);
+                }
+            });
         }
 
         function resetAllTimers() {
