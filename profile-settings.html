@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingdom 1269 | Player Profile Settings</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #070a12; color: #f1f5f9; font-family: 'Poppins', sans-serif; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .royal-card { background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 28, 0.98)); border: 1px solid rgba(245, 158, 11, 0.35); backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); }
+        .gold-gradient-text { background: linear-gradient(135deg, #ffffff 0%, #f59e0b 50%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #070a12; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
+    </style>
+</head>
+<body class="selection:bg-amber-500 selection:text-black">
+
+    <!-- HEADER BAR -->
+    <header class="w-full bg-slate-950/90 border-b border-amber-500/30 px-6 py-4 flex items-center justify-between shadow-2xl backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <img src="./images/IMG_3934.png" alt="Kingdom 1269" class="w-10 h-10 object-cover rounded-lg border border-amber-500">
+            <h1 class="font-cinzel text-lg md:text-xl font-bold gold-gradient-text">Kingdom 1269 | Player Settings</h1>
+        </div>
+        <a href="index.html" class="bg-slate-900 hover:bg-amber-600 text-amber-400 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-amber-500/40 flex items-center gap-2 shadow-lg">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-md mx-auto px-4 py-12 w-full flex-grow flex items-center justify-center">
+        <div class="royal-card p-8 rounded-2xl w-full space-y-6 shadow-2xl border border-amber-500/40">
+            
+            <div class="text-center space-y-3">
+                <div class="relative w-24 h-24 mx-auto">
+                    <img id="userAvatar" src="./images/IMG_3934.png" alt="User Avatar" class="w-24 h-24 rounded-full object-cover border-2 border-amber-500 shadow-xl shadow-amber-500/20">
+                    <div class="absolute bottom-0 right-0 bg-[#5865F2] text-white p-1.5 rounded-full text-xs shadow-lg" title="Discord Connected">
+                        <i class="fa-brands fa-discord"></i>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold font-cinzel gold-gradient-text">Profile Settings</h2>
+                    <p id="userRankDisplay" class="text-xs text-amber-400 font-semibold mt-1">Alliance Rank: Loading...</p>
+                </div>
+            </div>
+
+            <form id="settingsForm" onsubmit="updateProfileSettings(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">In-Game Nickname <span class="text-[10px] text-amber-400 font-normal">(Editable)</span></label>
+                    <input type="text" id="nicknameInput" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-slate-100 text-sm outline-none focus:border-amber-500 transition">
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Game ID <span class="text-[10px] text-rose-400 font-normal">(Locked / Read-only)</span></label>
+                    <input type="text" id="gameIdInput" readonly disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-400 text-sm outline-none cursor-not-allowed font-mono">
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Alliance <span class="text-[10px] text-rose-400 font-normal">(Locked)</span></label>
+                    <input type="text" id="allianceInput" readonly disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-400 text-sm outline-none cursor-not-allowed font-semibold">
+                </div>
+
+                <button type="submit" id="saveBtn" class="w-full py-3.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl transition shadow-lg text-sm tracking-wider uppercase mt-4">
+                    Update Nickname
+                </button>
+            </form>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-6 text-xs font-bold text-amber-500/80 tracking-widest uppercase border-t border-amber-500/20 bg-slate-950/90 backdrop-blur-md">
+        Design by Hell🔥
+    </footer>
+
+    <!-- FIREBASE SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                alert("Please sign in first.");
+                window.location.href = "index.html";
+                return;
+            }
+            currentUser = user;
+
+            // Load user data from Firestore
+            const userDocRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userDocRef);
+
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                document.getElementById('nicknameInput').value = data.nickname || "";
+                document.getElementById('gameIdInput').value = data.gameId || "";
+                document.getElementById('allianceInput').value = data.alliance || "APX";
+                
+                const alliance = data.alliance || "APX";
+                const rank = (data.roles && data.roles[alliance]) || data.rank || "R3";
+                document.getElementById('userRankDisplay').textContent = `Alliance: ${alliance} | Rank: ${rank}`;
+            }
+
+            // Set avatar from Discord or fallback
+            if (user.photoURL) {
+                document.getElementById('userAvatar').src = user.photoURL;
+            }
+        });
+
+        window.updateProfileSettings = async function(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const newNickname = document.getElementById('nicknameInput').value.trim();
+            if (!newNickname) {
+                alert("Nickname cannot be empty.");
+                return;
+            }
+
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.textContent = "Updating...";
+
+            try {
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    nickname: newNickname,
+                    updatedAt: new Date().toISOString()
+                });
+
+                alert("Nickname updated successfully!");
+            } catch (err) {
+                console.error("Error updating profile:", err);
+                alert("Failed to update nickname: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Update Nickname";
+            }
+        };
+    </script>
+</body>
+</html>
