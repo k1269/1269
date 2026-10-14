@@ -1,94 +1,276 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <title>Kingdom 1269 | Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingdom 1269 | Admin Command Center</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #C5A059; --bg: #050505; --dark-blue: #0A0F1A; --text: #E0E0E0; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; }
-        h1 { color: var(--gold); text-align: center; }
-        
-        table { width: 100%; border-collapse: collapse; background: var(--dark-blue); margin-top: 20px; }
-        th, td { border: 1px solid #333; padding: 12px; text-align: center; }
-        th { background: #1a1a1a; color: var(--gold); }
-        
-        .btn-approve { background: var(--gold); border: none; padding: 8px 15px; cursor: pointer; color: black; font-weight: bold; }
-        .btn-approve:hover { opacity: 0.8; }
-        
-        .status-pending { color: #ffcc00; }
-        .status-member { color: #4caf50; }
-        
-        .back-link { display: block; text-align: center; margin-top: 30px; color: var(--gold); text-decoration: none; }
+        body { background-color: #070a12; color: #f1f5f9; font-family: 'Poppins', sans-serif; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .royal-card { background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 28, 0.98)); border: 1px solid rgba(245, 158, 11, 0.35); backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); }
+        .gold-gradient-text { background: linear-gradient(135deg, #ffffff 0%, #f59e0b 50%, #d97706 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #070a12; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
     </style>
 </head>
-<body>
+<body class="selection:bg-amber-500 selection:text-black">
 
-    <h1>Admin Dashboard</h1>
-    <a href="command-center.html" class="back-link">← Back to Command Center</a>
+    <!-- HEADER BAR -->
+    <header class="w-full bg-slate-950/90 border-b border-amber-500/30 px-6 py-4 flex items-center justify-between shadow-2xl backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <img src="./images/IMG_3934.png" alt="Kingdom 1269" class="w-10 h-10 object-cover rounded-lg border border-amber-500">
+            <h1 class="font-cinzel text-lg md:text-xl font-bold gold-gradient-text">Kingdom 1269 | Admin Control Center</h1>
+        </div>
+        <a href="index.html" class="bg-slate-900 hover:bg-amber-600 text-amber-400 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-amber-500/40 flex items-center gap-2 shadow-lg">
+            <i class="fa-solid fa-house"></i> Home
+        </a>
+    </header>
 
-    <table id="userTable">
-        <thead>
-            <tr>
-                <th>In-Game Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="userList">
-            </tbody>
-    </table>
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full space-y-10 flex-grow">
+        
+        <!-- SECTION 1: MEMBER RANKS MANAGEMENT -->
+        <section class="royal-card p-6 md:p-8 rounded-2xl space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <h2 class="text-xl font-bold font-cinzel text-amber-400 flex items-center gap-2">
+                    <i class="fa-solid fa-users-gear"></i> Alliance Member Ranks Management (R1 - R5)
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">Assign alliance-specific ranks to registered members dynamically.</p>
+            </div>
 
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="text-amber-400 border-b border-slate-800 bg-slate-900/80">
+                            <th class="p-3">Player Nickname</th>
+                            <th class="p-3">Game ID</th>
+                            <th class="p-3">Alliance</th>
+                            <th class="p-3">Assigned Rank</th>
+                            <th class="p-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody" class="divide-y divide-slate-800/60">
+                        <tr><td colspan="5" class="p-4 text-center text-slate-500 italic">Loading registered users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DYNAMIC PERMISSIONS MATRIX -->
+        <section class="royal-card p-6 md:p-8 rounded-2xl space-y-6">
+            <div class="border-b border-slate-800 pb-4 flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h2 class="text-xl font-bold font-cinzel text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved"></i> Dynamic Permissions Matrix
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Control page access and permissions per rank and alliance without changing code.</p>
+                </div>
+                <button onclick="savePermissionsMatrix()" class="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-lg tracking-wider uppercase">
+                    Save Matrix Changes
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Page Selector -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-semibold text-slate-300">Select Target Page/Tool</label>
+                    <select id="targetPageSelect" onchange="loadMatrixForPage()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white outline-none focus:border-amber-500">
+                        <option value="appointment.html">Appointment Desk</option>
+                        <option value="Rally.html">Hell Rally Control</option>
+                        <option value="apx-command.html">APX Command Center</option>
+                        <option value="bear-trap.html">Bear Trap Calculator</option>
+                        <option value="KvKmap.html">KvK Tactical Map</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Matrix Table -->
+            <div class="overflow-x-auto pt-4">
+                <table class="w-full text-center text-xs border-collapse border border-slate-800">
+                    <thead>
+                        <tr class="bg-slate-900 text-amber-400 border-b border-slate-800">
+                            <th class="p-3 text-left">Alliance / Role</th>
+                            <th class="p-3">R1</th>
+                            <th class="p-3">R2</th>
+                            <th class="p-3">R3</th>
+                            <th class="p-3">R4</th>
+                            <th class="p-3">R5</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrixTableBody" class="divide-y divide-slate-800">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-6 text-xs font-bold text-amber-500/80 tracking-widest uppercase border-t border-amber-500/20 bg-slate-950/90 backdrop-blur-md mt-12">
+        Design by Hell🔥
+    </footer>
+
+    <!-- FIREBASE MODULE SCRIPT -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = { 
+        const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
             authDomain: "kingdom-1269-portal.firebaseapp.com",
             projectId: "kingdom-1269-portal",
             storageBucket: "kingdom-1269-portal.firebasestorage.app",
             messagingSenderId: "1007373803222",
-            appId: "1:1007373803222:web:bcb85595a99da596aaf377" 
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
         };
-        
+
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const db = getFirestore();
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
+        const alliances = ["APX", "SVG", "NDT", "WAR", "DUN", "69A", "DTM"];
+        const ranks = ["R1", "R2", "R3", "R4", "R5"];
+
+        // Check Admin Authorization on load
         onAuthStateChanged(auth, async (user) => {
-            if (!user) { window.location.href = "index.html"; return; }
-
-            // التحقق إذا كان المستخدم أدمن
-            const adminDoc = await getDoc(doc(db, "users", user.uid));
-            if (!adminDoc.exists() || adminDoc.data().role !== 'admin') {
-                alert("Access Denied!");
+            if (!user) {
+                alert("Please sign in first.");
                 window.location.href = "index.html";
                 return;
             }
 
-            // جلب المستخدمين
-            const querySnapshot = await getDocs(collection(db, "users"));
-            const tbody = document.getElementById('userList');
-            
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${data.inGameName || 'N/A'}</td>
-                    <td>${data.email}</td>
-                    <td class="status-${data.role}">${data.role}</td>
-                    <td>${data.role === 'pending' ? `<button class="btn-approve" onclick="approveUser('${doc.id}')">Approve</button>` : 'Approved'}</td>
-                `;
-                tbody.appendChild(row);
-            });
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (!userDoc.exists() || (!userDoc.data().roles?.isSuperAdmin && userDoc.data().role !== 'admin')) {
+                alert("Access Denied: Admin privileges required.");
+                window.location.href = "index.html";
+                return;
+            }
+
+            loadUsersDirectory();
+            loadMatrixForPage();
         });
 
-        // دالة الترقية
-        window.approveUser = async (userId) => {
-            await updateDoc(doc(db, "users", userId), { role: "member" });
-            location.reload(); // تحديث الصفحة
+        // Load Users List for Rank Assignment
+        async function loadUsersDirectory() {
+            const querySnapshot = await getDocs(collection(db, "users"));
+            const tbody = document.getElementById("usersTableBody");
+            tbody.innerHTML = "";
+
+            if (querySnapshot.empty) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">No registered users found.</td></tr>`;
+                return;
+            }
+
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const uid = docSnap.id;
+                const alliance = data.alliance || "APX";
+                const currentRank = (data.roles && data.roles[alliance]) || data.rank || "R3";
+
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-900/50 transition";
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-amber-400">${data.nickname || 'N/A'}</td>
+                    <td class="p-3 font-mono">${data.gameId || 'N/A'}</td>
+                    <td class="p-3 font-bold text-slate-300">${alliance}</td>
+                    <td class="p-3">
+                        <select id="rank-${uid}" class="bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-amber-300 outline-none">
+                            ${ranks.map(r => `<option value="${r}" ${currentRank === r ? 'selected' : ''}>${r}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td class="p-3 text-right">
+                        <button onclick="updateUserRank('${uid}', '${alliance}')" class="bg-amber-600 hover:bg-amber-500 text-black font-bold px-3 py-1.5 rounded-lg text-xs transition">Update Rank</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.updateUserRank = async function(uid, alliance) {
+            const newRank = document.getElementById(`rank-${uid}`).value;
+            try {
+                await updateDoc(doc(db, "users", uid), {
+                    [`roles.${alliance}`]: newRank,
+                    rank: newRank
+                });
+                alert("Member rank updated successfully!");
+                loadUsersDirectory();
+            } catch (e) {
+                console.error("Error updating rank:", e);
+                alert("Failed to update rank: " + e.message);
+            }
+        };
+
+        // Load Permissions Matrix for Selected Page
+        window.loadMatrixForPage = async function() {
+            const pageName = document.getElementById("targetPageSelect").value;
+            const tbody = document.getElementById("matrixTableBody");
+            tbody.innerHTML = "";
+
+            let matrixData = {};
+            try {
+                const docSnap = await getDoc(doc(db, "permissions_matrix", pageName));
+                if (docSnap.exists()) {
+                    matrixData = docSnap.data();
+                }
+            } catch (e) {
+                console.warn("No existing matrix found, loading defaults.");
+            }
+
+            alliances.forEach(alliance => {
+                const allianceRules = matrixData[alliance] || {};
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-900/40 transition";
+                
+                let rowHtml = `<td class="p-3 font-bold text-amber-400 text-left">Alliance: ${alliance}</td>`;
+                
+                ranks.forEach(rank => {
+                    const hasAccess = allianceRules[rank] !== undefined ? allianceRules[rank] : (rank === "R4" || rank === "R5");
+                    rowHtml += `
+                        <td class="p-3">
+                            <input type="checkbox" data-alliance="${alliance}" data-rank="${rank}" ${hasAccess ? 'checked' : ''} class="w-4 h-4 accent-amber-500 cursor-pointer rounded">
+                        </td>
+                    `;
+                });
+
+                tr.innerHTML = rowHtml;
+                tbody.appendChild(tr);
+            });
+        };
+
+        window.savePermissionsMatrix = async function() {
+            const pageName = document.getElementById("targetPageSelect").value;
+            const rows = document.querySelectorAll("#matrixTableBody tr");
+            const newMatrix = {};
+
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll("input[type='checkbox']");
+                inputs.forEach(input => {
+                    const alliance = input.getAttribute("data-alliance");
+                    const rank = input.getAttribute("data-rank");
+                    const isChecked = input.checked;
+
+                    if (!newMatrix[alliance]) newMatrix[alliance] = {};
+                    newMatrix[alliance][rank] = isChecked;
+                });
+            });
+
+            try {
+                await setDoc(doc(db, "permissions_matrix", pageName), newMatrix);
+                alert("Permissions matrix updated successfully!");
+            } catch (e) {
+                console.error("Error saving matrix:", e);
+                alert("Error: " + e.message);
+            }
         };
     </script>
 </body>
