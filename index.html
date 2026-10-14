@@ -1,498 +1,245 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 - Portal</title>
+    <title>Kingdom 1269 | Portal Home</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --gold-primary: #f3c258;
-            --gold-glow: #ffdf85;
-            --blue-royal: #1382ee;
-            --blue-glow: #00d2ff;
-            --bg-dark: #0a0c10;
-            --card-bg: rgba(18, 24, 38, 0.75);
-            --border-gold: rgba(243, 194, 88, 0.4);
-            --border-blue: rgba(19, 130, 238, 0.4);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            color: #ffffff;
+            background-color: #070a12;
+            color: #f1f5f9;
+            font-family: 'Poppins', sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 10%, rgba(19, 130, 238, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(243, 194, 88, 0.08) 0%, transparent 40%);
-        }
-
-        /* Header / Navbar */
-        header {
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            z-index: 10;
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(245, 158, 11, 0.08) 0%, transparent 40%);
         }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .header-logo {
-            width: 55px;
-            height: 55px;
-            border-radius: 10px;
-            border: 2px solid var(--gold-primary);
-            box-shadow: 0 0 15px rgba(243, 194, 88, 0.5);
-            object-fit: cover;
-        }
-
-        .brand-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, var(--gold-primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(243, 194, 88, 0.3);
-        }
-
-        .auth-btn {
-            background: linear-gradient(135deg, var(--gold-primary), #b8860b);
-            color: #000;
-            border: none;
-            padding: 10px 22px;
-            font-weight: 600;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(243, 194, 88, 0.4);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(243, 194, 88, 0.8);
-            background: linear-gradient(135deg, var(--gold-glow), var(--gold-primary));
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            margin: 40px 20px 20px;
-            position: relative;
-        }
-
-        .main-banner-logo {
-            width: 180px;
-            height: 180px;
-            border-radius: 20px;
-            border: 3px solid var(--gold-primary);
-            box-shadow: 0 0 35px var(--blue-royal), 0 0 15px var(--gold-primary);
-            margin-bottom: 20px;
-            transition: transform 0.5s ease;
-        }
-
-        .main-banner-logo:hover {
-            transform: scale(1.03) rotate(1deg);
-        }
-
-        .hero h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 2.8rem;
-            letter-spacing: 2px;
-            background: linear-gradient(180deg, #ffffff 0%, var(--gold-primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(243, 194, 88, 0.5);
-        }
-
-        .hero p {
-            color: #a0aec0;
-            font-size: 1.1rem;
-            margin-top: 5px;
-        }
-
-        /* Cards Grid */
-        .cards-container {
-            width: 100%;
-            max-width: 1200px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            padding: 40px 20px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-gold);
-            border-radius: 16px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            text-decoration: none;
-            color: #fff;
-            position: relative;
-            backdrop-filter: blur(10px);
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .royal-card {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 28, 0.98));
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden;
         }
-
-        /* Card Glow Line */
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: 0.5s;
+        .royal-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(56, 189, 248, 0.7);
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.25), 0 0 20px rgba(245, 158, 11, 0.2);
         }
-
-        .card:hover::before {
-            left: 100%;
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #ffffff 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--blue-glow);
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.25), 0 0 20px rgba(243, 194, 88, 0.2);
-        }
-
-        .card-icon-img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 8px rgba(243, 194, 88, 0.6));
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover .card-icon-img {
-            transform: scale(1.1);
-        }
-
-        .card-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--gold-primary);
-            margin-bottom: 10px;
-        }
-
-        .card-btn {
-            margin-top: auto;
-            padding: 8px 18px;
-            font-size: 0.85rem;
-            border-radius: 20px;
-            background: rgba(19, 130, 238, 0.2);
-            border: 1px solid var(--blue-royal);
-            color: #fff;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover .card-btn {
-            background: var(--blue-royal);
-            box-shadow: 0 0 15px var(--blue-glow);
-        }
-
-        /* Modal / Login Popup */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 100;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-card {
-            background: #0f1522;
-            border: 2px solid var(--gold-primary);
-            box-shadow: 0 0 40px rgba(243, 194, 88, 0.3);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 420px;
-            padding: 30px;
-            position: relative;
-            text-align: center;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 1.5rem;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .close-btn:hover {
-            color: #fff;
-        }
-
-        .modal-card h2 {
-            font-family: 'Cinzel', serif;
-            color: var(--gold-primary);
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: #a0aec0;
-            margin-bottom: 5px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-blue);
-            color: #fff;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus {
-            border-color: var(--gold-primary);
-            box-shadow: 0 0 10px rgba(243, 194, 88, 0.3);
-        }
-
-        .provider-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .provider-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .provider-btn.google {
-            background: #ffffff;
-            color: #333;
-        }
-
-        .provider-btn.discord {
-            background: #5865F2;
-            color: #fff;
-        }
-
-        .provider-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
-
-        /* Footer */
-        footer {
-            margin-top: auto;
-            padding: 25px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #718096;
-            width: 100%;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        footer span {
-            color: #e53e3e;
-            font-weight: bold;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-            .cards-container {
-                grid-template-columns: 1fr;
-            }
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #070a12; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
     </style>
 </head>
-<body>
+<body class="selection:bg-amber-500 selection:text-black">
 
-    <!-- Navigation Header -->
-    <header>
-        <div class="logo-container">
-            <img src="IMG_3934.png" alt="Kingdom 1269" class="header-logo">
-            <div class="brand-title">K1269</div>
+    <!-- NAVIGATION HEADER -->
+    <header class="w-full bg-slate-950/90 border-b border-amber-500/30 px-6 py-4 flex items-center justify-between shadow-2xl backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <img src="./images/IMG_3934.png" alt="Kingdom 1269 Crest" class="w-12 h-12 object-cover rounded-xl border border-amber-500 shadow-lg shadow-amber-500/30">
+            <div>
+                <span class="font-cinzel text-lg font-bold gold-gradient-text block leading-tight">KINGDOM 1269</span>
+                <span class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Tactical Portal</span>
+            </div>
         </div>
-        <button class="auth-btn" id="openLogin">
-            <i class="fa-solid fa-user-shield"></i> Sign In
-        </button>
+
+        <!-- AUTH & PROFILE ACTIONS -->
+        <div class="flex items-center gap-3">
+            <div id="guestActions">
+                <button onclick="loginWithDiscord()" class="bg-[#5865F2] hover:bg-[#4752C4] text-white px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-lg flex items-center gap-2 uppercase tracking-wider">
+                    <i class="fa-brands fa-discord text-base"></i> Discord Sign In
+                </button>
+            </div>
+            
+            <div id="userActions" class="hidden flex items-center gap-3 bg-slate-900 border border-slate-800 px-3.5 py-1.5 rounded-xl">
+                <img id="navUserAvatar" src="./images/IMG_3934.png" alt="Avatar" class="w-8 h-8 rounded-full border border-amber-500 object-cover">
+                <div class="text-left">
+                    <span id="navUserNickname" class="text-xs font-bold text-amber-400 block leading-none">Commander</span>
+                    <span id="navUserAlliance" class-[10px] text-slate-400 font-mono uppercase">APX</span>
+                </div>
+                <a href="profile-settings.html" class="text-slate-400 hover:text-amber-400 p-1.5 text-xs transition" title="Profile Settings"><i class="fa-solid fa-gear"></i></a>
+                <a href="admin.html" id="adminDashboardLink" class="hidden text-amber-500 hover:text-amber-400 p-1.5 text-xs transition" title="Admin Panel"><i class="fa-solid fa-shield-halved"></i></a>
+                <button onclick="logoutUser()" class="text-red-400 hover:text-red-300 p-1.5 text-xs transition" title="Sign Out"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <img src="IMG_3934.png" alt="Kingdom 1269 Emblem" class="main-banner-logo">
-        <h1>KINGDOM 1269</h1>
-        <p>Official Command & Operations Portal</p>
+    <!-- HERO SECTION -->
+    <section class="text-center my-10 px-4 relative">
+        <img src="./images/IMG_3934.png" alt="Kingdom 1269 Emblem" class="w-36 h-36 md:w-44 md:h-44 object-cover rounded-2xl border-2 border-amber-500 shadow-[0_0_40px_rgba(245,158,11,0.3)] mx-auto mb-6 hover:scale-105 transition duration-500">
+        <h1 class="font-cinzel text-3xl md:text-5xl font-black gold-gradient-text tracking-wider">KINGDOM 1269 PORTAL</h1>
+        <p class="text-slate-400 text-xs md:text-sm mt-2 font-medium tracking-widest uppercase">One Kingdom. One Purpose. Unified Strategic Command.</p>
     </section>
 
-    <!-- Cards Grid -->
-    <main class="cards-container">
-        
-        <!-- Card 1: Appointment Desk -->
-        <a href="https://k1269.github.io/1269/appointment.html" class="card">
-            <img src="IMG_3934.png" alt="Appointment Desk" class="card-icon-img">
-            <h3 class="card-title">KvK Appointment Desk</h3>
-            <span class="card-btn">Access Desk <i class="fa-solid fa-arrow-right"></i></span>
-        </a>
+    <!-- CARDS GRID -->
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Card 1: Appointment Desk -->
+            <a href="appointment.html" class="royal-card rounded-2xl p-6 flex flex-col items-center text-center">
+                <img src="./images/IMG_3934.png" alt="Appointment Desk" class="w-16 h-16 object-contain mb-4 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
+                <h3 class="font-cinzel font-bold text-lg text-amber-400 mb-2">KvK Appointment Desk</h3>
+                <p class="text-xs text-slate-400 mb-5 leading-relaxed">Book ministerial slots and manage KvK preparation schedules efficiently.</p>
+                <span class="mt-auto px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-300 rounded-full text-xs font-semibold hover:bg-blue-600 hover:text-white transition flex items-center gap-2">
+                    Access Desk <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
 
-        <!-- Card 2: 1269 Command Center -->
-        <a href="https://k1269.github.io/1269/command-center.html" class="card">
-            <img src="IMG_3934.png" alt="1269 Command Center" class="card-icon-img">
-            <h3 class="card-title">1269 Command Center</h3>
-            <span class="card-btn">Enter Center <i class="fa-solid fa-arrow-right"></i></span>
-        </a>
+            <!-- Card 2: 1269 Command Center -->
+            <a href="command-center.html" class="royal-card rounded-2xl p-6 flex flex-col items-center text-center">
+                <img src="./images/IMG_3934.png" alt="Command Center" class="w-16 h-16 object-contain mb-4 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
+                <h3 class="font-cinzel font-bold text-lg text-amber-400 mb-2">1269 Command Center</h3>
+                <p class="text-xs text-slate-400 mb-5 leading-relaxed">Centralized kingdom command briefings, presentations, and directives.</p>
+                <span class="mt-auto px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-300 rounded-full text-xs font-semibold hover:bg-blue-600 hover:text-white transition flex items-center gap-2">
+                    Enter Center <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
 
-        <!-- Card 3: APX Command Center -->
-        <a href="https://k1269.github.io/1269/apx-command.html" class="card">
-            <img src="APXlogo2.png" alt="APX Command Center" class="card-icon-img">
-            <h3 class="card-title">APX Command Center</h3>
-            <span class="card-btn">Enter Center <i class="fa-solid fa-arrow-right"></i></span>
-        </a>
+            <!-- Card 3: APX Command Center -->
+            <a href="apx-command.html" class="royal-card rounded-2xl p-6 flex flex-col items-center text-center">
+                <img src="./images/APXlogo2.png" alt="APX Command" class="w-16 h-16 object-contain mb-4 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" onerror="this.src='./images/IMG_3934.png'">
+                <h3 class="font-cinzel font-bold text-lg text-amber-400 mb-2">APX Command Center</h3>
+                <p class="text-xs text-slate-400 mb-5 leading-relaxed">Alliance operations calendar, event syncing, and tactical logs.</p>
+                <span class="mt-auto px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-300 rounded-full text-xs font-semibold hover:bg-blue-600 hover:text-white transition flex items-center gap-2">
+                    Enter Center <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
 
-        <!-- Card 4: Bear Trap Calculator -->
-        <a href="https://k1269.github.io/1269/bear-trap.html" class="card">
-            <img src="Beartrap%20logo.png" alt="Bear Trap Calculator" class="card-icon-img">
-            <h3 class="card-title">Bear Trap Calculator</h3>
-            <span class="card-btn">Open Calculator <i class="fa-solid fa-arrow-right"></i></span>
-        </a>
+            <!-- Card 4: Bear Trap Calculator -->
+            <a href="bear-trap.html" class="royal-card rounded-2xl p-6 flex flex-col items-center text-center">
+                <img src="./images/Beartrap logo.png" alt="Bear Trap" class="w-16 h-16 object-contain mb-4 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" onerror="this.src='./images/IMG_3934.png'">
+                <h3 class="font-cinzel font-bold text-lg text-amber-400 mb-2">Bear Trap Calculator</h3>
+                <p class="text-xs text-slate-400 mb-5 leading-relaxed">Real-time rally capacity and troop deployment optimization tool.</p>
+                <span class="mt-auto px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-300 rounded-full text-xs font-semibold hover:bg-blue-600 hover:text-white transition flex items-center gap-2">
+                    Open Calculator <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
 
-        <!-- Card 5: The Royal Court Executive -->
-        <a href="https://musab85n.github.io/1269/" class="card">
-            <img src="IMG_3934.png" alt="The Royal Court Executive" class="card-icon-img">
-            <h3 class="card-title">1269 The Royal Court Executive</h3>
-            <span class="card-btn">View Court <i class="fa-solid fa-arrow-right"></i></span>
-        </a>
+            <!-- Card 5: KvK Tactical Map -->
+            <a href="KvKmap.html" class="royal-card rounded-2xl p-6 flex flex-col items-center text-center">
+                <img src="./images/IMG_3934.png" alt="KvK Map" class="w-16 h-16 object-contain mb-4 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
+                <h3 class="font-cinzel font-bold text-lg text-amber-400 mb-2">KvK Tactical Map</h3>
+                <p class="text-xs text-slate-400 mb-5 leading-relaxed">Interactive alliance member city placement and trap coordinates map.</p>
+                <span class="mt-auto px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-300 rounded-full text-xs font-semibold hover:bg-blue-600 hover:text-white transition flex items-center gap-2">
+                    View Map <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
 
+            <!-- Card 6: Hell Rally Control -->
+            <a href="Rally.html" class="royal-card rounded-2xl p-6 flex flex-col items-center text-center">
+                <img src="./images/IMG_3934.png" alt="Rally Control" class="w-16 h-16 object-contain mb-4 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
+                <h3 class="font-cinzel font-bold text-lg text-amber-400 mb-2">Hell Rally Control</h3>
+                <p class="text-xs text-slate-400 mb-5 leading-relaxed">Simultaneous rally launch control system with voice countdown alerts.</p>
+                <span class="mt-auto px-4 py-2 bg-blue-500/20 border border-blue-500/40 text-blue-300 rounded-full text-xs font-semibold hover:bg-blue-600 hover:text-white transition flex items-center gap-2">
+                    Launch Control <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            </a>
+
+        </div>
     </main>
 
-    <!-- Login Modal -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal-card">
-            <span class="close-btn" id="closeLogin">&times;</span>
-            <h2>Player Registration</h2>
-            
-            <form id="loginForm" onsubmit="event.preventDefault();">
-                <div class="input-group">
-                    <label for="nickname">In-Game Nickname</label>
-                    <input type="text" id="nickname" placeholder="Enter your Nickname" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="gameId">Game ID</label>
-                    <input type="text" id="gameId" placeholder="Enter your Game ID" required>
-                </div>
-
-                <div class="provider-buttons">
-                    <button class="provider-btn google" type="button" onclick="handleAuth('Google')">
-                        <i class="fa-brands fa-google"></i> Google
-                    </button>
-                    <button class="provider-btn discord" type="button" onclick="handleAuth('Discord')">
-                        <i class="fa-brands fa-discord"></i> Discord
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <p>Designed by Hell🔥</p>
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-6 text-xs font-bold text-amber-500/80 tracking-widest uppercase border-t border-amber-500/20 bg-slate-950/90 backdrop-blur-md mt-16">
+        Design by Hell🔥
     </footer>
 
-    <!-- Script for Modal logic -->
-    <script>
-        const modal = document.getElementById('loginModal');
-        const openBtn = document.getElementById('openLogin');
-        const closeBtn = document.getElementById('closeLogin');
+    <!-- FIREBASE AUTHENTICATION SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, OAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        openBtn.addEventListener('click', () => {
-            modal.classList.add('active');
-        });
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+        };
 
-        closeBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const discordProvider = new OAuthProvider('oidc.kingdom-1269');
 
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
+        window.loginWithDiscord = async function() {
+            try {
+                await signInWithPopup(auth, discordProvider);
+            } catch (err) {
+                console.warn("Popup blocked or failed, trying redirect...", err);
+                await signInWithRedirect(auth, discordProvider);
+            }
+        };
+
+        window.logoutUser = async function() {
+            await signOut(auth);
+            window.location.reload();
+        };
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await getRedirectResult(auth);
+            } catch (e) {
+                console.error("Redirect auth error:", e);
             }
         });
 
-        function handleAuth(provider) {
-            const nickname = document.getElementById('nickname').value;
-            const gameId = document.getElementById('gameId').value;
+        onAuthStateChanged(auth, async (user) => {
+            const guestActions = document.getElementById('guestActions');
+            const userActions = document.getElementById('userActions');
+            const adminLink = document.getElementById('adminDashboardLink');
 
-            if (!nickname || !gameId) {
-                alert('Please fill in both your In-Game Nickname and Game ID first.');
-                return;
+            if (user) {
+                guestActions.classList.add('hidden');
+                userActions.classList.remove('hidden');
+
+                // Check profile completion or admin status in Firestore
+                try {
+                    const userRef = doc(db, "users", user.uid);
+                    const userSnap = await getDoc(userRef);
+
+                    if (!userSnap.exists() || !userSnap.data().nickname || !userSnap.data().gameId) {
+                        window.location.href = "complete-profile.html";
+                        return;
+                    }
+
+                    const data = userSnap.data();
+                    document.getElementById('navUserNickname').textContent = `${data.nickname} (#${data.gameId})`;
+                    document.getElementById('navUserAlliance').textContent = data.alliance || "APX";
+
+                    if (user.photoURL) {
+                        document.getElementById('navUserAvatar').src = user.photoURL;
+                    }
+
+                    if (data.roles?.isSuperAdmin || data.role === 'admin') {
+                        adminLink.classList.remove('hidden');
+                    }
+                } catch (e) {
+                    console.error("Error fetching user data:", e);
+                }
+            } else {
+                guestActions.classList.remove('hidden');
+                userActions.classList.add('hidden');
+                adminLink.classList.add('hidden');
             }
-
-            alert(`Signing in with ${provider}\nNickname: ${nickname}\nID: ${gameId}`);
-            modal.classList.remove('active');
-        }
+        });
     </script>
-
 </body>
 </html>
