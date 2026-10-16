@@ -1,155 +1,310 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kingdom 1269 | Bear Trap Calculator</title>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      background-color: #070a12;
-      color: #f1f5f9;
-      font-family: 'Poppins', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .font-cinzel { font-family: 'Cinzel', serif; }
-    .royal-card {
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 28, 0.98));
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-    }
-    .gold-gradient-text {
-      background: linear-gradient(135deg, #ffffff 0%, #f59e0b 50%, #d97706 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #070a12; }
-    ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
-  </style>
-</head>
-<body class="selection:bg-amber-500 selection:text-black">
-
-  <!-- HEADER NAVBAR -->
-  <header class="w-full bg-slate-950/90 border-b border-amber-500/30 px-6 py-4 flex items-center justify-between shadow-2xl backdrop-blur-md sticky top-0 z-50">
-    <div class="flex items-center gap-3">
-      <img src="./images/Beartrap logo.png" alt="Bear Trap" class="w-10 h-10 object-contain rounded-lg border border-amber-500" onerror="this.src='./images/IMG_3934.png'">
-      <h1 class="font-cinzel text-lg md:text-xl font-bold gold-gradient-text">Kingdom 1269 | Bear Trap Calculator</h1>
-    </div>
-    <div class="flex items-center gap-3">
-      <div id="userBadge" class="hidden text-xs text-amber-400 font-semibold bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl">
-        <span id="userNameDisplay">Commander</span>
-      </div>
-      <a href="index.html" class="bg-slate-900 hover:bg-amber-600 text-amber-400 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-amber-500/40 flex items-center gap-2 shadow-lg">
-        <i class="fa-solid fa-house"></i> Home
-      </a>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow space-y-8">
-    
-    <div class="text-center space-y-2">
-      <h2 class="text-3xl md:text-4xl font-black font-cinzel gold-gradient-text">Bear Trap Rally Optimizer</h2>
-      <p class="text-xs text-slate-400 uppercase tracking-widest">Calculate troop deployment capacities and optimize alliance damage output.</p>
-    </div>
-
-    <!-- CALCULATOR INPUT FORM -->
-    <section class="royal-card p-6 md:p-8 rounded-2xl shadow-2xl space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-300 mb-2">Leader Max March Capacity</label>
-          <input type="number" id="leaderCapacity" value="250000" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-amber-500">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-2">Joining Member Count</label>
-          <input type="number" id="memberCount" value="30" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-amber-500">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-2">Average Member Troop Cap</label>
-          <input type="number" id="memberCapacity" value="200000" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-white outline-none focus:border-amber-500">
-        </div>
-      </div>
-
-      <button onclick="calculateBearTrap()" class="w-full py-3.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl transition shadow-lg text-xs tracking-wider uppercase">
-        Calculate Optimal Rally Waves
-      </button>
-    </section>
-
-    <!-- RESULTS SECTION -->
-    <section id="resultsSection" class="hidden royal-card p-6 md:p-8 rounded-2xl shadow-2xl space-y-4 text-xs">
-      <h3 class="font-cinzel font-bold text-base text-amber-400 border-b border-slate-800 pb-3 flex items-center gap-2">
-        <i class="fa-solid fa-calculator"></i> Calculation Results
-      </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-1">
-          <span class="text-slate-400">Total Rally Capacity:</span>
-          <p id="totalCapacityResult" class="text-lg font-bold text-amber-400 font-mono">0</p>
-        </div>
-        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-1">
-          <span class="text-slate-400">Recommended Tier Focus:</span>
-          <p class="text-lg font-bold text-emerald-400">Highest Tier Available (T10 / T11)</p>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="w-full text-center py-6 text-xs font-bold text-amber-500/80 tracking-widest uppercase border-t border-amber-500/20 bg-slate-950/90 backdrop-blur-md mt-16">
-      Design by Hell🔥
-  </footer>
-
-  <!-- FIREBASE SCRIPT -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
-      authDomain: "kingdom-1269-portal.firebaseapp.com",
-      projectId: "kingdom-1269-portal",
-      storageBucket: "kingdom-1269-portal.firebasestorage.app",
-      messagingSenderId: "1007373803222",
-      appId: "1:1007373803222:web:bcb85595a99da596aaf377"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userSnap = await getDoc(doc(db, "users", user.uid));
-        if (userSnap.exists()) {
-          const data = userSnap.data();
-          document.getElementById('userBadge').classList.remove('hidden');
-          document.getElementById('userNameDisplay').textContent = `${data.nickname} (${data.alliance})`;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kingdom 1269 Bear trap calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                        accentBlue: '#3b82f6',
+                        accentHover: '#2563eb'
+                    }
+                }
+            }
         }
-      }
-    });
+    </script>
+</head>
+<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col justify-between font-sans">
 
-    window.calculateBearTrap = function() {
-      const leaderCap = parseFloat(document.getElementById('leaderCapacity').value) || 0;
-      const count = parseFloat(document.getElementById('memberCount').value) || 0;
-      const memberCap = parseFloat(document.getElementById('memberCapacity').value) || 0;
+    <!-- Navigation Header -->
+    <header class="border-b border-slate-800 bg-cardBg/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-lg font-bold tracking-wider text-blue-400">KINGDOM 1269</span>
+            </div>
+            <nav class="flex space-x-6 text-sm text-slate-300">
+                <a href="index.html" class="hover:text-blue-400 transition">Home</a>
+                <a href="bear-trap.html" class="text-blue-400 font-semibold">Bear Trap Calculator</a>
+            </nav>
+        </div>
+    </header>
 
-      const total = leaderCap + (count * memberCap);
-      document.getElementById('totalCapacityResult').textContent = total.toLocaleString();
-      document.getElementById('resultsSection').classList.remove('hidden');
-    };
-  </script>
+    <!-- Banner Section (Full Image View) -->
+    <div class="w-full max-w-4xl mx-auto px-4 pt-6">
+        <img src="1E71647C-6DCA-44F6-8FD3-870666D195FD.png" alt="Kingdom 1269 Banner" class="w-full h-auto object-contain rounded-xl border border-slate-800 shadow-lg bg-slate-900/40">
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="max-w-4xl mx-auto px-4 py-8 w-full flex-grow">
+        <div class="mb-6 text-center">
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">Kingdom 1269 Bear trap calculator</h1>
+            <p class="text-slate-400 mt-2 text-sm">Real-time rally capacity and troop deployment optimization.</p>
+        </div>
+
+        <div class="bg-cardBg border border-slate-800 rounded-xl p-6 md:p-8 shadow-xl space-y-6">
+            <form id="trapForm" class="space-y-5" oninput="calculate()" onchange="calculate()">
+                
+                <!-- S1 & S2 with Image Guide IMG_4201.jpeg -->
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-semibold text-blue-400">Base Stats Guide</span>
+                        <button type="button" onclick="toggleGuide()" class="text-xs text-blue-400 hover:underline">View Guide Image (IMG_4201.jpeg)</button>
+                    </div>
+                    <div id="guideImageContainer" class="hidden">
+                        <img src="IMG_4201.jpeg" alt="S1 and S2 Guide" class="w-full h-auto rounded-lg border border-slate-700 max-h-60 object-contain">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">S1 = Normal Squad Deployment capacity (without buffs)</label>
+                            <input type="number" id="s1" value="167610" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">S2 = Normal rally capacity (without buffs)</label>
+                            <input type="number" id="s2" value="1193110" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S3: Alliance joining troop number -->
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">S3 = Alliance joining troop number</label>
+                    <input type="number" id="s3" value="95000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                </div>
+
+                <!-- S4, S5, S6, S11 Dropdowns -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- S4: Valora 1st skill -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">S4 = Valora 1st skill (Dance of the Hunt)</label>
+                        <select id="s4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="0">Level 0: 0</option>
+                            <option value="30000">Level 1: 30,000</option>
+                            <option value="60000">Level 2: 60,000</option>
+                            <option value="90000">Level 3: 90,000</option>
+                            <option value="120000">Level 4: 120,000</option>
+                            <option value="150000">Level 5: 150,000</option>
+                            <option value="180000">Level 6: 180,000</option>
+                            <option value="210000">Level 7: 210,000</option>
+                            <option value="240000">Level 8: 240,000</option>
+                            <option value="270000">Level 9: 270,000</option>
+                            <option value="300000" selected>Level 10: 300,000</option>
+                        </select>
+                    </div>
+                    <!-- S5: Valora 4th skill -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">S5 = Valora 4th skill (Savage Advantage)</label>
+                        <select id="s5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="0">Level 0: 0</option>
+                            <option value="3000">Level 1: 3,000</option>
+                            <option value="6000">Level 2: 6,000</option>
+                            <option value="9000">Level 3: 9,000</option>
+                            <option value="12000">Level 4: 12,000</option>
+                            <option value="15000">Level 5: 15,000</option>
+                            <option value="18000">Level 6: 18,000</option>
+                            <option value="21000">Level 7: 21,000</option>
+                            <option value="24000">Level 8: 24,000</option>
+                            <option value="27000">Level 9: 27,000</option>
+                            <option value="30000" selected>Level 10: 30,000</option>
+                        </select>
+                    </div>
+                    <!-- S6: Mighty Bison -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">S6 = Mighty bison LVL</label>
+                        <select id="s6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="0">Level 0: 0</option>
+                            <option value="1500">Level 1: 1,500</option>
+                            <option value="3000">Level 2: 3,000</option>
+                            <option value="4500">Level 3: 4,500</option>
+                            <option value="6000">Level 4: 6,000</option>
+                            <option value="7500">Level 5: 7,500</option>
+                            <option value="9000">Level 6: 9,000</option>
+                            <option value="10500">Level 7: 10,500</option>
+                            <option value="12000">Level 8: 12,000</option>
+                            <option value="13500">Level 9: 13,500</option>
+                            <option value="15000" selected>Level 10: 15,000</option>
+                        </select>
+                    </div>
+                    <!-- S11: Great Moose Pet -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Great Moose LVL</label>
+                        <select id="s11" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+                            <option value="0" selected>Level 0: 0</option>
+                            <option value="60000">Level 1: 60,000</option>
+                            <option value="70000">Level 2: 70,000</option>
+                            <option value="80000">Level 3: 80,000</option>
+                            <option value="90000">Level 4: 90,000</option>
+                            <option value="100000">Level 5: 100,000</option>
+                            <option value="110000">Level 6: 110,000</option>
+                            <option value="120000">Level 7: 120,000</option>
+                            <option value="130000">Level 8: 130,000</option>
+                            <option value="140000">Level 9: 140,000</option>
+                            <option value="150000">Level 10: 150,000</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Custom Formation Section (Optional R1, R2, R3 percentages) -->
+                <div class="border-t border-slate-800 pt-4 space-y-3">
+                    <p class="text-xs text-blue-400 font-medium">If you want to calculate your own formation use this (Enter percentage):</p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">Infantry = R1</label>
+                            <input type="number" step="0.01" id="r1" placeholder="e.g., 10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">Cavalry = R2</label>
+                            <input type="number" step="0.01" id="r2" placeholder="e.g., 10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-slate-400 mb-1">Archers = R3</label>
+                            <input type="number" step="0.01" id="r3" placeholder="e.g., 80" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            <div id="results" class="border-t border-slate-800 pt-6 space-y-4">
+                <h3 class="text-md font-bold text-white">Calculation Results</h3>
+                <div id="resultContent" class="space-y-3 text-sm">
+                    <!-- Dynamic Output populated via JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>Designed by Hell</p>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        function toggleGuide() {
+            const guide = document.getElementById('guideImageContainer');
+            guide.classList.toggle('hidden');
+        }
+
+        function calculate() {
+            const S1 = parseFloat(document.getElementById('s1').value) || 0;
+            const S2 = parseFloat(document.getElementById('s2').value) || 0;
+            const S3 = parseFloat(document.getElementById('s3').value) || 95000;
+            const S4 = parseFloat(document.getElementById('s4').value) || 0;
+            const S5 = parseFloat(document.getElementById('s5').value) || 0;
+            const S6 = parseFloat(document.getElementById('s6').value) || 0;
+            const S11 = parseFloat(document.getElementById('s11').value) || 0;
+
+            const r1Input = document.getElementById('r1').value;
+            const r2Input = document.getElementById('r2').value;
+            const r3Input = document.getElementById('r3').value;
+
+            // Equations
+            const S7 = S2 + S4 + S5 + S6 + S11; // Your rally capacity
+            const S8 = S1 + S6 + S5;            // Hidden calculation base
+            const S9 = 14 * S3;
+            const S10 = S7 - S9;               // Squad deployment of YOUR Rally
+
+            const contentDiv = document.getElementById('resultContent');
+
+            // Joining ratio breakdown for alliance joining troop number
+            const joinInf = Math.round(0.1 * S3);
+            const joinCav = Math.round(0.1 * S3);
+            const joinArc = Math.round(0.8 * S3);
+
+            let resultsHTML = '';
+
+            if (S10 < 1) {
+                resultsHTML = `
+                    <div class="bg-rose-500/10 border border-rose-500/30 p-4 rounded-lg text-rose-300 space-y-3">
+                        <span class="font-bold block text-base">Your rally capacity is not big enough ,SEND 1 TROOP in your rally</span>
+                        
+                        <div class="border-t border-rose-500/20 pt-3">
+                            <span class="font-semibold text-white block mb-2 text-xs uppercase tracking-wider">Recommendation to upgrade your rally capacity:</span>
+                            <ul class="list-disc list-inside space-y-1 text-xs text-slate-300">
+                                <li><strong>Masters:</strong> Valora 1st and 4th skills (F2P), Cassia 4th skill ($$)</li>
+                                <li><strong>Pets:</strong> Mighty bison level, Great Moose (Gen 5 pet)</li>
+                                <li><strong>Academy:</strong> Regimental Expansion all levels</li>
+                                <li><strong>War Academy:</strong> Truegold Battalion (all troop types), Truegold Legionaries.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            } else {
+                let effectiveBase;
+                let conditionLabel;
+
+                if (S10 <= S8) {
+                    effectiveBase = S10;
+                    conditionLabel = "Squad deployment of YOUR Rally is = S10";
+                } else {
+                    effectiveBase = S8;
+                    conditionLabel = "Squad deployment of YOUR Rally is = S8";
+                }
+
+                let infDeploy, cavDeploy, arcDeploy;
+
+                if (r1Input !== "" && r2Input !== "" && r3Input !== "") {
+                    const r1 = parseFloat(r1Input) || 0;
+                    const r2 = parseFloat(r2Input) || 0;
+                    const r3 = parseFloat(r3Input) || 0;
+
+                    infDeploy = Math.round(effectiveBase * r1 / 100);
+                    cavDeploy = Math.round(effectiveBase * r2 / 100);
+                    arcDeploy = Math.round(effectiveBase * r3 / 100);
+                } else {
+                    infDeploy = Math.round(0.1 * effectiveBase);
+                    cavDeploy = Math.round(0.1 * effectiveBase);
+                    arcDeploy = Math.round(0.80 * effectiveBase);
+                }
+
+                resultsHTML = `
+                    <div class="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-lg text-emerald-300">
+                        <span class="font-bold block mb-1">Status: Ready for Deployment</span>
+                        <p class="text-xs text-slate-300">${conditionLabel} (<strong>${Math.round(effectiveBase).toLocaleString()} Troops</strong>)</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
+                            <h4 class="font-semibold text-blue-400 mb-2">Squad Deployment of YOUR Rally</h4>
+                            <ul class="space-y-1 text-xs text-slate-300">
+                                <li>Infantry: <span class="text-white font-bold">${infDeploy.toLocaleString()} Troops</span></li>
+                                <li>Cavalry: <span class="text-white font-bold">${cavDeploy.toLocaleString()} Troops</span></li>
+                                <li>Archers: <span class="text-white font-bold">${arcDeploy.toLocaleString()} Troops</span></li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
+                            <h4 class="font-semibold text-purple-400 mb-2">Joining Ratio Breakdown</h4>
+                            <ul class="space-y-1 text-xs text-slate-300">
+                                <li>Infantry (10%): <span class="text-white font-bold">${joinInf.toLocaleString()} Troops</span></li>
+                                <li>Cavalry (10%): <span class="text-white font-bold">${joinCav.toLocaleString()} Troops</span></li>
+                                <li>Archers (80%): <span class="text-white font-bold">${joinArc.toLocaleString()} Troops</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Append the red note and English contact note underneath all results
+            resultsHTML += `
+                <div class="mt-4 text-center space-y-1.5">
+                    <p class="text-xs font-bold text-red-500 tracking-wide">Remember to save your formation by Quantity not by Ratio</p>
+                    <p class="text-xs text-slate-300">If you don't know how to use the calculator, don't hesitate to contact R4 or just go to 🔥[APX]Hell🔥 😉</p>
+                </div>
+            `;
+
+            contentDiv.innerHTML = resultsHTML;
+        }
+
+        // Run calculation on initial load
+        window.onload = calculate;
+    </script>
 </body>
 </html>
