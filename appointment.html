@@ -162,6 +162,23 @@
                 <button onclick="logout()" class="text-red-400 text-xs hover:text-red-300 transition bg-red-950/50 hover:bg-red-900/60 px-3 py-1.5 rounded-lg border border-red-800/50">Sign Out</button>
             </div>
 
+            <!-- GLOBAL PROOF SECTION (Applicable for all days) -->
+            <div class="mb-8 p-5 bg-slate-950/80 border border-amber-500/40 rounded-2xl space-y-3">
+                <h3 class="text-sm font-bold font-cinzel text-amber-400">📷 General Evidence Proofs (Required for all bookings)</h3>
+                <p class="text-[11px] text-gray-400 italic">Note: If you wish to update your numbers or submit a request for another day, there is no need to upload the images again.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">1. General Proof 1</label>
+                        <input type="file" id="global-proof-1" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">2. General Proof 2</label>
+                        <input type="file" id="global-proof-2" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
+                    </div>
+                </div>
+            </div>
+
             <p class="text-xs text-gray-400 mb-6">Select a day below to expand and fill out its booking request separately.</p>
 
             <!-- ACCORDIONS / DAY CARDS -->
@@ -201,17 +218,6 @@
                             <div>
                                 <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 1 Slots (Minimum 4) <span class="text-amber-400 font-bold">(Scroll down)</span></label>
                                 <div id="slots-d1-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-gray-800 rounded-xl"></div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">1. Evidence Proof 1</label>
-                                    <input type="file" id="res-proof-d1" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Evidence Proof 2</label>
-                                    <input type="file" id="speed-proof-d1" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
-                                </div>
                             </div>
 
                             <div>
@@ -258,17 +264,6 @@
                                 <div id="slots-d2-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-gray-800 rounded-xl"></div>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">1. Evidence Proof 1</label>
-                                    <input type="file" id="res-proof-d2" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Evidence Proof 2</label>
-                                    <input type="file" id="speed-proof-d2" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
-                                </div>
-                            </div>
-
                             <div>
                                 <label class="block text-xs font-semibold text-gray-300 mb-1">Comments / Special Notes for Day 2</label>
                                 <textarea id="player-comments-d2" rows="2" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400" placeholder="Day 2 notes..."></textarea>
@@ -307,18 +302,6 @@
                             <div>
                                 <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 4 Slots (Minimum 4) <span class="text-amber-400 font-bold">(Scroll down)</span></label>
                                 <div id="slots-d4-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-gray-800 rounded-xl"></div>
-                            </div>
-
-                            <!-- Day 4 Screenshot Proof (Two Evidence Proofs Required) -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">1. Evidence Proof 1</label>
-                                    <input type="file" id="speed-proof-d4" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Evidence Proof 2</label>
-                                    <input type="file" id="extra-proof-d4" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
-                                </div>
                             </div>
 
                             <div>
@@ -477,12 +460,12 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <span class="text-xs text-amber-400 block mb-2 font-semibold">Evidence Proof 1:</span>
-                    <img id="modal-res-img" src="" alt="Evidence Proof 1" class="w-full max-h-[60vh] object-contain rounded-xl bg-slate-950 border border-gray-800 p-2">
+                    <span class="text-xs text-amber-400 block mb-2 font-semibold">Proof 1:</span>
+                    <img id="modal-res-img" src="" alt="Proof 1" class="w-full max-h-[60vh] object-contain rounded-xl bg-slate-950 border border-gray-800 p-2">
                 </div>
                 <div>
-                    <span class="text-xs text-amber-400 block mb-2 font-semibold">Evidence Proof 2:</span>
-                    <img id="modal-speed-img" src="" alt="Evidence Proof 2" class="w-full max-h-[60vh] object-contain rounded-xl bg-slate-950 border border-gray-800 p-2">
+                    <span class="text-xs text-amber-400 block mb-2 font-semibold">Proof 2:</span>
+                    <img id="modal-speed-img" src="" alt="Proof 2" class="w-full max-h-[60vh] object-contain rounded-xl bg-slate-950 border border-gray-800 p-2">
                 </div>
             </div>
         </div>
@@ -519,7 +502,7 @@
             "DTM": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png"
         };
 
-        // Viking Passwords Setup
+        //  alliance Passwords Setup
         const alliancePasswords = {
             "APX": "AreYouSure?",
             "SVG": "AreYouSure?",
@@ -528,7 +511,8 @@
             "DUN": "AreYouSure?",
             "69A": "AreYouSure?",
             "DTM": "AreYouSure?"
-        };
+        }; 
+
 
         let currentMember = null;
         let existingDataMap = new Map();
@@ -727,17 +711,21 @@
                     timestamp: new Date().toISOString()
                 };
 
-                let checkedSlots, proofFile1, proofFile2, prevData = existingDataMap.get(currentMember.playerId) || {};
+                let checkedSlots, prevData = existingDataMap.get(currentMember.playerId) || {};
+                const globalFile1 = document.getElementById('global-proof-1').files[0];
+                const globalFile2 = document.getElementById('global-proof-2').files[0];
+
+                // Handle global proofs (keep existing if not re-uploaded)
+                docData.globalProof1 = globalFile1 ? await compressImage(globalFile1) : (prevData.globalProof1 || prevData.resProofD1 || prevData.speedProofD1 || "");
+                docData.globalProof2 = globalFile2 ? await compressImage(globalFile2) : (prevData.globalProof2 || prevData.speedProofD1 || "");
 
                 if (dayNumber === 1) {
                     checkedSlots = document.querySelectorAll('input[name="slots_d1"]:checked');
                     if (checkedSlots.length === 0) {
                         if (!confirm("Are you sure you don't want slots for Day 1?")) { btn.disabled = false; btn.innerText = "SUBMIT DAY 1 BOOKING"; return; }
                     } else if (checkedSlots.length < 4) {
-                        alert("Please select at least 4 slots for Day 1."); btn.disabled = false; btn.innerText = "SUBMIT DAY 1 BOOKING"; return; }
-
-                    proofFile1 = document.getElementById('res-proof-d1').files[0];
-                    proofFile2 = document.getElementById('speed-proof-d1').files[0];
+                        alert("Please select at least 4 slots for Day 1."); btn.disabled = false; btn.innerText = "SUBMIT DAY 1 BOOKING"; return;
+                    }
 
                     docData.constSpeedups = document.getElementById('const-speedups').value;
                     docData.genSpeedupsD1 = document.getElementById('gen-speedups-d1').value;
@@ -745,8 +733,6 @@
                     docData.temperedGold = document.getElementById('tempered-gold').value;
                     docData.slotsD1 = Array.from(checkedSlots).map(c => c.value);
                     docData.commentsD1 = document.getElementById('player-comments-d1').value;
-                    docData.resProofD1 = proofFile1 ? await compressImage(proofFile1) : (prevData.resProofD1 || prevData.resourceProof || "");
-                    docData.speedProofD1 = proofFile2 ? await compressImage(proofFile2) : (prevData.speedProofD1 || prevData.speedupProof || "");
                     docData.d1Active = true;
                 } 
                 else if (dayNumber === 2) {
@@ -754,18 +740,14 @@
                     if (checkedSlots.length === 0) {
                         if (!confirm("Are you sure you don't want slots for Day 2?")) { btn.disabled = false; btn.innerText = "SUBMIT DAY 2 BOOKING"; return; }
                     } else if (checkedSlots.length < 4) {
-                        alert("Please select at least 4 slots for Day 2."); btn.disabled = false; btn.innerText = "SUBMIT DAY 2 BOOKING"; return; }
-
-                    proofFile1 = document.getElementById('res-proof-d2').files[0];
-                    proofFile2 = document.getElementById('speed-proof-d2').files[0];
+                        alert("Please select at least 4 slots for Day 2."); btn.disabled = false; btn.innerText = "SUBMIT DAY 2 BOOKING"; return;
+                    }
 
                     docData.researchSpeedups = document.getElementById('research-speedups').value;
                     docData.genSpeedupsD2 = document.getElementById('gen-speedups-d2').value;
                     docData.goldDust = document.getElementById('gold-dust').value;
                     docData.slotsD2 = Array.from(checkedSlots).map(c => c.value);
                     docData.commentsD2 = document.getElementById('player-comments-d2').value;
-                    docData.resProofD2 = proofFile1 ? await compressImage(proofFile1) : (prevData.resProofD2 || prevData.resourceProof || "");
-                    docData.speedProofD2 = proofFile2 ? await compressImage(proofFile2) : (prevData.speedProofD2 || prevData.speedupProof || "");
                     docData.d2Active = true;
                 }
                 else if (dayNumber === 4) {
@@ -775,15 +757,10 @@
                     } else if (checkedSlots.length < 4) {
                         alert("Please select at least 4 slots for Day 4."); btn.disabled = false; btn.innerText = "SUBMIT DAY 4 BOOKING"; return; }
 
-                    proofFile1 = document.getElementById('speed-proof-d4').files[0];
-                    proofFile2 = document.getElementById('extra-proof-d4').files[0];
-
                     docData.trainSpeedups = document.getElementById('train-speedups').value;
                     docData.genSpeedupsD4 = document.getElementById('gen-speedups-d4').value;
                     docData.slotsD4 = Array.from(checkedSlots).map(c => c.value);
                     docData.commentsD4 = document.getElementById('player-comments-d4').value;
-                    docData.speedProofD4 = proofFile1 ? await compressImage(proofFile1) : (prevData.speedProofD4 || prevData.speedupProof || "");
-                    docData.extraProofD4 = proofFile2 ? await compressImage(proofFile2) : (prevData.extraProofD4 || "");
                     docData.d4Active = true;
                 }
 
@@ -866,6 +843,8 @@
 
             snapshot.forEach(docSnap => {
                 const data = docSnap.data();
+                const globalImg1 = data.globalProof1 || data.resProofD1 || data.resourceProof || '';
+                const globalImg2 = data.globalProof2 || data.speedProofD1 || data.speedupProof || '';
 
                 // DAY 1 ROW
                 if (data.d1Active || data.constSpeedups || (data.slotsD1 && data.slotsD1.length > 0)) {
@@ -884,7 +863,7 @@
                         <td class="p-3">${data.temperedGold || 0}</td>
                         <td class="p-3 font-mono">${d1Slots || '-'}</td>
                         <td class="p-3 max-w-xs truncate text-gray-400">${data.commentsD1 || data.comments || '-'}</td>
-                        <td class="p-3"><button onclick="openModal('${data.resProofD1 || data.resourceProof || ''}', '${data.speedProofD1 || data.speedupProof || ''}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
+                        <td class="p-3"><button onclick="openModal('${globalImg1}', '${globalImg2}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
                         <td class="p-3 text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
                     `;
                     tbody1.appendChild(tr1);
@@ -906,7 +885,7 @@
                         <td class="p-3">${data.goldDust !== undefined ? data.goldDust : (data.trueGoldD2 || 0)}</td>
                         <td class="p-3 font-mono">${d2Slots || '-'}</td>
                         <td class="p-3 max-w-xs truncate text-gray-400">${data.commentsD2 || data.comments || '-'}</td>
-                        <td class="p-3"><button onclick="openModal('${data.resProofD2 || data.resourceProof || ''}', '${data.speedProofD2 || data.speedupProof || ''}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
+                        <td class="p-3"><button onclick="openModal('${globalImg1}', '${globalImg2}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
                         <td class="p-3 text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
                     `;
                     tbody2.appendChild(tr2);
@@ -927,7 +906,7 @@
                         <td class="p-3 font-bold text-amber-300">${d4Total} mins</td>
                         <td class="p-3 font-mono">${d4Slots || '-'}</td>
                         <td class="p-3 max-w-xs truncate text-gray-400">${data.commentsD4 || data.comments || '-'}</td>
-                        <td class="p-3"><button onclick="openModal('${data.speedProofD4 || data.speedupProof || ''}', '${data.extraProofD4 || ''}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
+                        <td class="p-3"><button onclick="openModal('${globalImg1}', '${globalImg2}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
                         <td class="p-3 text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
                     `;
                     tbody4.appendChild(tr4);
@@ -960,11 +939,11 @@
                 for (const docSnap of snapshot.docs) {
                     const docRef = doc(db, "appointment_requests", docSnap.id);
                     if (dayNumber === 1) {
-                        await updateDoc(docRef, { constSpeedups: deleteField(), genSpeedupsD1: deleteField(), trueGoldD1: deleteField(), temperedGold: deleteField(), slotsD1: deleteField(), commentsD1: deleteField(), resProofD1: deleteField(), speedProofD1: deleteField(), d1Active: deleteField() });
+                        await updateDoc(docRef, { constSpeedups: deleteField(), genSpeedupsD1: deleteField(), trueGoldD1: deleteField(), temperedGold: deleteField(), slotsD1: deleteField(), commentsD1: deleteField(), d1Active: deleteField() });
                     } else if (dayNumber === 2) {
-                        await updateDoc(docRef, { researchSpeedups: deleteField(), genSpeedupsD2: deleteField(), goldDust: deleteField(), slotsD2: deleteField(), commentsD2: deleteField(), resProofD2: deleteField(), speedProofD2: deleteField(), d2Active: deleteField() });
+                        await updateDoc(docRef, { researchSpeedups: deleteField(), genSpeedupsD2: deleteField(), goldDust: deleteField(), slotsD2: deleteField(), commentsD2: deleteField(), d2Active: deleteField() });
                     } else if (dayNumber === 4) {
-                        await updateDoc(docRef, { trainSpeedups: deleteField(), genSpeedupsD4: deleteField(), slotsD4: deleteField(), commentsD4: deleteField(), speedProofD4: deleteField(), extraProofD4: deleteField(), d4Active: deleteField() });
+                        await updateDoc(docRef, { trainSpeedups: deleteField(), genSpeedupsD4: deleteField(), slotsD4: deleteField(), commentsD4: deleteField(), d4Active: deleteField() });
                     }
                 }
                 alert(`Day ${dayNumber} data successfully reset!`);
