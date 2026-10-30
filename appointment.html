@@ -3,230 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kingdom 1269 | Appointment Desk</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Kingdom 1269 Appointment Desk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
-    <!-- FontAwesome & Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body { 
-            font-family: 'Poppins', sans-serif; 
-            background: #070a12;
-            color: #f1f5f9;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            font-family: 'Inter', sans-serif; 
+            background: #090d16;
+            color: #f3f4f6;
         }
         .font-cinzel { font-family: 'Cinzel', serif; }
         
+        /* Neon Glowing Animation Effects */
         @keyframes goldPulse {
             0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.25), inset 0 0 10px rgba(245, 158, 11, 0.1); }
             50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.55), inset 0 0 15px rgba(245, 158, 11, 0.25); }
         }
         .gold-glow { animation: goldPulse 3.5s infinite ease-in-out; }
         
-        .royal-card {
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 28, 0.98));
-            border: 1px solid rgba(245, 158, 11, 0.35);
+        .gold-card {
+            background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.98));
+            border: 1px solid rgba(245, 158, 11, 0.3);
             backdrop-filter: blur(12px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
         }
-        .royal-card:hover { border-color: rgba(245, 158, 11, 0.7); }
-        
+        .gold-card:hover {
+            border-color: rgba(245, 158, 11, 0.7);
+        }
         .gold-gradient-text {
-            background: linear-gradient(135deg, #ffffff 0%, #f59e0b 50%, #d97706 100%);
+            background: linear-gradient(135deg, #fffbeb 0%, #f59e0b 50%, #d97706 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         th.sort-header { cursor: pointer; }
         th.sort-header:hover { color: #f59e0b; }
         
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #070a12; }
+        ::-webkit-scrollbar-track { background: #090d16; }
         ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 4px; }
     </style>
 </head>
-<body class="selection:bg-amber-500 selection:text-black">
+<body class="min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-black">
 
-    <!-- HEADER BAR -->
-    <header class="w-full bg-slate-950/90 border-b border-amber-500/30 px-6 py-4 flex items-center justify-between shadow-2xl backdrop-blur-md sticky top-0 z-50">
-        <div class="flex items-center gap-3">
-            <img src="./images/IMG_3934.png" alt="Kingdom 1269" class="w-10 h-10 object-cover rounded-lg border border-amber-500 shadow-md">
-            <h1 class="font-cinzel text-lg md:text-xl font-bold gold-gradient-text">Kingdom 1269 | Appointment Desk</h1>
-        </div>
-        <a href="index.html" class="bg-slate-900 hover:bg-amber-600 text-amber-400 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-amber-500/40 flex items-center gap-2 shadow-lg">
-            <i class="fa-solid fa-house"></i> Home
-        </a>
-    </header>
-
-    <!-- BANNER IMAGE -->
+    <!-- Header Banner Section -->
     <div class="w-full bg-slate-950 shadow-2xl relative overflow-hidden border-b border-amber-500/30">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#070a12] via-transparent to-black/60 z-10 pointer-events-none"></div>
-        <img id="main-banner" src="./images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Kingdom 1269 Banner" class="w-full h-52 md:h-72 object-cover object-center filter brightness-90 contrast-105" onerror="this.src='./images/IMG_3934.png'">
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <main class="max-w-6xl mx-auto px-4 py-8 w-full flex-grow space-y-10">
-        
-        <!-- TITLE HEADER -->
-        <div class="text-center mb-10">
-            <h2 class="text-3xl md:text-5xl font-black font-cinzel gold-gradient-text tracking-wide drop-shadow-lg">KvK Appointment Desk</h2>
-            <p class="text-xs md:text-sm text-slate-400 mt-2 font-medium tracking-wider">BOOK YOUR CHIEF MINISTER & NOBLE ADVISOR FOR KVK PREPARATIONS</p>
-            <div class="w-32 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-4 rounded-full"></div>
-        </div>
-
-        <!-- 1. GENERAL SPEEDUPS CALCULATOR -->
-        <section class="royal-card gold-glow p-6 md:p-8 rounded-2xl shadow-2xl">
-            <h3 class="text-xl font-bold font-cinzel text-amber-400 mb-2 flex items-center gap-2">
-                <span>⚡</span> General Speedups Calculator
-            </h3>
-            <p class="text-xs text-slate-400 mb-5">Enter your total General Speedups and split them across Day 1, Day 2, and Day 4 by percentage.</p>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end text-xs">
-                <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Total General Speedups (mins)</label>
-                    <input type="number" id="calc-total" oninput="calculateSplit()" placeholder="e.g. 10000" class="w-full bg-slate-950 border border-amber-500/30 rounded-xl p-3 text-white focus:border-amber-400 outline-none transition">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Day 1 % (Const)</label>
-                    <input type="number" id="calc-d1-pct" value="33" oninput="calculateSplit()" class="w-full bg-slate-950 border border-amber-500/30 rounded-xl p-3 text-white focus:border-amber-400 outline-none transition">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Day 2 % (Research)</label>
-                    <input type="number" id="calc-d2-pct" value="33" oninput="calculateSplit()" class="w-full bg-slate-950 border border-amber-500/30 rounded-xl p-3 text-white focus:border-amber-400 outline-none transition">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Day 4 % (Training)</label>
-                    <input type="number" id="calc-d4-pct" value="34" oninput="calculateSplit()" class="w-full bg-slate-950 border border-amber-500/30 rounded-xl p-3 text-white focus:border-amber-400 outline-none transition">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5 pt-5 border-t border-slate-800 text-center text-xs">
-                <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
-                    <span class="text-slate-400">Day 1 General: </span>
-                    <span id="res-d1" class="font-bold text-amber-400 text-sm">0 mins</span>
-                </div>
-                <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
-                    <span class="text-slate-400">Day 2 General: </span>
-                    <span id="res-d2" class="font-bold text-amber-400 text-sm">0 mins</span>
-                </div>
-                <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
-                    <span class="text-slate-400">Day 4 General: </span>
-                    <span id="res-d4" class="font-bold text-amber-400 text-sm">0 mins</span>
-                </div>
-            </div>
-            <button type="button" onclick="applySplitToForm()" class="mt-5 w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg tracking-wider uppercase">
-                Auto-Fill Calculated Speedups Into Forms
-            </button>
-        </section>
-
-        <!-- 2. LOGGED-IN MEMBER & BOOKING SECTION -->
-        <div id="authGateSection" class="royal-card p-8 rounded-2xl text-center space-y-4 max-w-lg mx-auto shadow-2xl">
-            <h3 class="text-xl font-bold font-cinzel gold-gradient-text">Member Authentication Required</h3>
-            <p class="text-xs text-slate-400">Please sign in with Discord to access appointment booking slots.</p>
-            <a href="index.html" class="inline-block px-6 py-3 bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold rounded-xl text-xs transition shadow-lg">
-                <i class="fa-brands fa-discord mr-2"></i> Go to Home & Sign In
+        <!-- Floating Main Site Button -->
+        <div class="absolute top-4 right-4 z-20">
+            <a href="https://k1269.github.io/1269/" class="bg-black/80 hover:bg-amber-600 text-amber-300 hover:text-white px-5 py-2 rounded-xl text-xs font-bold transition border border-amber-500/50 backdrop-blur-md shadow-lg flex items-center gap-2">
+                🏰 Main Site 
             </a>
         </div>
 
-        <section id="booking-section" class="hidden royal-card p-6 md:p-8 rounded-2xl shadow-2xl space-y-6">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-5">
+        <!-- Dynamic Dark Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[#090d16] via-transparent to-black/60 z-10 pointer-events-none"></div>
+
+        <!-- Main Banner Image -->
+        <img id="main-banner" src="images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png" alt="Kingdom 1269 Banner" class="w-full h-52 md:h-72 object-cover object-center transition-all duration-500 filter brightness-90 contrast-105">
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 w-full">
+        
+        <!-- Main Title Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-black font-cinzel gold-gradient-text tracking-wide drop-shadow-lg">Kingdom 1269 Appointment Desk</h1>
+            <p class="text-xs md:text-sm text-gray-400 mt-2 font-medium tracking-wider">BOOK YOUR CHIEF MINISTER & NOBLE ADVISOR FOR KVK PREPARATIONS</p>
+            <div class="w-32 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-4 rounded-full"></div>
+        </div>
+
+        <!-- 1. General Speedups Calculator Widget -->
+        <section class="gold-card gold-glow p-6 md:p-8 rounded-2xl shadow-2xl mb-10">
+            <h2 class="text-xl font-bold font-cinzel text-amber-400 mb-2 flex items-center gap-2">
+                <span>⚡</span> General Speedups Calculator
+            </h2>
+            <p class="text-xs text-gray-400 mb-5">Enter your total General Speedups and split them across Day 1, Day 2, and Day 4 by percentage.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div>
-                    <span class="text-xs text-amber-500 font-semibold tracking-wider block">LOGGED IN MEMBER</span>
-                    <h3 class="text-xl font-bold font-cinzel text-amber-400"><span id="display-name" class="text-white">Commander</span></h3>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Total General Speedups (mins)</label>
+                    <input type="number" id="calc-total" oninput="calculateSplit()" placeholder="e.g. 10000" class="w-full bg-slate-950/80 border border-amber-500/30 rounded-xl p-3 text-white text-sm focus:border-amber-400 outline-none transition">
                 </div>
-                <a href="profile-settings.html" class="text-amber-400 text-xs hover:underline bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">Edit Nickname</a>
-            </div>
-
-            <!-- GLOBAL SCREENSHOT PROOFS SECTION (UNIFIED FOR ALL DAYS) -->
-            <div class="border border-amber-500/40 rounded-2xl bg-slate-950/80 p-5 space-y-4">
-                <h4 class="font-cinzel text-sm font-bold text-amber-400 flex items-center gap-2">
-                    <i class="fa-solid fa-camera"></i> Global Screenshot Proofs (Comprehensive for All Days)
-                </h4>
-                <p class="text-xs text-slate-400">Upload just 2 screenshots covering all days to optimize storage and speed up your submission.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                    <div>
-                        <label class="block font-semibold text-slate-300 mb-1">1. Resources Proof (All Days)</label>
-                        <input type="file" id="global-res-proof" accept="image/*" class="w-full text-slate-400 file:bg-amber-600 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-300 mb-1">2. Speedups Proof (All Days)</label>
-                        <input type="file" id="global-speed-proof" accept="image/*" class="w-full text-slate-400 file:bg-amber-600 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer">
-                    </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Day 1 % (Const)</label>
+                    <input type="number" id="calc-d1-pct" value="33" oninput="calculateSplit()" class="w-full bg-slate-950/80 border border-amber-500/30 rounded-xl p-3 text-white text-sm focus:border-amber-400 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Day 2 % (Research)</label>
+                    <input type="number" id="calc-d2-pct" value="33" oninput="calculateSplit()" class="w-full bg-slate-950/80 border border-amber-500/30 rounded-xl p-3 text-white text-sm focus:border-amber-400 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-300 mb-1">Day 4 % (Training)</label>
+                    <input type="number" id="calc-d4-pct" value="34" oninput="calculateSplit()" class="w-full bg-slate-950/80 border border-amber-500/30 rounded-xl p-3 text-white text-sm focus:border-amber-400 outline-none transition">
                 </div>
             </div>
 
-            <!-- DAY ACCORDIONS -->
-            <div class="space-y-6 text-xs">
+            <!-- Split Results Display -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5 pt-5 border-t border-gray-800 text-center text-xs">
+                <div class="bg-slate-950/80 p-3 rounded-xl border border-gray-800">
+                    <span class="text-gray-400">Day 1 General: </span>
+                    <span id="res-d1" class="font-bold text-amber-400 text-sm">0 mins</span>
+                </div>
+                <div class="bg-slate-950/80 p-3 rounded-xl border border-gray-800">
+                    <span class="text-gray-400">Day 2 General: </span>
+                    <span id="res-d2" class="font-bold text-amber-400 text-sm">0 mins</span>
+                </div>
+                <div class="bg-slate-950/80 p-3 rounded-xl border border-gray-800">
+                    <span class="text-gray-400">Day 4 General: </span>
+                    <span id="res-d4" class="font-bold text-amber-400 text-sm">0 mins</span>
+                </div>
+            </div>
+            <button type="button" onclick="applySplitToForm()" class="mt-5 w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg tracking-wider">
+                AUTO-FILL CALCULATED SPEEDUPS INTO FORMS
+            </button>
+        </section>
 
-                <!-- DAY 1 -->
+        <!-- 2. Member Login Section -->
+        <div id="login-section" class="gold-card gold-glow p-8 rounded-2xl border border-amber-500/40 max-w-lg mx-auto shadow-2xl my-8">
+            <h2 class="text-2xl font-bold font-cinzel mb-6 gold-gradient-text text-center">Alliance Member Login</h2>
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-300">In-Game Nickname</label>
+                    <input type="text" id="nickname" placeholder="Enter your nickname" class="w-full bg-slate-950/90 p-3 rounded-xl border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-400 text-sm transition" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-300">Player ID (Used for updating your booking)</label>
+                    <input type="number" id="player-id" placeholder="Enter your player ID" class="w-full bg-slate-950/90 p-3 rounded-xl border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-400 text-sm transition" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-300">Alliance</label>
+                    <select id="alliance-select" class="w-full bg-slate-950/90 p-3 rounded-xl border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-400 text-sm transition">
+                        <option value="APX">APX</option>
+                        <option value="SVG">SVG</option>
+                        <option value="NDT">NDT</option>
+                        <option value="WAR">WAR</option>
+                        <option value="DUN">DUN</option>
+                        <option value="69A">69A</option>
+                        <option value="DTM">DTM</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-300">Alliance Password</label>
+                    <input type="password" id="alliance-password" placeholder="Enter alliance password" class="w-full bg-slate-950/90 p-3 rounded-xl border border-gray-700 text-gray-100 focus:outline-none focus:border-amber-400 text-sm transition" required>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white p-3.5 rounded-xl font-bold transition shadow-lg text-sm tracking-wider">
+                    SIGN IN / UPDATE DATA
+                </button>
+            </form>
+        </div>
+
+        <!-- 3. Booking Form Section (Day-by-Day Accordion / Tabs) -->
+        <section id="booking-section" class="hidden gold-card p-6 md:p-8 rounded-2xl border border-amber-500/40 shadow-2xl mb-10">
+            <div class="flex justify-between items-center mb-8 border-b border-gray-800 pb-5">
+                <div>
+                    <span class="text-xs text-amber-500/80 font-semibold tracking-wider block">LOGGED IN MEMBER</span>
+                    <h2 class="text-xl font-bold font-cinzel text-amber-400"><span id="display-name" class="text-white"></span></h2>
+                </div>
+                <button onclick="logout()" class="text-red-400 text-xs hover:text-red-300 transition bg-red-950/50 hover:bg-red-900/60 px-3 py-1.5 rounded-lg border border-red-800/50">Sign Out</button>
+            </div>
+
+            <p class="text-xs text-gray-400 mb-6">Select a day below to expand and fill out its booking request separately.</p>
+
+            <!-- ACCORDIONS / DAY CARDS -->
+            <div class="space-y-6">
+
+                <!-- DAY 1 COLLAPSIBLE CONTAINER -->
                 <div class="border border-amber-500/30 rounded-2xl bg-slate-950/60 overflow-hidden">
-                    <button type="button" onclick="toggleAccordion('day1-content')" class="w-full p-5 bg-gradient-to-r from-slate-900 to-slate-950 hover:bg-slate-800 text-left flex justify-between items-center border-b border-slate-800 transition">
-                        <span class="text-amber-400 font-bold text-base font-cinzel">🏰 Day 1: Construction</span>
-                        <span id="counter-d1" class="text-xs text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-full font-medium">Slots: 0 / 4 min</span>
+                    <button type="button" onclick="toggleAccordion('day1-content')" class="w-full p-5 bg-gradient-to-r from-slate-900 to-slate-950 hover:bg-slate-800 text-left flex justify-between items-center border-b border-gray-800 transition">
+                        <div class="flex items-center gap-3">
+                            <span class="text-amber-400 font-bold text-lg font-cinzel">🏰 Day 1: Construction</span>
+                            <span id="counter-d1" class="text-xs text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-full font-medium">Slots: 0 / 4 min</span>
+                        </div>
+                        <span id="arrow-day1" class="text-amber-400 text-xl font-bold transform transition-transform duration-300">▼</span>
                     </button>
+                    
                     <div id="day1-content" class="hidden p-6 space-y-5 bg-slate-900/60">
-                        <form onsubmit="submitDayBooking(event, 1)" class="space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div><label class="block font-semibold text-slate-300 mb-1">Const Speedups (mins)</label><input type="number" id="const-speedups" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
-                                <div><label class="block font-semibold text-slate-300 mb-1">Gen Speedups (mins)</label><input type="number" id="gen-speedups-d1" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
-                                <div><label class="block font-semibold text-slate-300 mb-1">True Gold</label><input type="number" id="true-gold-d1" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
-                                <div><label class="block font-semibold text-slate-300 mb-1">Tempered Gold</label><input type="number" id="tempered-gold" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
+                        <form onsubmit="submitDayBooking(event, 1)" class="space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">Construction Speedups (mins)</label>
+                                    <input type="number" id="const-speedups" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="e.g. 1500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">General Speedups (mins)</label>
+                                    <input type="number" id="gen-speedups-d1" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="e.g. 500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">True Gold</label>
+                                    <input type="number" id="true-gold-d1" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="Amount">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">Tempered Gold</label>
+                                    <input type="number" id="tempered-gold" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="Amount">
+                                </div>
                             </div>
+
                             <div>
-                                <label class="block font-semibold text-slate-300 mb-2">Select Day 1 Slots (Minimum 4)</label>
-                                <div id="slots-d1-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-slate-800 rounded-xl"></div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 1 Slots (Minimum 4) <span class="text-amber-400 font-bold">(Scroll down)</span></label>
+                                <div id="slots-d1-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-gray-800 rounded-xl"></div>
                             </div>
-                            <button type="submit" id="submit-btn-d1" class="w-full bg-amber-600 hover:bg-amber-500 text-black font-bold py-3 rounded-xl transition uppercase tracking-wider">Submit Day 1 Booking</button>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">1. Evidence Proof 1</label>
+                                    <input type="file" id="res-proof-d1" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Evidence Proof 2</label>
+                                    <input type="file" id="speed-proof-d1" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Comments / Special Notes for Day 1</label>
+                                <textarea id="player-comments-d1" rows="2" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400" placeholder="Day 1 notes..."></textarea>
+                            </div>
+
+                            <button type="submit" id="submit-btn-d1" class="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-sm tracking-wider">
+                                SUBMIT DAY 1 BOOKING
+                            </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- DAY 2 -->
+                <!-- DAY 2 COLLAPSIBLE CONTAINER -->
                 <div class="border border-amber-500/30 rounded-2xl bg-slate-950/60 overflow-hidden">
-                    <button type="button" onclick="toggleAccordion('day2-content')" class="w-full p-5 bg-gradient-to-r from-slate-900 to-slate-950 hover:bg-slate-800 text-left flex justify-between items-center border-b border-slate-800 transition">
-                        <span class="text-amber-400 font-bold text-base font-cinzel">🧪 Day 2: Research</span>
-                        <span id="counter-d2" class="text-xs text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-full font-medium">Slots: 0 / 4 min</span>
+                    <button type="button" onclick="toggleAccordion('day2-content')" class="w-full p-5 bg-gradient-to-r from-slate-900 to-slate-950 hover:bg-slate-800 text-left flex justify-between items-center border-b border-gray-800 transition">
+                        <div class="flex items-center gap-3">
+                            <span class="text-amber-400 font-bold text-lg font-cinzel">🧪 Day 2: Research</span>
+                            <span id="counter-d2" class="text-xs text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-full font-medium">Slots: 0 / 4 min</span>
+                        </div>
+                        <span id="arrow-day2" class="text-amber-400 text-xl font-bold transform transition-transform duration-300">▼</span>
                     </button>
+                    
                     <div id="day2-content" class="hidden p-6 space-y-5 bg-slate-900/60">
-                        <form onsubmit="submitDayBooking(event, 2)" class="space-y-4">
+                        <form onsubmit="submitDayBooking(event, 2)" class="space-y-5">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div><label class="block font-semibold text-slate-300 mb-1">Research Speedups (mins)</label><input type="number" id="research-speedups" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
-                                <div><label class="block font-semibold text-slate-300 mb-1">Gen Speedups (mins)</label><input type="number" id="gen-speedups-d2" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
-                                <div><label class="block font-semibold text-slate-300 mb-1">Gold Dust</label><input type="number" id="gold-dust" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">Research Speedups (mins)</label>
+                                    <input type="number" id="research-speedups" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="e.g. 1200">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">General Speedups (mins)</label>
+                                    <input type="number" id="gen-speedups-d2" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="e.g. 500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">Gold Dust</label>
+                                    <input type="number" id="gold-dust" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="Amount">
+                                </div>
                             </div>
+
                             <div>
-                                <label class="block font-semibold text-slate-300 mb-2">Select Day 2 Slots (Minimum 4)</label>
-                                <div id="slots-d2-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-slate-800 rounded-xl"></div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 2 Slots (Minimum 4) <span class="text-amber-400 font-bold">(Scroll down)</span></label>
+                                <div id="slots-d2-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-gray-800 rounded-xl"></div>
                             </div>
-                            <button type="submit" id="submit-btn-d2" class="w-full bg-amber-600 hover:bg-amber-500 text-black font-bold py-3 rounded-xl transition uppercase tracking-wider">Submit Day 2 Booking</button>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">1. Evidence Proof 1</label>
+                                    <input type="file" id="res-proof-d2" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Evidence Proof 2</label>
+                                    <input type="file" id="speed-proof-d2" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Comments / Special Notes for Day 2</label>
+                                <textarea id="player-comments-d2" rows="2" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400" placeholder="Day 2 notes..."></textarea>
+                            </div>
+
+                            <button type="submit" id="submit-btn-d2" class="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-sm tracking-wider">
+                                SUBMIT DAY 2 BOOKING
+                            </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- DAY 4 -->
+                <!-- DAY 4 COLLAPSIBLE CONTAINER -->
                 <div class="border border-amber-500/30 rounded-2xl bg-slate-950/60 overflow-hidden">
-                    <button type="button" onclick="toggleAccordion('day4-content')" class="w-full p-5 bg-gradient-to-r from-slate-900 to-slate-950 hover:bg-slate-800 text-left flex justify-between items-center border-b border-slate-800 transition">
-                        <span class="text-amber-400 font-bold text-base font-cinzel">⚔️ Day 4: Troop Training</span>
-                        <span id="counter-d4" class="text-xs text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-full font-medium">Slots: 0 / 4 min</span>
+                    <button type="button" onclick="toggleAccordion('day4-content')" class="w-full p-5 bg-gradient-to-r from-slate-900 to-slate-950 hover:bg-slate-800 text-left flex justify-between items-center border-b border-gray-800 transition">
+                        <div class="flex items-center gap-3">
+                            <span class="text-amber-400 font-bold text-lg font-cinzel">⚔️ Day 4: Troop Training</span>
+                            <span id="counter-d4" class="text-xs text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-full font-medium">Slots: 0 / 4 min</span>
+                        </div>
+                        <span id="arrow-day4" class="text-amber-400 text-xl font-bold transform transition-transform duration-300">▼</span>
                     </button>
+                    
                     <div id="day4-content" class="hidden p-6 space-y-5 bg-slate-900/60">
-                        <form onsubmit="submitDayBooking(event, 4)" class="space-y-4">
+                        <form onsubmit="submitDayBooking(event, 4)" class="space-y-5">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="block font-semibold text-slate-300 mb-1">Training Speedups (mins)</label><input type="number" id="train-speedups" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
-                                <div><label class="block font-semibold text-slate-300 mb-1">Gen Speedups (mins)</label><input type="number" id="gen-speedups-d4" required min="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"></div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">Training Speedups (mins)</label>
+                                    <input type="number" id="train-speedups" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="e.g. 2400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">General Speedups (mins)</label>
+                                    <input type="number" id="gen-speedups-d4" required min="0" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-2.5 text-white text-sm focus:border-amber-400 outline-none" placeholder="e.g. 500">
+                                </div>
                             </div>
+
                             <div>
-                                <label class="block font-semibold text-slate-300 mb-2">Select Day 4 Slots (Minimum 4)</label>
-                                <div id="slots-d4-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-slate-800 rounded-xl"></div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-2">Select Day 4 Slots (Minimum 4) <span class="text-amber-400 font-bold">(Scroll down)</span></label>
+                                <div id="slots-d4-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-3 bg-slate-950 border border-gray-800 rounded-xl"></div>
                             </div>
-                            <button type="submit" id="submit-btn-d4" class="w-full bg-amber-600 hover:bg-amber-500 text-black font-bold py-3 rounded-xl transition uppercase tracking-wider">Submit Day 4 Booking</button>
+
+                            <!-- Day 4 Screenshot Proof (Two Evidence Proofs Required) -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">1. Evidence Proof 1</label>
+                                    <input type="file" id="speed-proof-d4" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-300 mb-1">2. Evidence Proof 2</label>
+                                    <input type="file" id="extra-proof-d4" accept="image/*" class="w-full text-gray-400 file:bg-amber-600 file:hover:bg-amber-500 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg cursor-pointer text-xs">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-300 mb-1">Comments / Special Notes for Day 4</label>
+                                <textarea id="player-comments-d4" rows="2" class="w-full bg-slate-950 border border-gray-700 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-amber-400" placeholder="Day 4 notes..."></textarea>
+                            </div>
+
+                            <button type="submit" id="submit-btn-d4" class="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold py-3.5 rounded-xl transition shadow-lg text-sm tracking-wider">
+                                SUBMIT DAY 4 BOOKING
+                            </button>
                         </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Admin Google Sign-in Trigger -->
+        <div class="mt-12 text-center">
+            <button onclick="adminLogin()" class="text-xs text-gray-400 hover:text-amber-400 transition flex items-center gap-2 mx-auto bg-slate-900/80 px-4 py-2 rounded-xl border border-amber-500/30">
+                <span>🔑</span> Admin Login with Gmail (Google Auth)
+            </button>
+        </div>
+
+        <!-- 4. Admin Dashboard Section (Per-Day Accordions) -->
+        <section id="admin-dashboard" class="hidden gold-card border border-amber-500/50 mt-10 rounded-2xl p-6 md:p-8 shadow-2xl">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b border-gray-800 pb-5">
+                <div>
+                    <h2 class="text-2xl font-bold font-cinzel gold-gradient-text">Admin Command Center Dashboard</h2>
+                    <p id="admin-user-info" class="text-xs text-gray-400 mt-1"></p>
+                </div>
+                <button onclick="adminLogout()" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition border border-gray-700">Sign Out Admin</button>
+            </div>
+
+            <!-- ADMIN DAY DASHBOARDS DROPDOWNS -->
+            <div class="space-y-6">
+
+                <!-- ADMIN DAY 1 DROPDOWN -->
+                <div class="border border-amber-500/30 rounded-2xl bg-slate-950/80 overflow-hidden">
+                    <button type="button" onclick="toggleAccordion('admin-day1-panel')" class="w-full p-4 bg-slate-900 hover:bg-slate-800 text-left flex justify-between items-center border-b border-gray-800 transition">
+                        <span class="text-amber-400 font-bold text-base font-cinzel">📂 Day 1: Construction Dashboard</span>
+                        <span id="arrow-admin-d1" class="text-amber-400 text-lg font-bold">▼</span>
+                    </button>
+                    <div id="admin-day1-panel" class="hidden p-5 space-y-4">
+                        <div class="flex justify-end gap-3">
+                            <button onclick="exportToExcel(1)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">Export Day 1 Excel</button>
+                            <button onclick="resetMonthlyData(1)" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">Reset Day 1 Monthly</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table id="table-day1" class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="text-amber-400 border-b border-gray-800 bg-slate-900/90">
+                                        <th class="p-3 sort-header">Nickname</th>
+                                        <th class="p-3 sort-header">Player ID</th>
+                                        <th class="p-3 sort-header">Alliance</th>
+                                        <th class="p-3 sort-header">Const Speedups</th>
+                                        <th class="p-3 sort-header">Gen Speedups</th>
+                                        <th class="p-3 sort-header">Total D1 Mins</th>
+                                        <th class="p-3 sort-header">True Gold</th>
+                                        <th class="p-3 sort-header">Tempered Gold</th>
+                                        <th class="p-3">Day 1 Slots</th>
+                                        <th class="p-3">Comments</th>
+                                        <th class="p-3">Proofs</th>
+                                        <th class="p-3 sort-header">Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-day1" class="divide-y divide-gray-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN DAY 2 DROPDOWN -->
+                <div class="border border-amber-500/30 rounded-2xl bg-slate-950/80 overflow-hidden">
+                    <button type="button" onclick="toggleAccordion('admin-day2-panel')" class="w-full p-4 bg-slate-900 hover:bg-slate-800 text-left flex justify-between items-center border-b border-gray-800 transition">
+                        <span class="text-amber-400 font-bold text-base font-cinzel">📂 Day 2: Research Dashboard</span>
+                        <span id="arrow-admin-d2" class="text-amber-400 text-lg font-bold">▼</span>
+                    </button>
+                    <div id="admin-day2-panel" class="hidden p-5 space-y-4">
+                        <div class="flex justify-end gap-3">
+                            <button onclick="exportToExcel(2)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">Export Day 2 Excel</button>
+                            <button onclick="resetMonthlyData(2)" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">Reset Day 2 Monthly</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table id="table-day2" class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="text-amber-400 border-b border-gray-800 bg-slate-900/90">
+                                        <th class="p-3 sort-header">Nickname</th>
+                                        <th class="p-3 sort-header">Player ID</th>
+                                        <th class="p-3 sort-header">Alliance</th>
+                                        <th class="p-3 sort-header">Research Speedups</th>
+                                        <th class="p-3 sort-header">Gen Speedups</th>
+                                        <th class="p-3 sort-header">Total D2 Mins</th>
+                                        <th class="p-3 sort-header">Gold Dust</th>
+                                        <th class="p-3">Day 2 Slots</th>
+                                        <th class="p-3">Comments</th>
+                                        <th class="p-3">Proofs</th>
+                                        <th class="p-3 sort-header">Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-day2" class="divide-y divide-gray-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN DAY 4 DROPDOWN -->
+                <div class="border border-amber-500/30 rounded-2xl bg-slate-950/80 overflow-hidden">
+                    <button type="button" onclick="toggleAccordion('admin-day4-panel')" class="w-full p-4 bg-slate-900 hover:bg-slate-800 text-left flex justify-between items-center border-b border-gray-800 transition">
+                        <span class="text-amber-400 font-bold text-base font-cinzel">📂 Day 4: Troop Training Dashboard</span>
+                        <span id="arrow-admin-d4" class="text-amber-400 text-lg font-bold">▼</span>
+                    </button>
+                    <div id="admin-day4-panel" class="hidden p-5 space-y-4">
+                        <div class="flex justify-end gap-3">
+                            <button onclick="exportToExcel(4)" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">Export Day 4 Excel</button>
+                            <button onclick="resetMonthlyData(4)" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">Reset Day 4 Monthly</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table id="table-day4" class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="text-amber-400 border-b border-gray-800 bg-slate-900/90">
+                                        <th class="p-3 sort-header">Nickname</th>
+                                        <th class="p-3 sort-header">Player ID</th>
+                                        <th class="p-3 sort-header">Alliance</th>
+                                        <th class="p-3 sort-header">Training Speedups</th>
+                                        <th class="p-3 sort-header">Gen Speedups</th>
+                                        <th class="p-3 sort-header">Total D4 Mins</th>
+                                        <th class="p-3">Day 4 Slots</th>
+                                        <th class="p-3">Comments</th>
+                                        <th class="p-3">Proofs</th>
+                                        <th class="p-3 sort-header">Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-day4" class="divide-y divide-gray-800"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -235,16 +463,36 @@
 
     </main>
 
-    <!-- FOOTER -->
-    <footer class="w-full text-center py-6 text-xs font-bold text-amber-500/80 tracking-widest uppercase border-t border-amber-500/20 bg-slate-950/90 backdrop-blur-md mt-16">
-        Design by Hell🔥
+    <!-- FOOTER DESIGN BY HELL -->
+    <footer class="w-full text-center py-6 text-xs font-bold text-amber-500/80 tracking-widest uppercase border-t border-amber-500/20 mt-16 bg-slate-950/90 backdrop-blur-md">
+        Design by Hell
     </footer>
 
-    <!-- FIREBASE SCRIPT -->
+    <!-- Modal for Screenshots -->
+    <div id="image-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 backdrop-blur-md">
+        <div class="bg-slate-900 p-6 rounded-2xl max-w-3xl w-full border border-amber-500/40 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <h3 class="font-bold font-cinzel text-amber-400">Screenshot Proofs</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white font-bold text-sm bg-gray-800 px-3 py-1 rounded-lg">Close</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <span class="text-xs text-amber-400 block mb-2 font-semibold">Evidence Proof 1:</span>
+                    <img id="modal-res-img" src="" alt="Evidence Proof 1" class="w-full max-h-[60vh] object-contain rounded-xl bg-slate-950 border border-gray-800 p-2">
+                </div>
+                <div>
+                    <span class="text-xs text-amber-400 block mb-2 font-semibold">Evidence Proof 2:</span>
+                    <img id="modal-speed-img" src="" alt="Evidence Proof 2" class="w-full max-h-[60vh] object-contain rounded-xl bg-slate-950 border border-gray-800 p-2">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, setDoc, doc, getDoc, getDocs, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
@@ -258,14 +506,51 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        const allianceBanners = {
+            "DEFAULT": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "APX": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "SVG": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "NDT": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "WAR": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "DUN": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "69A": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png",
+            "DTM": "images/E9FF28A7-EA93-4FEA-A64F-C86E6F8AEAED.png"
+        };
+
+        // Viking Passwords Setup
+        const alliancePasswords = {
+            "APX": "AreYouSure?",
+            "SVG": "AreYouSure?",
+            "NDT": "AreYouSure?",
+            "WAR": "AreYouSure?",
+            "DUN": "AreYouSure?",
+            "69A": "AreYouSure?",
+            "DTM": "AreYouSure?"
+        };
 
         let currentMember = null;
         let existingDataMap = new Map();
 
+        // UI Accordion Toggle
         window.toggleAccordion = function(id) {
-            document.getElementById(id).classList.toggle('hidden');
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle('hidden');
+            }
         };
 
+        // Alliance Banner Switch
+        document.getElementById('alliance-select').addEventListener('change', (e) => {
+            const selectedAlliance = e.target.value;
+            const bannerImg = document.getElementById('main-banner');
+            if (allianceBanners[selectedAlliance]) {
+                bannerImg.src = allianceBanners[selectedAlliance];
+            }
+        });
+
+        // Calculator logic
         window.calculateSplit = function() {
             const total = parseFloat(document.getElementById('calc-total').value) || 0;
             const d1Pct = parseFloat(document.getElementById('calc-d1-pct').value) || 0;
@@ -288,10 +573,12 @@
             document.getElementById('gen-speedups-d4').value = Math.round((total * d4Pct) / 100);
         };
 
+        // Time slot generator per day (Starts at 00:00)
         function generateDaySlots(containerId, dayPrefix, counterId, checkboxName) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
-            let currentMinutes = 0;
+
+            let currentMinutes = 0; // Starts from 00:00 AM
             for (let i = 0; i < 48; i++) {
                 const startH = Math.floor((currentMinutes % (24 * 60)) / 60).toString().padStart(2, '0');
                 const startM = (currentMinutes % 60).toString().padStart(2, '0');
@@ -303,10 +590,10 @@
                 const slotLabel = `${startH}:${startM} - ${endH}:${endM}`;
 
                 const label = document.createElement('label');
-                label.className = 'flex items-center space-x-2 bg-slate-900 p-2 rounded-lg border border-slate-800 hover:border-amber-500 cursor-pointer text-xs transition';
+                label.className = 'flex items-center space-x-2 bg-slate-900 p-2 rounded-lg border border-gray-800 hover:border-amber-500 cursor-pointer text-xs transition';
                 label.innerHTML = `
-                    <input type="checkbox" name="${checkboxName}" value="${slotId}" onchange="updateDayCounter('${checkboxName}', '${counterId}')" class="rounded bg-slate-950 border-slate-700 text-amber-500">
-                    <span class="text-slate-300 font-mono">${slotLabel}</span>
+                    <input type="checkbox" name="${checkboxName}" value="${slotId}" onchange="updateDayCounter('${checkboxName}', '${counterId}')" class="rounded bg-slate-950 border-gray-700 text-amber-500 focus:ring-0">
+                    <span class="text-gray-300 font-mono">${slotLabel}</span>
                 `;
                 container.appendChild(label);
                 currentMinutes = endMinutes;
@@ -324,79 +611,93 @@
             counter.className = checked >= 4 ? 'text-xs text-emerald-400 font-semibold bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-1 rounded-full' : 'text-xs text-amber-400 font-semibold bg-amber-950/80 border border-amber-500/30 px-2.5 py-1 rounded-full';
         };
 
-        async function fetchExistingMembers() {
-            const snapshot = await getDocs(collection(db, "appointment_requests"));
-            existingDataMap.clear();
-            snapshot.forEach(docSnap => existingDataMap.set(docSnap.id, docSnap.data()));
+        function formatSlotTime(rawTime) {
+            if (!rawTime) return "";
+            let cleanTime = rawTime.replace(/^D\d+_/, '');
+            return cleanTime.split('-')[0].trim();
         }
 
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                document.getElementById('authGateSection').classList.remove('hidden');
-                document.getElementById('booking-section').classList.add('hidden');
-                return;
-            }
+        async function fetchExistingMembers() {
+            const querySnapshot = await getDocs(collection(db, "appointment_requests"));
+            existingDataMap.clear();
+            querySnapshot.forEach((docSnap) => {
+                existingDataMap.set(docSnap.id, docSnap.data());
+            });
+        }
+        fetchExistingMembers();
 
-            const userSnap = await getDoc(doc(db, "users", user.uid));
-            if (!userSnap.exists() || !userSnap.data().nickname || !userSnap.data().gameId) {
-                window.location.href = "complete-profile.html";
-                return;
-            }
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const nickname = document.getElementById('nickname').value.trim();
+            const playerId = document.getElementById('player-id').value.trim();
+            const alliance = document.getElementById('alliance-select').value;
+            const password = document.getElementById('alliance-password').value;
 
-            const userData = userSnap.data();
-            currentMember = {
-                nickname: userData.nickname,
-                playerId: userData.gameId,
-                alliance: userData.alliance
-            };
-
-            document.getElementById('authGateSection').classList.add('hidden');
-            document.getElementById('booking-section').classList.remove('hidden');
-            document.getElementById('display-name').innerText = `${userData.nickname} (${userData.alliance}) - ID: ${userData.gameId}`;
-
-            await fetchExistingMembers();
-            if (existingDataMap.has(userData.gameId)) {
-                const prev = existingDataMap.get(userData.gameId);
-                document.getElementById('const-speedups').value = prev.constSpeedups || '';
-                document.getElementById('gen-speedups-d1').value = prev.genSpeedupsD1 || '';
-                document.getElementById('true-gold-d1').value = prev.trueGoldD1 || '';
-                document.getElementById('tempered-gold').value = prev.temperedGold || '';
-
-                document.getElementById('research-speedups').value = prev.researchSpeedups || '';
-                document.getElementById('gen-speedups-d2').value = prev.genSpeedupsD2 || '';
-                document.getElementById('gold-dust').value = prev.goldDust || '';
-
-                document.getElementById('train-speedups').value = prev.trainSpeedups || '';
-                document.getElementById('gen-speedups-d4').value = prev.genSpeedupsD4 || '';
-
-                if (prev.slotsD1) {
-                    document.querySelectorAll('input[name="slots_d1"]').forEach(chk => chk.checked = prev.slotsD1.includes(chk.value));
-                    updateDayCounter('slots_d1', 'counter-d1');
+            if (password === alliancePasswords[alliance]) {
+                currentMember = { nickname, playerId, alliance };
+                
+                if (allianceBanners[alliance]) {
+                    document.getElementById('main-banner').src = allianceBanners[alliance];
                 }
-                if (prev.slotsD2) {
-                    document.querySelectorAll('input[name="slots_d2"]').forEach(chk => chk.checked = prev.slotsD2.includes(chk.value));
-                    updateDayCounter('slots_d2', 'counter-d2');
+
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('booking-section').classList.remove('hidden');
+                document.getElementById('display-name').innerText = `${nickname} (${alliance}) - ID: ${playerId}`;
+
+                await fetchExistingMembers();
+                if (existingDataMap.has(playerId)) {
+                    const prev = existingDataMap.get(playerId);
+                    // Populate Day 1
+                    document.getElementById('const-speedups').value = prev.constSpeedups || '';
+                    document.getElementById('gen-speedups-d1').value = prev.genSpeedupsD1 || '';
+                    document.getElementById('true-gold-d1').value = prev.trueGoldD1 || '';
+                    document.getElementById('tempered-gold').value = prev.temperedGold || '';
+                    document.getElementById('player-comments-d1').value = prev.commentsD1 || prev.comments || '';
+
+                    // Populate Day 2
+                    document.getElementById('research-speedups').value = prev.researchSpeedups || '';
+                    document.getElementById('gen-speedups-d2').value = prev.genSpeedupsD2 || '';
+                    document.getElementById('gold-dust').value = prev.goldDust !== undefined ? prev.goldDust : '';
+                    document.getElementById('player-comments-d2').value = prev.commentsD2 || prev.comments || '';
+
+                    // Populate Day 4
+                    document.getElementById('train-speedups').value = prev.trainSpeedups || '';
+                    document.getElementById('gen-speedups-d4').value = prev.genSpeedupsD4 || '';
+                    document.getElementById('player-comments-d4').value = prev.commentsD4 || prev.comments || '';
+
+                    if (prev.slotsD1) {
+                        document.querySelectorAll('input[name="slots_d1"]').forEach(chk => chk.checked = prev.slotsD1.includes(chk.value));
+                        updateDayCounter('slots_d1', 'counter-d1');
+                    }
+                    if (prev.slotsD2) {
+                        document.querySelectorAll('input[name="slots_d2"]').forEach(chk => chk.checked = prev.slotsD2.includes(chk.value));
+                        updateDayCounter('slots_d2', 'counter-d2');
+                    }
+                    if (prev.slotsD4) {
+                        document.querySelectorAll('input[name="slots_d4"]').forEach(chk => chk.checked = prev.slotsD4.includes(chk.value));
+                        updateDayCounter('slots_d4', 'counter-d4');
+                    }
                 }
-                if (prev.slotsD4) {
-                    document.querySelectorAll('input[name="slots_d4"]').forEach(chk => chk.checked = prev.slotsD4.includes(chk.value));
-                    updateDayCounter('slots_d4', 'counter-d4');
-                }
+            } else {
+                alert("Incorrect password for alliance " + alliance);
             }
-        });
+        };
+
+        window.logout = () => location.reload();
 
         async function compressImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = (e) => {
+                reader.onload = (event) => {
                     const img = new Image();
-                    img.src = e.target.result;
+                    img.src = event.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         const MAX_WIDTH = 800;
-                        const scale = MAX_WIDTH / img.width;
+                        const scaleSize = MAX_WIDTH / img.width;
                         canvas.width = MAX_WIDTH;
-                        canvas.height = img.height * scale;
+                        canvas.height = img.height * scaleSize;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         resolve(canvas.toDataURL('image/jpeg', 0.6));
@@ -405,9 +706,14 @@
             });
         }
 
+        // INDEPENDENT DAY SUBMISSIONS
         window.submitDayBooking = async function(e, dayNumber) {
             e.preventDefault();
-            if (!currentMember) return;
+            
+            if (!currentMember) {
+                alert("Please login first.");
+                return;
+            }
 
             const btn = document.getElementById(`submit-btn-d${dayNumber}`);
             btn.disabled = true;
@@ -421,51 +727,248 @@
                     timestamp: new Date().toISOString()
                 };
 
-                const globalResFile = document.getElementById('global-res-proof').files[0];
-                const globalSpeedFile = document.getElementById('global-speed-proof').files[0];
-                const prevData = existingDataMap.get(currentMember.playerId) || {};
-
-                // Use new uploaded global proofs or fallback to previously saved ones
-                docData.resourceProof = globalResFile ? await compressImage(globalResFile) : (prevData.resourceProof || "");
-                docData.speedupProof = globalSpeedFile ? await compressImage(globalSpeedFile) : (prevData.speedupProof || "");
-
-                let checkedSlots;
+                let checkedSlots, proofFile1, proofFile2, prevData = existingDataMap.get(currentMember.playerId) || {};
 
                 if (dayNumber === 1) {
                     checkedSlots = document.querySelectorAll('input[name="slots_d1"]:checked');
-                    if (checkedSlots.length < 4) { alert("Please select at least 4 slots for Day 1."); btn.disabled = false; btn.innerText = "Submit Day 1 Booking"; return; }
+                    if (checkedSlots.length === 0) {
+                        if (!confirm("Are you sure you don't want slots for Day 1?")) { btn.disabled = false; btn.innerText = "SUBMIT DAY 1 BOOKING"; return; }
+                    } else if (checkedSlots.length < 4) {
+                        alert("Please select at least 4 slots for Day 1."); btn.disabled = false; btn.innerText = "SUBMIT DAY 1 BOOKING"; return; }
+
+                    proofFile1 = document.getElementById('res-proof-d1').files[0];
+                    proofFile2 = document.getElementById('speed-proof-d1').files[0];
+
                     docData.constSpeedups = document.getElementById('const-speedups').value;
                     docData.genSpeedupsD1 = document.getElementById('gen-speedups-d1').value;
                     docData.trueGoldD1 = document.getElementById('true-gold-d1').value;
                     docData.temperedGold = document.getElementById('tempered-gold').value;
                     docData.slotsD1 = Array.from(checkedSlots).map(c => c.value);
+                    docData.commentsD1 = document.getElementById('player-comments-d1').value;
+                    docData.resProofD1 = proofFile1 ? await compressImage(proofFile1) : (prevData.resProofD1 || prevData.resourceProof || "");
+                    docData.speedProofD1 = proofFile2 ? await compressImage(proofFile2) : (prevData.speedProofD1 || prevData.speedupProof || "");
                     docData.d1Active = true;
-                } else if (dayNumber === 2) {
+                } 
+                else if (dayNumber === 2) {
                     checkedSlots = document.querySelectorAll('input[name="slots_d2"]:checked');
-                    if (checkedSlots.length < 4) { alert("Please select at least 4 slots for Day 2."); btn.disabled = false; btn.innerText = "Submit Day 2 Booking"; return; }
+                    if (checkedSlots.length === 0) {
+                        if (!confirm("Are you sure you don't want slots for Day 2?")) { btn.disabled = false; btn.innerText = "SUBMIT DAY 2 BOOKING"; return; }
+                    } else if (checkedSlots.length < 4) {
+                        alert("Please select at least 4 slots for Day 2."); btn.disabled = false; btn.innerText = "SUBMIT DAY 2 BOOKING"; return; }
+
+                    proofFile1 = document.getElementById('res-proof-d2').files[0];
+                    proofFile2 = document.getElementById('speed-proof-d2').files[0];
+
                     docData.researchSpeedups = document.getElementById('research-speedups').value;
                     docData.genSpeedupsD2 = document.getElementById('gen-speedups-d2').value;
                     docData.goldDust = document.getElementById('gold-dust').value;
                     docData.slotsD2 = Array.from(checkedSlots).map(c => c.value);
+                    docData.commentsD2 = document.getElementById('player-comments-d2').value;
+                    docData.resProofD2 = proofFile1 ? await compressImage(proofFile1) : (prevData.resProofD2 || prevData.resourceProof || "");
+                    docData.speedProofD2 = proofFile2 ? await compressImage(proofFile2) : (prevData.speedProofD2 || prevData.speedupProof || "");
                     docData.d2Active = true;
-                } else if (dayNumber === 4) {
+                }
+                else if (dayNumber === 4) {
                     checkedSlots = document.querySelectorAll('input[name="slots_d4"]:checked');
-                    if (checkedSlots.length < 4) { alert("Please select at least 4 slots for Day 4."); btn.disabled = false; btn.innerText = "Submit Day 4 Booking"; return; }
+                    if (checkedSlots.length === 0) {
+                        if (!confirm("Are you sure you don't want slots for Day 4?")) { btn.disabled = false; btn.innerText = "SUBMIT DAY 4 BOOKING"; return; }
+                    } else if (checkedSlots.length < 4) {
+                        alert("Please select at least 4 slots for Day 4."); btn.disabled = false; btn.innerText = "SUBMIT DAY 4 BOOKING"; return; }
+
+                    proofFile1 = document.getElementById('speed-proof-d4').files[0];
+                    proofFile2 = document.getElementById('extra-proof-d4').files[0];
+
                     docData.trainSpeedups = document.getElementById('train-speedups').value;
                     docData.genSpeedupsD4 = document.getElementById('gen-speedups-d4').value;
                     docData.slotsD4 = Array.from(checkedSlots).map(c => c.value);
+                    docData.commentsD4 = document.getElementById('player-comments-d4').value;
+                    docData.speedProofD4 = proofFile1 ? await compressImage(proofFile1) : (prevData.speedProofD4 || prevData.speedupProof || "");
+                    docData.extraProofD4 = proofFile2 ? await compressImage(proofFile2) : (prevData.extraProofD4 || "");
                     docData.d4Active = true;
                 }
 
                 await setDoc(doc(db, "appointment_requests", currentMember.playerId), docData, { merge: true });
                 alert(`Day ${dayNumber} booking successfully saved!`);
                 await fetchExistingMembers();
-            } catch (err) {
-                console.error("Booking error:", err);
-                alert("Error: " + err.message);
+            } catch (error) {
+                console.error(`Error saving Day ${dayNumber}: `, error);
+                alert("An error occurred: " + error.message);
             } finally {
                 btn.disabled = false;
-                btn.innerText = `Submit Day ${dayNumber} Booking`;
+                btn.innerText = `SUBMIT DAY ${dayNumber} BOOKING`;
+            }
+        };
+
+        // Modal Controls
+        window.closeModal = function() {
+            document.getElementById('image-modal').classList.add('hidden');
+        };
+
+        window.openModal = function(resUrl, speedUrl) {
+            document.getElementById('modal-res-img').src = resUrl || '';
+            document.getElementById('modal-speed-img').src = speedUrl || '';
+            document.getElementById('image-modal').classList.remove('hidden');
+        };
+
+        // ==========================================
+        // ADMIN GOOGLE AUTHENTICATION & DASHBOARD
+        // ==========================================
+        window.adminLogin = async function() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                await verifyAdminStatus(result.user);
+            } catch (error) {
+                console.error("Google Auth Error:", error);
+                alert("Login Failed: " + error.message);
+            }
+        };
+
+        async function verifyAdminStatus(user) {
+            if (!user || !user.email) return;
+
+            const adminDocSnap = await getDoc(doc(db, "admins", user.email.toLowerCase()));
+
+            if (adminDocSnap.exists()) {
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                document.getElementById('admin-user-info').innerText = `Logged in as Admin: ${user.email}`;
+                loadAdminTables();
+            } else {
+                alert(`Access Denied: The account (${user.email}) does not have admin permissions.`);
+                await signOut(auth);
+                document.getElementById('admin-dashboard').classList.add('hidden');
+            }
+        }
+
+        window.adminLogout = async function() {
+            await signOut(auth);
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            alert("Admin signed out.");
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                await verifyAdminStatus(user);
+            } else {
+                document.getElementById('admin-dashboard').classList.add('hidden');
+            }
+        });
+
+        async function loadAdminTables() {
+            const snapshot = await getDocs(collection(db, "appointment_requests"));
+            
+            const tbody1 = document.getElementById('tbody-day1');
+            const tbody2 = document.getElementById('tbody-day2');
+            const tbody4 = document.getElementById('tbody-day4');
+
+            tbody1.innerHTML = '';
+            tbody2.innerHTML = '';
+            tbody4.innerHTML = '';
+
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+
+                // DAY 1 ROW
+                if (data.d1Active || data.constSpeedups || (data.slotsD1 && data.slotsD1.length > 0)) {
+                    const tr1 = document.createElement('tr');
+                    tr1.className = 'hover:bg-slate-800/60 transition border-b border-gray-800';
+                    const d1Total = (parseFloat(data.constSpeedups) || 0) + (parseFloat(data.genSpeedupsD1) || 0);
+                    const d1Slots = (data.slotsD1 || []).map(formatSlotTime).join(', ');
+                    tr1.innerHTML = `
+                        <td class="p-3 font-semibold text-amber-400">${data.nickname || ''}</td>
+                        <td class="p-3">${data.playerId || ''}</td>
+                        <td class="p-3 font-bold text-gray-300">${data.alliance || ''}</td>
+                        <td class="p-3">${data.constSpeedups || 0} mins</td>
+                        <td class="p-3">${data.genSpeedupsD1 || 0} mins</td>
+                        <td class="p-3 font-bold text-amber-300">${d1Total} mins</td>
+                        <td class="p-3">${data.trueGoldD1 || 0}</td>
+                        <td class="p-3">${data.temperedGold || 0}</td>
+                        <td class="p-3 font-mono">${d1Slots || '-'}</td>
+                        <td class="p-3 max-w-xs truncate text-gray-400">${data.commentsD1 || data.comments || '-'}</td>
+                        <td class="p-3"><button onclick="openModal('${data.resProofD1 || data.resourceProof || ''}', '${data.speedProofD1 || data.speedupProof || ''}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
+                        <td class="p-3 text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
+                    `;
+                    tbody1.appendChild(tr1);
+                }
+
+                // DAY 2 ROW
+                if (data.d2Active || data.researchSpeedups || (data.slotsD2 && data.slotsD2.length > 0)) {
+                    const tr2 = document.createElement('tr');
+                    tr2.className = 'hover:bg-slate-800/60 transition border-b border-gray-800';
+                    const d2Total = (parseFloat(data.researchSpeedups) || 0) + (parseFloat(data.genSpeedupsD2) || 0);
+                    const d2Slots = (data.slotsD2 || []).map(formatSlotTime).join(', ');
+                    tr2.innerHTML = `
+                        <td class="p-3 font-semibold text-amber-400">${data.nickname || ''}</td>
+                        <td class="p-3">${data.playerId || ''}</td>
+                        <td class="p-3 font-bold text-gray-300">${data.alliance || ''}</td>
+                        <td class="p-3">${data.researchSpeedups || 0} mins</td>
+                        <td class="p-3">${data.genSpeedupsD2 || 0} mins</td>
+                        <td class="p-3 font-bold text-amber-300">${d2Total} mins</td>
+                        <td class="p-3">${data.goldDust !== undefined ? data.goldDust : (data.trueGoldD2 || 0)}</td>
+                        <td class="p-3 font-mono">${d2Slots || '-'}</td>
+                        <td class="p-3 max-w-xs truncate text-gray-400">${data.commentsD2 || data.comments || '-'}</td>
+                        <td class="p-3"><button onclick="openModal('${data.resProofD2 || data.resourceProof || ''}', '${data.speedProofD2 || data.speedupProof || ''}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
+                        <td class="p-3 text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
+                    `;
+                    tbody2.appendChild(tr2);
+                }
+
+                // DAY 4 ROW
+                if (data.d4Active || data.trainSpeedups || (data.slotsD4 && data.slotsD4.length > 0)) {
+                    const tr4 = document.createElement('tr');
+                    tr4.className = 'hover:bg-slate-800/60 transition border-b border-gray-800';
+                    const d4Total = (parseFloat(data.trainSpeedups) || 0) + (parseFloat(data.genSpeedupsD4) || 0);
+                    const d4Slots = (data.slotsD4 || []).map(formatSlotTime).join(', ');
+                    tr4.innerHTML = `
+                        <td class="p-3 font-semibold text-amber-400">${data.nickname || ''}</td>
+                        <td class="p-3">${data.playerId || ''}</td>
+                        <td class="p-3 font-bold text-gray-300">${data.alliance || ''}</td>
+                        <td class="p-3">${data.trainSpeedups || 0} mins</td>
+                        <td class="p-3">${data.genSpeedupsD4 || 0} mins</td>
+                        <td class="p-3 font-bold text-amber-300">${d4Total} mins</td>
+                        <td class="p-3 font-mono">${d4Slots || '-'}</td>
+                        <td class="p-3 max-w-xs truncate text-gray-400">${data.commentsD4 || data.comments || '-'}</td>
+                        <td class="p-3"><button onclick="openModal('${data.speedProofD4 || data.speedupProof || ''}', '${data.extraProofD4 || ''}')" class="bg-amber-600 hover:bg-amber-500 text-white px-2 py-1 rounded text-[10px] font-bold">View Proofs</button></td>
+                        <td class="p-3 text-gray-400">${data.timestamp ? new Date(data.timestamp).toLocaleString() : '-'}</td>
+                    `;
+                    tbody4.appendChild(tr4);
+                }
+            });
+
+            if (window.Tablesort) {
+                new Tablesort(document.getElementById('table-day1'));
+                new Tablesort(document.getElementById('table-day2'));
+                new Tablesort(document.getElementById('table-day4'));
+            }
+        }
+
+        // PER-DAY EXPORTS
+        window.exportToExcel = function(dayNumber) {
+            const table = document.getElementById(`table-day${dayNumber}`);
+            if (!table) return;
+            const wb = XLSX.utils.table_to_book(table, { sheet: `Day ${dayNumber} Appointments` });
+            XLSX.writeFile(wb, `Kingdom1269_Appointments_Day${dayNumber}.xlsx`);
+        };
+
+        // PER-DAY MONTHLY RESET
+        window.resetMonthlyData = async function(dayNumber) {
+            if (!auth.currentUser) {
+                alert("You must be logged in as an Admin.");
+                return;
+            }
+            if (confirm(`Are you sure you want to clear ALL Day ${dayNumber} booking data? This action cannot be undone.`)) {
+                const snapshot = await getDocs(collection(db, "appointment_requests"));
+                for (const docSnap of snapshot.docs) {
+                    const docRef = doc(db, "appointment_requests", docSnap.id);
+                    if (dayNumber === 1) {
+                        await updateDoc(docRef, { constSpeedups: deleteField(), genSpeedupsD1: deleteField(), trueGoldD1: deleteField(), temperedGold: deleteField(), slotsD1: deleteField(), commentsD1: deleteField(), resProofD1: deleteField(), speedProofD1: deleteField(), d1Active: deleteField() });
+                    } else if (dayNumber === 2) {
+                        await updateDoc(docRef, { researchSpeedups: deleteField(), genSpeedupsD2: deleteField(), goldDust: deleteField(), slotsD2: deleteField(), commentsD2: deleteField(), resProofD2: deleteField(), speedProofD2: deleteField(), d2Active: deleteField() });
+                    } else if (dayNumber === 4) {
+                        await updateDoc(docRef, { trainSpeedups: deleteField(), genSpeedupsD4: deleteField(), slotsD4: deleteField(), commentsD4: deleteField(), speedProofD4: deleteField(), extraProofD4: deleteField(), d4Active: deleteField() });
+                    }
+                }
+                alert(`Day ${dayNumber} data successfully reset!`);
+                loadAdminTables();
             }
         };
     </script>
