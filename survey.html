@@ -321,6 +321,9 @@
                         <button onclick="exportToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-2 shadow-md">
                             <i class="fa-solid fa-file-excel"></i> Export to Excel (.xlsx)
                         </button>
+                        <button onclick="resetSubmissions()" class="px-4 py-2 bg-red-700 hover:bg-red-600 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-2 shadow-md">
+                            <i class="fa-solid fa-trash-can"></i> Reset Submissions
+                        </button>
                         <button onclick="toggleAdminPanel()" class="w-9 h-9 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg flex items-center justify-center transition-all">
                             <i class="fa-solid fa-xmark text-lg"></i>
                         </button>
@@ -633,6 +636,42 @@
             } catch (err) {
                 console.error("Error fetching submissions:", err);
                 loadingEl.innerHTML = `<p class="text-red-400">Failed to load submissions from database.</p>`;
+            }
+        }
+
+        // Permanently delete every survey submission from Firestore.
+        window.resetSubmissions = async function() {
+            if (!isAuthorizedAdmin) {
+                showModal("Access Denied", "Only authorized R4, R5, and NAP members can reset submissions.", true);
+                return;
+            }
+            const confirmed = window.confirm("PERMANENT ACTION: This will permanently delete ALL KVK and Swordland survey submissions from the database. This cannot be undone. Continue?");
+            if (!confirmed) return;
+
+            const resetBtn = document.querySelector('button[onclick="resetSubmissions()"]');
+            resetBtn.disabled = true;
+            resetBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
+            try {
+                const collection = db.collection('kvkSubmissions');
+                let snapshot = await collection.limit(400).get();
+                let deletedCount = 0;
+                while (!snapshot.empty) {
+                    const batch = db.batch();
+                    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                    deletedCount += snapshot.size;
+                    snapshot = await collection.limit(400).get();
+                }
+                allSubmissions = [];
+                await fetchSubmissions();
+                showModal("Reset Complete", `${deletedCount} submission(s) were permanently deleted from the database.`);
+            } catch (error) {
+                console.error("Error resetting submissions:", error);
+                showModal("Reset Failed", "Could not delete all submissions. Check the browser console and Firestore permissions.", true);
+                await fetchSubmissions();
+            } finally {
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = '<i class="fa-solid fa-trash-can"></i> Reset Submissions';
             }
         }
 
