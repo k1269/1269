@@ -1,0 +1,261 @@
+<!-- ... .-.-.- existing code -.-.-. -->
+    <!-- FOOTER -->
+    <footer class="w-full border-t border-slate-800/80 bg-slate-950/80 py-6 mt-12 text-center">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="text-xs text-slate-500 font-mono">
+                KINGDOM 1269 &copy; WAR ROOM TACTICS
+            </div>
+            <div class="text-sm font-bold tracking-wider text-slate-300">
+                Designed by <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-400 to-yellow-500 font-extrabold">Hell🔥</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FIREBASE SDKs & INTEGRATION SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration provided by user
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9WCd_D9kKxFb6xP4IcWK46itFWNOuU5g",
+            authDomain: "kingdom-1269-portal.firebaseapp.com",
+            projectId: "kingdom-1269-portal",
+            storageBucket: "kingdom-1269-portal.firebasestorage.app",
+            messagingSenderId: "1007373803222",
+            appId: "1:1007373803222:web:bcb85595a99da596aaf377"
+        };
+
+        // Initialize Firebase Services
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // App ID for Firestore path convention
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kingdom-1269-portal';
+
+        // Pre-configured Discord IDs
+        const DISCORD_DEFAULT_CONFIG = {
+            guildId: "1532387267656552569",
+            roleR5: "1532632755031113768",
+            roleR4: "1532632829962354849",
+            roleNAP: "1532635063764652185"
+        };
+
+        // Global Submissions Array for Admin Export
+        window.cloudSubmissions = [];
+
+        // Attempt authentication safely; fallback to local storage / open read if sign-in restricted
+        async function initFirebaseSession() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.warn("Firebase Auth restricted or disabled. Operating in hybrid/local mode:", err.message);
+            }
+            listenToCloudSubmissions();
+        }
+
+        initFirebaseSession();
+
+        // Listen for live Firestore submissions
+        function listenToCloudSubmissions() {
+            const dataCol = collection(db, 'artifacts', appId, 'public', 'data', 'registrations');
+            
+            onSnapshot(dataCol, (snapshot) => {
+                window.cloudSubmissions = [];
+                snapshot.forEach(doc => {
+                    window.cloudSubmissions.push({ id: doc.id, ...doc.data() });
+                });
+                renderAdminTable();
+            }, (error) => {
+                console.warn("Firestore listener fallback to local storage:", error.message);
+                renderAdminTable();
+            });
+        }
+
+        // Form Submit Handler linked to Firestore
+        window.handleFormSubmit = async function(e) {
+            e.preventDefault();
+
+            const entry = {
+                timestamp: new Date().toLocaleString(),
+                playerName: document.getElementById('playerName').value.trim(),
+                alliance: document.getElementById('alliance').value,
+                infantryTier: document.getElementById('infantryTier').value,
+                infantryT11: document.getElementById('infantryT11').checked ? 'YES' : 'NO',
+                cavalryTier: document.getElementById('cavalryTier').value,
+                cavalryT11: document.getElementById('cavalryT11').checked ? 'YES' : 'NO',
+                archeryTier: document.getElementById('archeryTier').value,
+                archeryT11: document.getElementById('archeryT11').checked ? 'YES' : 'NO',
+                availability: document.getElementById('availability').value,
+                communication: document.getElementById('communication').value,
+                summitAgreement: 'AGREED'
+            };
+
+            try {
+                // Save to Firestore Cloud
+                const dataCol = collection(db, 'artifacts', appId, 'public', 'data', 'registrations');
+                await addDoc(dataCol, entry);
+            } catch (err) {
+                console.warn("Cloud save note (falling back to local):", err.message);
+            }
+
+            // Always save to local storage as reliable backup
+            const localData = JSON.parse(localStorage.getItem('k1269_registrations') || '[]');
+            localData.push(entry);
+            localStorage.setItem('k1269_registrations', JSON.stringify(localData));
+            
+            if (typeof window.renderAdminTable === 'function') {
+                window.renderAdminTable();
+            }
+
+            document.getElementById('modalMessage').innerText = `Thank you, ${entry.playerName} [${entry.alliance}]. Your registration has been successfully recorded.`;
+            document.getElementById('successModal').classList.remove('hidden');
+            document.getElementById('registrationForm').reset();
+        };
+
+        // Populate Default Discord Config on Modal Load
+        window.loadDiscordConfig = function() {
+            const guildIdInput = document.getElementById('discordGuildId');
+            if (guildIdInput) guildIdInput.value = DISCORD_DEFAULT_CONFIG.guildId;
+            const r5Input = document.getElementById('discordRoleR5');
+            if (r5Input) r5Input.value = DISCORD_DEFAULT_CONFIG.roleR5;
+            const r4Input = document.getElementById('discordRoleR4');
+            if (r4Input) r4Input.value = DISCORD_DEFAULT_CONFIG.roleR4;
+            const napInput = document.getElementById('discordRoleNap');
+            if (napInput) napInput.value = DISCORD_DEFAULT_CONFIG.roleNAP;
+            
+            const redirectUriInput = document.getElementById('discordRedirectUri');
+            if (redirectUriInput) {
+                redirectUriInput.value = window.location.href.split('?')[0];
+            }
+        };
+
+        // Simulated Discord Login Verification
+        window.simulateDiscordLogin = function() {
+            const btn = document.getElementById('discordLoginBtn');
+            btn.innerHTML = `<svg class="animate-spin h-5 w-5 mr-2 text-indigo-400 inline" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Authenticating with Discord...`;
+            
+            setTimeout(() => {
+                // Mock success with R5/R4/NAP role check passed
+                localStorage.setItem('k1269_admin_auth', 'true');
+                localStorage.setItem('k1269_admin_role', 'R5 (Kingdom Supreme Commander)');
+                document.getElementById('adminLoginSection').classList.add('hidden');
+                document.getElementById('adminDashboardSection').classList.remove('hidden');
+                renderAdminTable();
+            }, 1200);
+        };
+
+        window.logoutAdmin = function() {
+            localStorage.removeItem('k1269_admin_auth');
+            localStorage.removeItem('k1269_admin_role');
+            document.getElementById('adminDashboardSection').classList.add('hidden');
+            document.getElementById('adminLoginSection').classList.remove('hidden');
+            const btn = document.getElementById('discordLoginBtn');
+            if (btn) btn.innerHTML = `Login with Discord (R5/R4/NAP)`;
+        };
+
+        // Render Admin Data Table & Metrics
+        window.renderAdminTable = function() {
+            const tbody = document.getElementById('adminTableBody');
+            if (!tbody) return;
+
+            // Combine cloudSubmissions and local backups
+            const localData = JSON.parse(localStorage.getItem('k1269_registrations') || '[]');
+            const allMap = new Map();
+            
+            // Merge unique entries
+            [...localData, ...window.cloudSubmissions].forEach(item => {
+                const key = `${item.playerName}_${item.alliance}_${item.timestamp}`;
+                allMap.set(key, item);
+            });
+
+            const combinedList = Array.from(allMap.values());
+            
+            // Update counts & metrics
+            document.getElementById('totalCount').innerText = combinedList.length;
+            const r5Count = combinedList.filter(i => i.alliance === 'APX').length;
+            const r4Count = combinedList.filter(i => i.alliance === 'SVG').length;
+            document.getElementById('activeAlliancesCount').innerText = new Set(combinedList.map(i => i.alliance)).size;
+
+            if (combinedList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-500 font-mono">No registrations recorded yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = combinedList.map((item, idx) => `
+                <tr class="border-b border-slate-800/60 hover:bg-slate-900/40 transition">
+                    <td class="py-3 px-4 font-mono text-xs text-slate-400">${idx + 1}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-200">${item.playerName || 'N/A'}</td>
+                    <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800/50">${item.alliance || 'N/A'}</span></td>
+                    <td class="py-3 px-4 text-xs font-mono text-slate-300">Inf: ${item.infantryTier || '-'}${item.infantryT11 === 'YES' ? ' (T11)' : ''}<br>Cav: ${item.cavalryTier || '-'}${item.cavalryT11 === 'YES' ? ' (T11)' : ''}<br>Arch: ${item.archeryTier || '-'}${item.archeryT11 === 'YES' ? ' (T11)' : ''}</td>
+                    <td class="py-3 px-4 text-xs font-mono text-cyan-300">${item.availability || 'N/A'}</td>
+                    <td class="py-3 px-4 text-xs text-slate-400">${item.communication || 'N/A'}</td>
+                    <td class="py-3 px-4 text-xs font-mono text-slate-500">${item.timestamp || 'N/A'}</td>
+                </tr>
+            `).join('');
+        };
+
+        // Export Data to Excel (.csv)
+        window.exportToExcel = function() {
+            const localData = JSON.parse(localStorage.getItem('k1269_registrations') || '[]');
+            const allMap = new Map();
+            [...localData, ...window.cloudSubmissions].forEach(item => {
+                const key = `${item.playerName}_${item.alliance}_${item.timestamp}`;
+                allMap.set(key, item);
+            });
+            const data = Array.from(allMap.values());
+
+            if (data.length === 0) {
+                alert("No data available to export.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Timestamp,Player Name,Alliance,Infantry Tier,Infantry T11,Cavalry Tier,Cavalry T11,Archery Tier,Archery T11,Availability,Communication,Summit Agreement\r\n";
+
+            data.forEach(row => {
+                const line = [
+                    `"${row.timestamp || ''}"`,
+                    `"${row.playerName || ''}"`,
+                    `"${row.alliance || ''}"`,
+                    `"${row.infantryTier || ''}"`,
+                    `"${row.infantryT11 || ''}"`,
+                    `"${row.cavalryTier || ''}"`,
+                    `"${row.cavalryT11 || ''}"`,
+                    `"${row.archeryTier || ''}"`,
+                    `"${row.archeryT11 || ''}"`,
+                    `"${row.availability || ''}"`,
+                    `"${row.communication || ''}"`,
+                    `"${row.summitAgreement || ''}"`
+                ].join(",");
+                csvContent += line + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `K1269_Battle_Registrations_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // Check if admin session was active on reload
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('k1269_admin_auth') === 'true') {
+                const loginSec = document.getElementById('adminLoginSection');
+                const dashSec = document.getElementById('adminDashboardSection');
+                if (loginSec) loginSec.classList.add('hidden');
+                if (dashSec) dashSec.classList.remove('hidden');
+                renderAdminTable();
+            }
+        });
+    </script>
+</body>
+</html>
