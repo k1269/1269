@@ -552,6 +552,15 @@
             document.body.removeChild(link);
         };
 
+        window.resetRegistrationsList = function() {
+            if (window.confirm("هل أنت متأكد من رغبتك في مسح وإعادة ضبط جميع بيانات التسجيل؟")) {
+                localStorage.removeItem('k1269_registrations');
+                window.cloudSubmissions = [];
+                window.renderAdminTable();
+                console.log("تم مسح القائمة بنجاح");
+            }
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('k1269_admin_auth') === 'true') {
                 const loginSec = document.getElementById('adminLoginSection');
